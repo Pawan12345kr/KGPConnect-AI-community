@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Write a Story — KGPConnect</title>
+  <script src="auth-client.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+            serif: ['Merriweather', 'Georgia', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            kgp: {
+              50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
+              400: '#60a5fa', 500: '#3b82f6', 600: '#1d4ed8', 700: '#1e3a8a',
+              800: '#1e2d5f', 900: '#0f172a',
+            },
+            accent: {
+              orange: '#f97316', emerald: '#10b981', violet: '#8b5cf6',
+              rose: '#f43f5e', amber: '#f59e0b', cyan: '#06b6d4', pink: '#ec4899',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #60a5fa, #8b5cf6, #f43f5e);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .glass {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Medium-like Editor Area */
+    #editorContent {
+      font-family: 'Merriweather', Georgia, serif;
+      font-size: 1.125rem;
+      line-height: 1.9;
+      min-height: 420px;
+      outline: none;
+      color: #e2e8f0;
+    }
+    #editorContent:empty:before {
+      content: attr(data-placeholder);
+      color: #475569;
+      font-style: italic;
+      pointer-events: none;
+    }
+    #editorContent h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+      line-height: 1.3;
+    }
+    #editorContent h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: #f1f5f9;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+    }
+    #editorContent p {
+      margin-bottom: 1.25rem;
+    }
+    #editorContent blockquote {
+      border-left: 4px solid #8b5cf6;
+      padding: 0.75rem 1.25rem;
+      margin: 1.5rem 0;
+      font-style: italic;
+      color: #cbd5e1;
+      background: rgba(139, 92, 246, 0.06);
+      border-radius: 0 12px 12px 0;
+    }
+    #editorContent ul {
+      list-style-type: disc;
+      padding-left: 1.75rem;
+      margin-bottom: 1.25rem;
+    }
+    #editorContent ol {
+      list-style-type: decimal;
+      padding-left: 1.75rem;
+      margin-bottom: 1.25rem;
+    }
+    #editorContent a {
+      color: #60a5fa;
+      text-decoration: underline;
+    }
+    #editorContent code.inline-code,
+    #previewFullBody code.inline-code,
+    #previewFullBody :not(pre) > code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88em;
+      font-weight: 600;
+      background: rgba(59, 130, 246, 0.22);
+      color: #93c5fd;
+      border: 1px solid rgba(96, 165, 250, 0.4);
+      padding: 0.15rem 0.45rem;
+      border-radius: 6px;
+    }
+    #editorContent pre.kgp-code-block,
+    #previewFullBody pre,
+    #previewFullBody pre.kgp-code-block {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.875rem;
+      line-height: 1.65;
+      background: #1e293b;
+      border: 1px solid rgba(96, 165, 250, 0.4);
+      border-radius: 14px;
+      padding: 1.25rem;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+      color: #6ee7b7;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      white-space: pre;
+    }
+    #editorContent figure.kgp-figure {
+      margin: 2rem 0;
+      text-align: center;
+    }
+    #editorContent figure.kgp-figure img {
+      max-width: 100%;
+      border-radius: 16px;
+      margin: 0 auto;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    #editorContent figure.kgp-figure figcaption {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 0.6rem;
+    }
+    #editorContent hr {
+      border: none;
+      text-align: center;
+      margin: 2.5rem 0;
+    }
+    #editorContent hr::before {
+      content: '• • •';
+      color: #64748b;
+      letter-spacing: 0.75rem;
+      font-size: 1.1rem;
+    }
+
+    /* Toolbar Button */
+    .tool-btn {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #94a3b8;
+      transition: all 0.2s ease;
+    }
+    .tool-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+    }
+
+    /* High-visibility Category Box & Select in Dark Mode */
+    .category-box {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+    .category-pill {
+      background: rgba(15, 23, 42, 0.9);
+      color: #e2e8f0;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      transition: all 0.2s ease;
+    }
+    .category-pill:hover {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: rgba(96, 165, 250, 0.6);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+    .category-pill.active {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: #ffffff !important;
+      border-color: transparent;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+    }
+    select.kgp-select {
+      background-color: #1e293b !important;
+      color: #f8fafc !important;
+      border: 1px solid rgba(148, 163, 184, 0.35) !important;
+      color-scheme: dark;
+    }
+    select.kgp-select option {
+      background-color: #0f172a !important;
+      color: #f8fafc !important;
+      padding: 8px;
+    }
+
+    /* Dark Mode contrast enhancements */
+    body:not(.light-mode) #editorContent:empty:before {
+      color: #64748b;
+    }
+    body:not(.light-mode) .tool-btn {
+      color: #cbd5e1;
+    }
+    body:not(.light-mode) ::placeholder {
+      color: #64748b !important;
+    }
+
+    /* Light Mode */
+    body.light-mode {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+    }
+    body.light-mode .glass {
+      background: rgba(255, 255, 255, 0.96) !important;
+      border: 1px solid rgba(15, 23, 42, 0.12) !important;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06) !important;
+    }
+    body.light-mode .category-box {
+      background: #ffffff;
+      border: 1px solid rgba(15, 23, 42, 0.12);
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+    }
+    body.light-mode .category-pill {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid rgba(15, 23, 42, 0.12);
+    }
+    body.light-mode .category-pill:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    body.light-mode .category-pill.active {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: #ffffff !important;
+    }
+    body.light-mode select.kgp-select {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      border: 1px solid rgba(15, 23, 42, 0.25) !important;
+      color-scheme: light;
+    }
+    body.light-mode select.kgp-select option {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+    }
+    body.light-mode #editorContent {
+      color: #0f172a !important;
+    }
+    body.light-mode #editorContent:empty:before {
+      color: #64748b !important;
+    }
+    body.light-mode #editorContent h2,
+    body.light-mode #editorContent h3 {
+      color: #0f172a !important;
+    }
+    body.light-mode #editorContent blockquote {
+      color: #334155 !important;
+      background: rgba(139, 92, 246, 0.08) !important;
+    }
+    body.light-mode #editorContent code.inline-code,
+    body.light-mode #previewFullBody code.inline-code {
+      background: #e2e8f0 !important;
+      color: #be185d !important;
+      border-color: #cbd5e1 !important;
+    }
+    body.light-mode #editorContent pre.kgp-code-block,
+    body.light-mode #previewFullBody pre,
+    body.light-mode #previewFullBody pre.kgp-code-block {
+      background: #f1f5f9 !important;
+      color: #047857 !important;
+      border-color: #cbd5e1 !important;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06) !important;
+    }
+    body.light-mode .text-white { color: #0f172a !important; }
+    body.light-mode .text-gray-300 { color: #1e293b !important; }
+    body.light-mode .text-gray-400,
+    body.light-mode .text-gray-500 { color: #475569 !important; }
+    body.light-mode .border-white\/10,
+    body.light-mode .border-white\/15,
+    body.light-mode .border-white\/5 { border-color: rgba(15, 23, 42, 0.15) !important; }
+    body.light-mode .bg-white\/5,
+    body.light-mode .bg-white\/10,
+    body.light-mode .bg-white\/\[0\.02\] { background-color: #f1f5f9 !important; }
+    body.light-mode #previewFullBody {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+    }
+    body.light-mode input:not([type="file"]),
+    body.light-mode textarea:not(#articleTitle):not(#articleExcerpt):not(#codeSnippetInput) {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      border-color: rgba(15, 23, 42, 0.2) !important;
+    }
+    body.light-mode ::placeholder { color: #64748b !important; }
+    body.light-mode .tool-btn { color: #334155; }
+    body.light-mode .tool-btn:hover { background: rgba(15, 23, 42, 0.08); color: #0f172a; }
+    body.light-mode .bg-gradient-to-r.text-white,
+    body.light-mode .bg-gradient-to-r .text-white,
+    body.light-mode .bg-gradient-to-br.text-white,
+    body.light-mode .bg-gradient-to-br .text-white,
+    body.light-mode .bg-black\/70.text-white { color: #ffffff !important; }
+  </style>
+</head>
+
+<body class="bg-kgp-900 text-gray-100 min-h-screen">
+
+  <!-- ==================== EDITOR NAVBAR ==================== -->
+  <nav class="sticky top-0 z-40 glass border-b border-white/5">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Left: Logo + Status -->
+        <div class="flex items-center gap-4">
+          <a href="index.html" class="flex items-center gap-2.5 group">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-kgp-500 to-accent-violet flex items-center justify-center shadow-lg shadow-kgp-500/20">
+              <span class="text-white font-display font-bold">K</span>
+            </div>
+            <span class="font-display font-bold text-lg text-white hidden sm:inline">KGP</span><span class="font-display font-bold text-lg gradient-text hidden sm:inline -ml-2">Connect</span>
+          </a>
+          <div class="h-4 w-px bg-white/10 hidden sm:block"></div>
+          <div class="flex items-center gap-2 text-xs text-gray-400">
+            <span id="draftAuthorName">Draft</span>
+            <span>•</span>
+            <span id="saveStatus" class="text-accent-emerald flex items-center gap-1">
+              <i class="fas fa-check-circle text-[10px]"></i> Ready to write
+            </span>
+          </div>
+        </div>
+
+        <!-- Right: Word Count, Theme Toggle, Review & Publish Button -->
+        <div class="flex items-center gap-3">
+          <span id="wordCountBadge" class="hidden md:inline-block text-xs text-gray-500 px-3 py-1 rounded-full bg-white/5">
+            0 words • 1 min read
+          </span>
+
+          <!-- Dark / Light Mode Toggle -->
+          <button onclick="toggleTheme()" title="Toggle Dark/Light Mode"
+            class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-gray-300 hover:text-white transition-all">
+            <i id="themeIcon" class="fas fa-sun text-amber-400 text-sm"></i>
+          </button>
+
+          <!-- Open Pre-Publish Preview Modal -->
+          <button onclick="openPublishPreview()"
+            class="px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white rounded-full bg-gradient-to-r from-accent-emerald to-teal-500 hover:from-emerald-400 hover:to-teal-400 transition-all shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/35 hover:-translate-y-0.5 flex items-center gap-2">
+            <i class="fas fa-paper-plane text-xs"></i>
+            <span>Preview & Publish</span>
+          </button>
+
+          <!-- User Profile Pill & Dropdown (links to profile.html) -->
+          <div id="editorProfileArea" class="relative group">
+            <a href="profile.html" title="Go to My Profile" class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
+              <div id="editorUserAvatar" class="w-8 h-8 rounded-xl bg-gradient-to-br from-kgp-500 to-accent-violet flex items-center justify-center text-white font-bold text-xs overflow-hidden">
+                U
+              </div>
+              <div class="hidden sm:block text-left pr-1">
+                <div id="editorNavUserName" class="text-xs font-semibold text-white leading-tight">My Profile</div>
+                <div id="editorNavUserDept" class="text-[10px] text-gray-400 leading-tight">KGPian</div>
+              </div>
+              <i class="fas fa-chevron-down text-[10px] text-gray-500 hidden sm:inline"></i>
+            </a>
+
+            <!-- Profile Dropdown Menu -->
+            <div class="absolute right-0 mt-2 w-60 glass rounded-2xl p-3.5 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <a href="profile.html" class="block pb-3 mb-2.5 border-b border-white/10 hover:opacity-80">
+                <div id="dropdownUserName" class="text-sm font-semibold text-white">KGP Student</div>
+                <div id="dropdownUserEmail" class="text-xs text-gray-400 truncate">View your profile</div>
+              </a>
+              <a href="profile.html" class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all mb-1">
+                <i class="fas fa-user-circle text-accent-cyan"></i>
+                My Profile (Published & Saved)
+              </a>
+              <a href="index.html" class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all mb-1">
+                <i class="fas fa-newspaper text-kgp-400"></i>
+                Back to Home Feed
+              </a>
+              <button type="button" onclick="logoutFromEditor()" class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all">
+                <i class="fas fa-sign-out-alt"></i>
+                Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- ==================== STICKY FORMATTING TOOLBAR ==================== -->
+  <div class="sticky top-16 z-30 glass border-b border-white/5 py-2">
+    <div class="max-w-4xl mx-auto px-4 flex items-center gap-1 overflow-x-auto">
+      
+      <!-- Text Styles -->
+      <button type="button" onclick="formatDoc('formatBlock', 'H2')" class="tool-btn font-display font-bold text-xs" title="Large Heading (H2)">H1</button>
+      <button type="button" onclick="formatDoc('formatBlock', 'H3')" class="tool-btn font-display font-bold text-xs" title="Subheading (H3)">H2</button>
+      <button type="button" onclick="formatDoc('formatBlock', 'P')" class="tool-btn text-xs font-serif" title="Normal Paragraph">¶</button>
+
+      <div class="w-px h-5 bg-white/10 mx-1"></div>
+
+      <!-- Inline Formatting -->
+      <button type="button" onclick="formatDoc('bold')" class="tool-btn" title="Bold (Ctrl+B)"><i class="fas fa-bold text-xs"></i></button>
+      <button type="button" onclick="formatDoc('italic')" class="tool-btn" title="Italic (Ctrl+I)"><i class="fas fa-italic text-xs"></i></button>
+      <button type="button" onclick="formatDoc('underline')" class="tool-btn" title="Underline (Ctrl+U)"><i class="fas fa-underline text-xs"></i></button>
+      <button type="button" onclick="formatDoc('strikeThrough')" class="tool-btn" title="Strikethrough"><i class="fas fa-strikethrough text-xs"></i></button>
+
+      <div class="w-px h-5 bg-white/10 mx-1"></div>
+
+      <!-- Lists & Quote -->
+      <button type="button" onclick="formatDoc('FormatBlock', 'BLOCKQUOTE')" class="tool-btn" title="Blockquote"><i class="fas fa-quote-left text-xs"></i></button>
+      <button type="button" onclick="formatDoc('insertUnorderedList')" class="tool-btn" title="Bullet List"><i class="fas fa-list-ul text-xs"></i></button>
+      <button type="button" onclick="formatDoc('insertOrderedList')" class="tool-btn" title="Numbered List"><i class="fas fa-list-ol text-xs"></i></button>
+
+      <div class="w-px h-5 bg-white/10 mx-1"></div>
+
+      <!-- Rich Inserts: Image, Code, Inline Code, Link, Divider -->
+      <button type="button" onclick="openImageModal()" class="tool-btn text-accent-cyan" title="Insert Image"><i class="far fa-image text-sm"></i></button>
+      <button type="button" onclick="openCodeModal()" class="tool-btn text-accent-emerald" title="Insert Code Block"><i class="fas fa-terminal text-xs"></i></button>
+      <button type="button" onclick="insertInlineCode()" class="tool-btn text-accent-rose" title="Inline Code"><i class="fas fa-code text-xs"></i></button>
+      <button type="button" onclick="insertLink()" class="tool-btn" title="Insert Link"><i class="fas fa-link text-xs"></i></button>
+      <button type="button" onclick="insertDivider()" class="tool-btn" title="Insert Section Divider"><i class="fas fa-ellipsis-h text-xs"></i></button>
+
+      <!-- Quick Helper Pill -->
+      <div class="ml-auto hidden sm:flex items-center gap-1.5 text-[11px] text-gray-500 pl-3">
+        <i class="fas fa-magic text-accent-violet"></i>
+        <span>Medium-style Editor</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== MAIN EDITOR CANVAS ==================== -->
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 py-10">
+
+    <!-- Topic / Category Dropdown Selector Bar -->
+    <div class="mb-6 flex flex-wrap items-center gap-3">
+      <span class="text-xs font-semibold text-gray-300"><i class="fas fa-tag mr-1.5 text-accent-violet"></i>Category:</span>
+      <select id="articleTopic" onchange="selectCategory(this.value)"
+        class="kgp-select px-4 py-2 rounded-xl text-xs font-semibold focus:outline-none focus:border-kgp-500 cursor-pointer">
+        <option value="Read Stories">✨ Read Stories (Inspiring & Personal)</option>
+        <option value="Machine Learning" selected>🧠 Machine Learning</option>
+        <option value="Computer Vision">👁️ Computer Vision</option>
+        <option value="LLM">💬 LLM (Large Language Models)</option>
+        <option value="Data Engineering">🗄️ Data Engineering</option>
+        <option value="Agentic AI">🤖 Agentic AI</option>
+        <option value="Deep Learning">🌐 Deep Learning</option>
+        <option value="Systems">🖥️ Systems & Infra</option>
+        <option value="RL">🎮 Reinforcement Learning</option>
+      </select>
+
+      <!-- Add Cover Image Button -->
+      <button type="button" onclick="document.getElementById('coverFileInput').click()"
+        class="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-xs font-semibold text-white transition-all">
+        <i class="far fa-image text-accent-cyan"></i>
+        <span id="coverBtnLabel">Add Cover Image</span>
+      </button>
+      <input type="file" id="coverFileInput" accept="image/*" class="hidden" onchange="handleCoverUpload(event)" />
+    </div>
+
+    <!-- Cover Image Preview -->
+    <div id="coverPreviewContainer" class="hidden relative mb-8 rounded-2xl overflow-hidden border border-white/10 group">
+      <img id="coverPreviewImg" src="" alt="Cover Preview" class="w-full max-h-80 object-cover" />
+      <button type="button" onclick="removeCoverImage()"
+        class="absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-black/70 hover:bg-rose-600 text-white text-xs font-medium transition-all">
+        <i class="fas fa-trash-alt mr-1"></i> Remove Cover
+      </button>
+    </div>
+
+    <!-- Article Title -->
+    <textarea id="articleTitle" rows="1" placeholder="Title"
+      oninput="autoResizeTextarea(this); updateMetrics();"
+      class="w-full bg-transparent font-display text-3xl sm:text-5xl font-bold text-white placeholder-gray-600 focus:outline-none resize-none leading-tight mb-3"></textarea>
+
+    <!-- Subtitle / Excerpt -->
+    <textarea id="articleExcerpt" rows="1" placeholder="Write a brief subtitle or summary…"
+      oninput="autoResizeTextarea(this);"
+      class="w-full bg-transparent font-sans text-lg sm:text-xl text-gray-400 placeholder-gray-600 focus:outline-none resize-none leading-relaxed mb-8 pb-6 border-b border-white/10"></textarea>
+
+    <!-- ContentEditable Rich Story Body -->
+    <div id="editorContent" contenteditable="true"
+      data-placeholder="Tell your story… Add headings, code blocks, images, or research insights for KGPians."
+      oninput="updateMetrics()"></div>
+
+    <!-- Quick Insert Bar at Bottom of Editor -->
+    <div class="mt-8 pt-6 border-t border-white/5 flex flex-wrap items-center gap-3 text-xs text-gray-500">
+      <span class="font-medium text-gray-400"><i class="fas fa-plus-circle text-kgp-400 mr-1"></i>Quick Insert:</span>
+      <button type="button" onclick="openImageModal()" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 transition-all">
+        <i class="far fa-image text-accent-cyan mr-1"></i> Image
+      </button>
+      <button type="button" onclick="openCodeModal()" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 transition-all">
+        <i class="fas fa-terminal text-accent-emerald mr-1"></i> Code Block
+      </button>
+      <button type="button" onclick="formatDoc('FormatBlock', 'BLOCKQUOTE')" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 transition-all">
+        <i class="fas fa-quote-left text-accent-violet mr-1"></i> Quote
+      </button>
+      <button type="button" onclick="insertDivider()" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 transition-all">
+        <i class="fas fa-ellipsis-h mr-1"></i> Divider
+      </button>
+    </div>
+
+  </main>
+
+
+  <!-- ==================== INSERT IMAGE MODAL ==================== -->
+  <div id="imageModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/75 backdrop-blur-sm" onclick="closeImageModal()"></div>
+    <div class="relative w-full max-w-md glass rounded-3xl p-6 sm:p-8 shadow-2xl z-10">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="font-display text-lg font-bold text-white flex items-center gap-2">
+          <i class="far fa-image text-accent-cyan"></i> Insert Image
+        </h3>
+        <button onclick="closeImageModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="space-y-4">
+        <!-- Upload from device -->
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-2">Upload from device</label>
+          <input type="file" id="inlineImageFile" accept="image/*"
+            class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-kgp-500/20 file:text-kgp-300 hover:file:bg-kgp-500/30 cursor-pointer" />
+        </div>
+
+        <div class="text-center text-xs text-gray-600 uppercase">or paste image URL</div>
+
+        <!-- Image URL -->
+        <div>
+          <input type="url" id="inlineImageUrl" placeholder="https://example.com/diagram.png"
+            class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-kgp-500" />
+        </div>
+
+        <!-- Caption -->
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Caption (optional)</label>
+          <input type="text" id="inlineImageCaption" placeholder="Figure 1: Architecture diagram of our model"
+            class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-kgp-500" />
+        </div>
+
+        <button type="button" onclick="confirmInsertImage()"
+          class="w-full py-3 rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet text-white font-semibold text-sm shadow-lg">
+          Insert Image into Article
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== INSERT CODE BLOCK MODAL ==================== -->
+  <div id="codeModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/75 backdrop-blur-sm" onclick="closeCodeModal()"></div>
+    <div class="relative w-full max-w-xl glass rounded-3xl p-6 sm:p-8 shadow-2xl z-10">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="font-display text-lg font-bold text-white flex items-center gap-2">
+          <i class="fas fa-terminal text-accent-emerald"></i> Insert Code Block
+        </h3>
+        <button onclick="closeCodeModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1.5">Language</label>
+          <select id="codeLanguage"
+            class="kgp-select w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none">
+            <option value="Python">Python / PyTorch</option>
+            <option value="C++">C++</option>
+            <option value="JavaScript">JavaScript / TypeScript</option>
+            <option value="SQL">SQL</option>
+            <option value="Bash">Bash / Shell</option>
+            <option value="Rust">Rust</option>
+            <option value="Go">Go</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1.5">Code Snippet</label>
+          <textarea id="codeSnippetInput" rows="8" placeholder="import torch&#10;import torch.nn as nn&#10;&#10;class Attention(nn.Module):&#10;    ..."
+            class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-blue-400/35 font-mono text-xs text-emerald-300 placeholder-gray-400 focus:outline-none focus:border-accent-emerald"></textarea>
+        </div>
+
+        <button type="button" onclick="confirmInsertCode()"
+          class="w-full py-3 rounded-xl bg-gradient-to-r from-accent-emerald to-teal-500 text-white font-semibold text-sm shadow-lg">
+          Insert Code Block
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== BEFORE PUBLISHING: STORY PREVIEW MODAL ==================== -->
+  <div id="publishPreviewModal" class="fixed inset-0 z-50 hidden overflow-y-auto px-4">
+    <div class="fixed inset-0 bg-black/85 backdrop-blur-md" onclick="closePublishPreview()"></div>
+    <div class="relative max-w-5xl mx-auto my-10 glass rounded-3xl p-6 sm:p-10 shadow-2xl z-10">
+      
+      <div class="flex items-center justify-between pb-6 mb-8 border-b border-white/10">
+        <div>
+          <span class="px-3 py-1 text-[11px] font-bold rounded-full bg-accent-emerald/20 text-accent-emerald uppercase tracking-wider">Final Check Before Publishing</span>
+          <h2 class="font-display text-2xl font-bold text-white mt-2">Story Preview & Settings</h2>
+        </div>
+        <button onclick="closePublishPreview()" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-10">
+        
+        <!-- Left Column: Feed Card Preview -->
+        <div>
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">How your card appears on the KGPConnect Feed</h4>
+          
+          <div class="rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02] shadow-xl">
+            <div id="previewCardBanner" class="relative h-48 bg-gradient-to-br from-kgp-800 to-slate-800 overflow-hidden flex items-center justify-center">
+              <img id="previewCardImg" src="" class="hidden w-full h-full object-cover" />
+              <i id="previewCardIcon" class="fas fa-brain text-6xl text-white/20"></i>
+              <div class="absolute bottom-3 left-3">
+                <span id="previewCardTopic" class="px-2.5 py-1 text-[10px] font-bold rounded-full bg-blue-500/20 text-blue-400">Machine Learning</span>
+              </div>
+              <div id="previewCardReadTime" class="absolute bottom-3 right-3 text-xs text-gray-300 bg-black/40 px-2 py-0.5 rounded">
+                3 min read
+              </div>
+            </div>
+            <div class="p-5">
+              <h3 id="previewCardTitle" class="font-display font-bold text-white text-lg mb-2 leading-snug">Your Article Title</h3>
+              <p id="previewCardExcerpt" class="text-xs text-gray-400 leading-relaxed mb-4 line-clamp-3">Your article summary will appear here…</p>
+              <div class="flex items-center gap-2.5 pt-3 border-t border-white/5">
+                <div id="previewAuthorAvatar" class="w-7 h-7 rounded-full bg-gradient-to-br from-kgp-500 to-accent-violet"></div>
+                <div>
+                  <div id="previewAuthorName" class="text-xs font-semibold text-white">KGP Student</div>
+                  <div id="previewAuthorDept" class="text-[10px] text-gray-500">Just now</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Full Content Preview Toggle -->
+          <div class="mt-6">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Article Body Preview</h4>
+            <div id="previewFullBody" class="max-h-60 overflow-y-auto p-4 rounded-2xl bg-black/30 border border-white/10 prose prose-invert text-sm space-y-3"></div>
+          </div>
+        </div>
+
+        <!-- Right Column: Publishing Metadata & Confirm -->
+        <div class="flex flex-col justify-between">
+          <div class="space-y-5">
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Publishing to Category</label>
+              <select id="previewTopicSelect" onchange="syncTopicFromPreview(this.value)"
+                class="kgp-select w-full px-4 py-3 rounded-xl text-sm font-semibold focus:outline-none focus:border-kgp-500">
+                <option value="Read Stories">✨ Read Stories (Inspiring & Personal Experiences)</option>
+                <option value="Machine Learning">🧠 Machine Learning</option>
+                <option value="Computer Vision">👁️ Computer Vision</option>
+                <option value="LLM">💬 LLM</option>
+                <option value="Data Engineering">🗄️ Data Engineering</option>
+                <option value="Agentic AI">🤖 Agentic AI</option>
+                <option value="Deep Learning">🌐 Deep Learning</option>
+                <option value="Systems">🖥️ Systems & Infra</option>
+                <option value="RL">🎮 Reinforcement Learning</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Preview Subtitle / Excerpt</label>
+              <textarea id="previewExcerptInput" rows="3"
+                oninput="document.getElementById('articleExcerpt').value = this.value; document.getElementById('previewCardExcerpt').textContent = this.value;"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-kgp-500 resize-none"></textarea>
+              <p class="text-[11px] text-gray-500 mt-1">Shown on the home page feed card. Readers can read your full article without logging in.</p>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-kgp-500/10 border border-kgp-500/20 text-xs text-gray-300 space-y-1.5">
+              <div class="font-semibold text-white flex items-center gap-2">
+                <i class="fas fa-globe text-kgp-400"></i> Public Community Feed
+              </div>
+              <p class="text-gray-400 leading-relaxed">
+                Once published, your article will appear immediately in the <strong>Recent Articles</strong> feed on the home page and under its selected topic category.
+              </p>
+            </div>
+          </div>
+
+          <div class="pt-6 mt-6 border-t border-white/10 flex items-center justify-end gap-3">
+            <button type="button" onclick="closePublishPreview()"
+              class="px-5 py-3 rounded-xl border border-white/10 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all">
+              Back to Editing
+            </button>
+            <button type="button" id="confirmPublishBtn" onclick="publishArticleNow()"
+              class="px-7 py-3 rounded-xl bg-gradient-to-r from-accent-emerald to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-semibold text-sm shadow-lg shadow-emerald-500/25 transition-all flex items-center gap-2">
+              <i class="fas fa-check"></i>
+              Publish Now
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== JAVASCRIPT ==================== -->
+  <script>
+    let currentUser = null;
+    let coverImageData = null;
+    let savedSelectionRange = null;
+
+    // ===== 1. Verify User is Logged In & Render Navbar Profile =====
+    function populateEditorUserUI(user) {
+      if (!user) return;
+      currentUser = user;
+      document.getElementById('draftAuthorName').textContent = `Draft by ${user.full_name}`;
+      const initials = (user.full_name || 'U').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+      const deptBadge = user.department
+        ? `${user.department}${user.grad_year ? " '" + String(user.grad_year).slice(-2) : ''}`
+        : 'KGPian';
+      const verifiedIcon = user.is_verified
+        ? '<i class="fas fa-circle-check text-kgp-400 text-[10px] ml-1" title="Verified IIT KGP Email"></i>'
+        : '';
+
+      const avatarEl = document.getElementById('editorUserAvatar');
+      if (user.profile_image) {
+        avatarEl.innerHTML = `<img src="${user.profile_image}" alt="${user.full_name}" class="w-full h-full object-cover" />`;
+      } else {
+        avatarEl.textContent = initials;
+        avatarEl.className = `w-8 h-8 rounded-xl bg-gradient-to-br ${user.avatar_color || 'from-kgp-500 to-accent-violet'} flex items-center justify-center text-white font-bold text-xs overflow-hidden`;
+      }
+
+      const navName = document.getElementById('editorNavUserName');
+      const navDept = document.getElementById('editorNavUserDept');
+      const dropName = document.getElementById('dropdownUserName');
+      const dropEmail = document.getElementById('dropdownUserEmail');
+
+      if (navName) navName.innerHTML = `${user.full_name}${verifiedIcon}`;
+      if (navDept) navDept.textContent = deptBadge;
+      if (dropName) dropName.innerHTML = `${user.full_name}${verifiedIcon}`;
+      if (dropEmail) dropEmail.textContent = user.email || user.phone || deptBadge;
+    }
+
+    async function logoutFromEditor() {
+      try {
+        await fetch('/api/auth/logout', { method: 'POST', cache: 'no-store' });
+      } catch (e) {}
+      if (window.setStoredKgpUser) window.setStoredKgpUser(null);
+      localStorage.removeItem('kgp-user');
+      localStorage.removeItem('kgp_user');
+      window.location.replace('index.html');
+    }
+
+    async function verifyEditorAuth() {
+      const cachedUser = window.getStoredKgpUser ? window.getStoredKgpUser() : null;
+      if (cachedUser) {
+        populateEditorUserUI(cachedUser);
+      }
+
+      try {
+        const res = await fetch('/api/auth/me', { cache: 'no-store' });
+        const data = await res.json();
+        if (!res.ok || !data.loggedIn || !data.user) {
+          if (window.setStoredKgpUser) window.setStoredKgpUser(null);
+          localStorage.removeItem('kgp-user');
+          localStorage.removeItem('kgp_user');
+          window.location.replace('login.html');
+          return;
+        }
+        populateEditorUserUI(data.user);
+      } catch (err) {
+        if (!cachedUser || window.location.protocol !== 'file:') {
+          window.location.replace('login.html');
+        }
+      }
+    }
+
+    verifyEditorAuth();
+    window.addEventListener('pageshow', () => {
+      verifyEditorAuth();
+    });
+
+    // Save cursor selection inside #editorContent before opening modals
+    document.getElementById('editorContent').addEventListener('keyup', saveSelection);
+    document.getElementById('editorContent').addEventListener('mouseup', saveSelection);
+
+    function saveSelection() {
+      const sel = window.getSelection();
+      if (sel.rangeCount > 0) {
+        const range = sel.getRangeAt(0);
+        if (document.getElementById('editorContent').contains(range.commonAncestorContainer)) {
+          savedSelectionRange = range.cloneRange();
+        }
+      }
+    }
+
+    function restoreSelection() {
+      const editor = document.getElementById('editorContent');
+      editor.focus();
+      if (savedSelectionRange) {
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(savedSelectionRange);
+      }
+    }
+
+    // ===== 2. Rich Text Formatting =====
+    function formatDoc(cmd, value = null) {
+      restoreSelection();
+      document.execCommand(cmd, false, value);
+      updateMetrics();
+    }
+
+    function insertInlineCode() {
+      restoreSelection();
+      const sel = window.getSelection();
+      const text = sel.toString() || 'code';
+      document.execCommand('insertHTML', false, `<code class="inline-code">${escapeHtml(text)}</code>&nbsp;`);
+      updateMetrics();
+    }
+
+    function insertLink() {
+      const url = prompt('Enter URL (e.g. https://arxiv.org/...):', 'https://');
+      if (url && url !== 'https://') {
+        formatDoc('createLink', url);
+      }
+    }
+
+    function insertDivider() {
+      restoreSelection();
+      document.execCommand('insertHTML', false, '<hr/><p><br/></p>');
+      updateMetrics();
+    }
+
+    // ===== 3. Cover Image Handling =====
+    function handleCoverUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        coverImageData = ev.target.result;
+        document.getElementById('coverPreviewImg').src = coverImageData;
+        document.getElementById('coverPreviewContainer').classList.remove('hidden');
+        document.getElementById('coverBtnLabel').textContent = 'Change Cover Image';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeCoverImage() {
+      coverImageData = null;
+      document.getElementById('coverPreviewContainer').classList.add('hidden');
+      document.getElementById('coverBtnLabel').textContent = 'Add Cover Image';
+    }
+
+    // ===== 4. Insert Image Modal =====
+    function openImageModal() {
+      saveSelection();
+      document.getElementById('inlineImageFile').value = '';
+      document.getElementById('inlineImageUrl').value = '';
+      document.getElementById('inlineImageCaption').value = '';
+      document.getElementById('imageModal').classList.remove('hidden');
+    }
+
+    function closeImageModal() {
+      document.getElementById('imageModal').classList.add('hidden');
+    }
+
+    function confirmInsertImage() {
+      const fileInput = document.getElementById('inlineImageFile');
+      const urlInput = document.getElementById('inlineImageUrl').value.trim();
+      const caption = document.getElementById('inlineImageCaption').value.trim();
+
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          insertFigureHtml(ev.target.result, caption);
+          closeImageModal();
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      } else if (urlInput) {
+        insertFigureHtml(urlInput, caption);
+        closeImageModal();
+      } else {
+        showToast('Please select an image file or enter an image URL.', 'error');
+      }
+    }
+
+    function insertFigureHtml(src, caption) {
+      restoreSelection();
+      const figCaptionHtml = caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : '';
+      const html = `
+        <figure class="kgp-figure" contenteditable="false">
+          <img src="${src}" alt="${escapeHtml(caption || 'Article image')}" />
+          ${figCaptionHtml}
+        </figure>
+        <p><br/></p>
+      `;
+      document.execCommand('insertHTML', false, html);
+      updateMetrics();
+    }
+
+    // ===== 5. Insert Code Block Modal =====
+    function openCodeModal() {
+      saveSelection();
+      document.getElementById('codeSnippetInput').value = '';
+      document.getElementById('codeModal').classList.remove('hidden');
+    }
+
+    function closeCodeModal() {
+      document.getElementById('codeModal').classList.add('hidden');
+    }
+
+    function confirmInsertCode() {
+      const lang = document.getElementById('codeLanguage').value;
+      const code = document.getElementById('codeSnippetInput').value;
+      if (!code.trim()) {
+        showToast('Please enter some code first.', 'error');
+        return;
+      }
+      restoreSelection();
+      const html = `
+        <pre class="kgp-code-block" data-lang="${escapeHtml(lang)}" contenteditable="false"><div class="flex items-center justify-between text-[11px] text-gray-400 pb-2 mb-2 border-b border-white/10 font-sans"><span><i class="fas fa-terminal mr-1.5 text-accent-emerald"></i>${escapeHtml(lang)}</span><span><i class="far fa-copy mr-1"></i>Copy</span></div><code>${escapeHtml(code)}</code></pre>
+        <p><br/></p>
+      `;
+      document.execCommand('insertHTML', false, html);
+      closeCodeModal();
+      updateMetrics();
+    }
+
+    // ===== 6. Metrics & Helpers =====
+    function autoResizeTextarea(el) {
+      el.style.height = 'auto';
+      el.style.height = el.scrollHeight + 'px';
+    }
+
+    function getWordCountAndReadTime() {
+      const titleText = document.getElementById('articleTitle').value.trim();
+      const bodyText = document.getElementById('editorContent').innerText.trim();
+      const combined = (titleText + ' ' + bodyText).trim();
+      const words = combined ? combined.split(/\s+/).length : 0;
+      const minutes = Math.max(1, Math.ceil(words / 200));
+      return { words, readTime: `${minutes} min` };
+    }
+
+    function updateMetrics() {
+      const { words, readTime } = getWordCountAndReadTime();
+      document.getElementById('wordCountBadge').textContent = `${words} words • ${readTime} read`;
+      document.getElementById('saveStatus').innerHTML = '<i class="fas fa-check-circle text-[10px]"></i> Draft updated';
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function showToast(msg, type = 'error') {
+      document.querySelectorAll('.toast-alert').forEach(e => e.remove());
+      const toast = document.createElement('div');
+      const bg = type === 'success' ? 'bg-emerald-500/95' : 'bg-rose-500/95';
+      toast.className = `toast-alert fixed top-5 right-5 z-[100] px-5 py-3 rounded-xl ${bg} text-white text-sm font-medium shadow-xl flex items-center gap-2`;
+      toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>${msg}`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+
+    // ===== 7. Pre-Publish Story Preview Modal =====
+    function openPublishPreview() {
+      const title = document.getElementById('articleTitle').value.trim();
+      const contentHtml = document.getElementById('editorContent').innerHTML.trim();
+      const bodyPlain = document.getElementById('editorContent').innerText.trim();
+
+      if (!title) {
+        showToast('Please add a title for your article before publishing.');
+        document.getElementById('articleTitle').focus();
+        return;
+      }
+      if (!bodyPlain && !contentHtml.includes('<img') && !contentHtml.includes('<pre')) {
+        showToast('Please write some content for your article before publishing.');
+        document.getElementById('editorContent').focus();
+        return;
+      }
+
+      const topic = document.getElementById('articleTopic').value;
+      let excerpt = document.getElementById('articleExcerpt').value.trim();
+      if (!excerpt) {
+        excerpt = bodyPlain.slice(0, 160) + (bodyPlain.length > 160 ? '…' : '');
+      }
+
+      const { readTime } = getWordCountAndReadTime();
+
+      // Populate preview card
+      document.getElementById('previewCardTitle').textContent = title;
+      document.getElementById('previewCardExcerpt').textContent = excerpt;
+      document.getElementById('previewExcerptInput').value = excerpt;
+      document.getElementById('previewCardTopic').textContent = topic;
+      document.getElementById('previewTopicSelect').value = topic;
+      document.getElementById('previewCardReadTime').textContent = `${readTime} read`;
+      document.getElementById('previewFullBody').innerHTML = contentHtml;
+
+      if (currentUser) {
+        document.getElementById('previewAuthorName').textContent = currentUser.full_name;
+        const dept = currentUser.department
+          ? `${currentUser.department}${currentUser.grad_year ? " '" + String(currentUser.grad_year).slice(-2) : ''}`
+          : 'KGPian';
+        document.getElementById('previewAuthorDept').textContent = `${dept} • Ready to publish`;
+      }
+
+      const previewImg = document.getElementById('previewCardImg');
+      const previewIcon = document.getElementById('previewCardIcon');
+      if (coverImageData) {
+        previewImg.src = coverImageData;
+        previewImg.classList.remove('hidden');
+        previewIcon.classList.add('hidden');
+      } else {
+        previewImg.classList.add('hidden');
+        previewIcon.classList.remove('hidden');
+      }
+
+      document.getElementById('publishPreviewModal').classList.remove('hidden');
+    }
+
+    function selectCategory(topic) {
+      const topicSelect = document.getElementById('articleTopic');
+      if (topicSelect) topicSelect.value = topic;
+      const previewSelect = document.getElementById('previewTopicSelect');
+      if (previewSelect) previewSelect.value = topic;
+      const previewCardTopic = document.getElementById('previewCardTopic');
+      if (previewCardTopic) previewCardTopic.textContent = topic;
+
+      // Update active state on Category Pills
+      document.querySelectorAll('#categoryPillsContainer .category-pill').forEach(pill => {
+        if (pill.getAttribute('data-topic') === topic) {
+          pill.classList.add('active');
+        } else {
+          pill.classList.remove('active');
+        }
+      });
+
+      // Update editor placeholder & hint when "Read Stories" is chosen
+      const hintBadge = document.getElementById('categoryHintBadge');
+      const editorEl = document.getElementById('editorContent');
+      const titleEl = document.getElementById('articleTitle');
+      if (topic === 'Read Stories') {
+        if (hintBadge) hintBadge.textContent = '✨ Share an inspiring story you came across or your personal KGP experience';
+        if (editorEl) editorEl.setAttribute('data-placeholder', 'Share an inspiring story you came across, a personal experience at IIT KGP, lessons learned from placements/internships, or a memorable campus journey…');
+        if (titleEl) titleEl.setAttribute('placeholder', 'Story Title');
+      } else {
+        if (hintBadge) hintBadge.textContent = `Publishing under ${topic}`;
+        if (editorEl) editorEl.setAttribute('data-placeholder', 'Tell your story… Add headings, code blocks, images, or research insights for KGPians.');
+        if (titleEl) titleEl.setAttribute('placeholder', 'Title');
+      }
+    }
+
+    function syncTopicFromPreview(val) {
+      selectCategory(val);
+    }
+
+    // Pre-select category if passed via URL query string (e.g. write.html?topic=Read%20Stories)
+    (function initCategoryFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const topicParam = params.get('topic');
+      if (topicParam) {
+        selectCategory(topicParam);
+      }
+    })();
+
+    function closePublishPreview() {
+      document.getElementById('publishPreviewModal').classList.add('hidden');
+    }
+
+    // ===== 8. Publish Article to Backend =====
+    async function publishArticleNow() {
+      const btn = document.getElementById('confirmPublishBtn');
+      const title = document.getElementById('articleTitle').value.trim();
+      const excerpt = document.getElementById('previewExcerptInput').value.trim();
+      const content = document.getElementById('editorContent').innerHTML.trim();
+      const topic = document.getElementById('previewTopicSelect').value;
+      const { readTime } = getWordCountAndReadTime();
+
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publishing…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/articles', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title,
+            excerpt,
+            content,
+            topic,
+            coverImage: coverImageData,
+            readTime,
+          }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showToast(data.error || 'Failed to publish.', 'error');
+          btn.innerHTML = '<i class="fas fa-check"></i> Publish Now';
+          btn.disabled = false;
+          return;
+        }
+
+        showToast('Article published to KGPConnect feed!', 'success');
+        setTimeout(() => {
+          window.location.href = 'index.html#articles';
+        }, 900);
+      } catch (err) {
+        showToast('Network error while publishing.', 'error');
+        btn.innerHTML = '<i class="fas fa-check"></i> Publish Now';
+        btn.disabled = false;
+      }
+    }
+
+    // ===== 9. Dark / Light Mode Toggle =====
+    function applyTheme(theme) {
+      const isLight = theme === 'light';
+      document.body.classList.toggle('light-mode', isLight);
+      const icon = document.getElementById('themeIcon');
+      if (icon) {
+        icon.className = isLight ? 'fas fa-moon text-indigo-600 text-sm' : 'fas fa-sun text-amber-400 text-sm';
+      }
+    }
+
+    function toggleTheme() {
+      const nextTheme = document.body.classList.contains('light-mode') ? 'dark' : 'light';
+      localStorage.setItem('kgp-theme', nextTheme);
+      applyTheme(nextTheme);
+    }
+
+    applyTheme(localStorage.getItem('kgp-theme') || 'dark');
+  </script>
+
+</body>
+</html>

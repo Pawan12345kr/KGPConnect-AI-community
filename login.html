@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log In — KGPConnect</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="auth-client.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            kgp: {
+              50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
+              400: '#60a5fa', 500: '#3b82f6', 600: '#1d4ed8', 700: '#1e3a8a',
+              800: '#1e2d5f', 900: '#0f172a',
+            },
+            accent: {
+              orange: '#f97316', emerald: '#10b981', violet: '#8b5cf6',
+              rose: '#f43f5e', amber: '#f59e0b', cyan: '#06b6d4',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .gradient-text {
+      background: linear-gradient(135deg, #60a5fa, #8b5cf6, #f43f5e);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .glass {
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .input-field {
+      transition: all 0.3s ease;
+    }
+    .input-field:focus {
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 0 20px rgba(59, 130, 246, 0.05);
+    }
+    .social-btn {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .social-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+    .auth-card {
+      animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    .float { animation: float 6s ease-in-out infinite; }
+    .float-delay { animation: float 6s ease-in-out 2s infinite; }
+
+    /* OTP input styling */
+    .otp-input {
+      width: 48px; height: 56px;
+      text-align: center; font-size: 1.25rem; font-weight: 700;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; color: white; outline: none;
+      transition: all 0.3s ease;
+    }
+    .otp-input:focus {
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Phone input with country code */
+    .phone-wrapper { position: relative; }
+    .country-code {
+      position: absolute; left: 1px; top: 1px; bottom: 1px;
+      display: flex; align-items: center; padding: 0 12px;
+      background: rgba(255,255,255,0.03);
+      border-right: 1px solid rgba(255,255,255,0.1);
+      border-radius: 11px 0 0 11px;
+      color: #94a3b8; font-size: 0.875rem; font-weight: 500;
+      pointer-events: none;
+    }
+
+    /* Password eye toggle */
+    .eye-toggle {
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      color: #64748b; cursor: pointer; transition: color 0.2s;
+    }
+    .eye-toggle:hover { color: #94a3b8; }
+
+    /* Step transitions */
+    .step-panel { display: none; animation: fadeIn 0.4s ease; }
+    .step-panel.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Divider */
+    .divider-line {
+      flex: 1; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    }
+
+    .grid-pattern {
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* Light Mode */
+    body.light-mode {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+    }
+    body.light-mode .glass {
+      background: rgba(255, 255, 255, 0.96) !important;
+      border: 1px solid rgba(15, 23, 42, 0.12) !important;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08) !important;
+    }
+    body.light-mode .text-white { color: #0f172a !important; }
+    body.light-mode .text-gray-200,
+    body.light-mode .text-gray-300 { color: #1e293b !important; }
+    body.light-mode .text-gray-400,
+    body.light-mode .text-gray-500,
+    body.light-mode .text-gray-600 { color: #475569 !important; }
+    body.light-mode .border-white\/10 { border-color: rgba(15, 23, 42, 0.15) !important; }
+    body.light-mode .input-field,
+    body.light-mode .otp-input,
+    body.light-mode .social-btn {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      border-color: rgba(15, 23, 42, 0.2) !important;
+    }
+    body.light-mode .country-code {
+      color: #334155 !important;
+      border-right-color: rgba(15, 23, 42, 0.15) !important;
+    }
+    body.light-mode .bg-gradient-to-r.text-white,
+    body.light-mode .bg-gradient-to-r .text-white,
+    body.light-mode .bg-gradient-to-br.text-white,
+    body.light-mode .bg-gradient-to-br .text-white { color: #ffffff !important; }
+  </style>
+</head>
+
+<body class="bg-kgp-900 text-gray-100 min-h-screen grid-pattern">
+
+  <!-- Background decorations -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden">
+    <div class="absolute -top-40 -left-40 w-[500px] h-[500px] bg-kgp-500/8 rounded-full blur-3xl float"></div>
+    <div class="absolute -bottom-40 -right-40 w-[600px] h-[600px] bg-accent-violet/8 rounded-full blur-3xl float-delay"></div>
+    <div class="absolute top-1/3 right-1/4 w-[300px] h-[300px] bg-accent-rose/5 rounded-full blur-3xl"></div>
+  </div>
+
+  <!-- Minimal Navbar -->
+  <nav class="relative z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 lg:h-20">
+        <a href="index.html" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-kgp-500 to-accent-violet flex items-center justify-center shadow-lg shadow-kgp-500/20">
+            <span class="text-white font-display font-bold text-lg">K</span>
+          </div>
+          <div>
+            <span class="font-display font-bold text-xl text-white tracking-tight">KGP</span><span class="font-display font-bold text-xl gradient-text tracking-tight">Connect</span>
+            <p class="text-[10px] text-gray-500 -mt-1 tracking-widest uppercase">IIT Kharagpur</p>
+          </div>
+        </a>
+        <div class="flex items-center gap-4">
+          <button onclick="toggleTheme()" title="Toggle Dark/Light Mode"
+            class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-gray-300 hover:text-white transition-all">
+            <i id="themeIcon" class="fas fa-sun text-amber-400 text-sm"></i>
+          </button>
+          <a href="signup.html" class="text-sm text-gray-400 hover:text-white transition-colors">
+            Don't have an account? <span class="font-semibold text-kgp-400 hover:text-kgp-300">Sign Up</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="relative z-10 flex items-center justify-center px-4 py-8 min-h-[calc(100vh-80px)]">
+    <div class="w-full max-w-md auth-card">
+
+      <!-- Card -->
+      <div class="glass rounded-3xl p-8 sm:p-10 shadow-2xl">
+
+        <!-- Header -->
+        <div class="text-center mb-8" id="loginCardHeader">
+          <h1 class="font-display text-2xl sm:text-3xl font-bold text-white mb-2">Welcome back</h1>
+          <p class="text-sm text-gray-400">Log in with your KGP Email ID and password</p>
+        </div>
+
+        <!-- ===== STEP 1: KGP EMAIL + PASSWORD LOGIN (NO OTP REQUIRED) ===== -->
+        <div id="step-email" class="step-panel active">
+
+          <form onsubmit="handlePasswordLogin(event)">
+            <div class="space-y-4">
+
+              <!-- Compulsory KGP Email -->
+              <div>
+                <label class="block text-xs font-medium text-gray-400 mb-1.5 ml-1">KGP Email ID <span class="text-rose-400">*</span></label>
+                <div class="relative">
+                  <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 text-sm"></i>
+                  <input type="email" id="loginEmail" placeholder="yourname@kgpian.iitkgp.ac.in or @iitkgp.ac.in" required
+                    class="input-field w-full pl-11 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-gray-600 text-sm focus:outline-none" />
+                </div>
+                <p class="text-[11px] text-gray-500 mt-1 ml-1"><i class="fas fa-graduation-cap text-kgp-400 mr-1"></i>Must end with <code class="text-kgp-400">@iitkgp.ac.in</code> or <code class="text-kgp-400">@kgpian.iitkgp.ac.in</code></p>
+              </div>
+
+              <!-- Password -->
+              <div>
+                <div class="flex items-center justify-between mb-1.5 ml-1">
+                  <label class="block text-xs font-medium text-gray-400">Password <span class="text-rose-400">*</span></label>
+                  <button type="button" onclick="openForgotPasswordStep()" class="text-xs font-medium text-kgp-400 hover:text-kgp-300 transition-colors">
+                    Forgot / Set Password?
+                  </button>
+                </div>
+                <div class="relative">
+                  <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 text-sm"></i>
+                  <input type="password" id="loginPassword" placeholder="Enter your password" required
+                    class="input-field w-full pl-11 pr-11 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-gray-600 text-sm focus:outline-none" />
+                  <button type="button" onclick="togglePasswordVisibility('loginPassword', 'loginPwdEye')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+                    <i id="loginPwdEye" class="far fa-eye text-sm"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Remember me -->
+              <div class="flex items-center gap-2">
+                <input type="checkbox" id="remember" class="w-4 h-4 rounded border-white/20 bg-white/5 text-kgp-500 focus:ring-kgp-500/30 cursor-pointer" />
+                <label for="remember" class="text-xs text-gray-500 cursor-pointer">Remember me for 30 days</label>
+              </div>
+
+              <!-- Submit -->
+              <button type="submit" id="loginSubmitBtn"
+                class="w-full py-3.5 rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet hover:from-kgp-400 hover:to-violet-500 text-white font-semibold text-sm transition-all shadow-lg shadow-kgp-500/20 hover:shadow-kgp-500/35 hover:-translate-y-0.5 mt-2">
+                <i class="fas fa-sign-in-alt mr-2"></i>Log In
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ===== STEP 2A: FORGOT / SET PASSWORD — REQUEST EMAIL OTP ===== -->
+        <div id="step-forgot-email" class="step-panel">
+          <button type="button" onclick="showStep('step-email')" class="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-300 transition-colors mb-6">
+            <i class="fas fa-arrow-left text-xs"></i> Back to Password Login
+          </button>
+
+          <div class="text-center mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-kgp-500/15 flex items-center justify-center mx-auto mb-3">
+              <i class="fas fa-key text-xl text-kgp-400"></i>
+            </div>
+            <h3 class="font-display font-semibold text-white text-lg mb-1">Forgot or Set Password</h3>
+            <p class="text-xs text-gray-400">Enter your KGP Email ID to receive a 6-digit verification OTP to set a new password.</p>
+          </div>
+
+          <form onsubmit="sendResetEmailOTP(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-medium text-gray-400 mb-1.5 ml-1">KGP Email ID <span class="text-rose-400">*</span></label>
+              <div class="relative">
+                <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 text-sm"></i>
+                <input type="email" id="resetEmailInput" placeholder="yourname@kgpian.iitkgp.ac.in or @iitkgp.ac.in" required
+                  class="input-field w-full pl-11 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-gray-600 text-sm focus:outline-none" />
+              </div>
+            </div>
+
+            <button type="submit" id="sendResetOtpBtn"
+              class="w-full py-3.5 rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet hover:from-kgp-400 hover:to-violet-500 text-white font-semibold text-sm transition-all shadow-lg">
+              <i class="fas fa-paper-plane mr-2"></i>Send OTP to Email
+            </button>
+          </form>
+        </div>
+
+        <!-- ===== STEP 2B: FORGOT / SET PASSWORD — VERIFY OTP & SET NEW PASSWORD ===== -->
+        <div id="step-otp" class="step-panel">
+          <button type="button" onclick="showStep('step-forgot-email')" class="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-300 transition-colors mb-6">
+            <i class="fas fa-arrow-left text-xs"></i> Change KGP Email ID
+          </button>
+
+          <div class="text-center mb-6">
+            <div class="w-14 h-14 rounded-2xl bg-kgp-500/15 flex items-center justify-center mx-auto mb-3">
+              <i class="fas fa-envelope-open-text text-xl text-kgp-400"></i>
+            </div>
+            <h3 class="font-display font-semibold text-white text-lg mb-1">Verify OTP & Set Password</h3>
+            <p class="text-xs text-gray-500">Enter the 6-digit OTP sent to <span id="otpEmailDisplay" class="text-gray-300 font-medium">yourname@kgpian.iitkgp.ac.in</span></p>
+          </div>
+
+          <form onsubmit="verifyResetOTPAndSetPassword(event)">
+            <div class="flex items-center justify-center gap-2.5 mb-5" id="otpContainer">
+              <input type="text" maxlength="1" class="otp-input" oninput="otpMove(this, 'next')" onkeydown="otpMove(this, 'prev', event)" />
+              <input type="text" maxlength="1" class="otp-input" oninput="otpMove(this, 'next')" onkeydown="otpMove(this, 'prev', event)" />
+              <input type="text" maxlength="1" class="otp-input" oninput="otpMove(this, 'next')" onkeydown="otpMove(this, 'prev', event)" />
+              <div class="w-3 flex items-center justify-center"><div class="w-2 h-0.5 bg-gray-700 rounded"></div></div>
+              <input type="text" maxlength="1" class="otp-input" oninput="otpMove(this, 'next')" onkeydown="otpMove(this, 'prev', event)" />
+              <input type="text" maxlength="1" class="otp-input" oninput="otpMove(this, 'next')" onkeydown="otpMove(this, 'prev', event)" />
+              <input type="text" maxlength="1" class="otp-input" oninput="otpMove(this, 'next')" onkeydown="otpMove(this, 'prev', event)" />
+            </div>
+
+            <div class="space-y-3 mb-5">
+              <div>
+                <label class="block text-xs font-medium text-gray-400 mb-1 ml-1">New Password <span class="text-rose-400">*</span></label>
+                <div class="relative">
+                  <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 text-sm"></i>
+                  <input type="password" id="resetNewPassword" placeholder="Minimum 6 characters" minlength="6" required
+                    class="input-field w-full pl-11 pr-11 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-gray-600 text-sm focus:outline-none" />
+                  <button type="button" onclick="togglePasswordVisibility('resetNewPassword', 'resetPwdEye')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+                    <i id="resetPwdEye" class="far fa-eye text-sm"></i>
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-400 mb-1 ml-1">Confirm New Password <span class="text-rose-400">*</span></label>
+                <div class="relative">
+                  <i class="fas fa-shield-halved absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 text-sm"></i>
+                  <input type="password" id="resetConfirmPassword" placeholder="Re-enter new password" minlength="6" required
+                    class="input-field w-full pl-11 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-gray-600 text-sm focus:outline-none" />
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" id="verifyLoginOtpBtn"
+              class="w-full py-3.5 rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet hover:from-kgp-400 hover:to-violet-500 text-white font-semibold text-sm transition-all shadow-lg shadow-kgp-500/20 hover:shadow-kgp-500/35 hover:-translate-y-0.5 mb-4">
+              Save Password & Log In
+            </button>
+
+            <div class="text-center">
+              <p class="text-xs text-gray-600">
+                Didn't receive the email code?
+                <button type="button" id="resendBtn" onclick="resendLoginOTP()" class="text-kgp-400 hover:text-kgp-300 font-medium transition-colors ml-1">Resend OTP</button>
+                <span id="resendTimer" class="text-gray-600 ml-1 hidden">in <span id="timerCount">30</span>s</span>
+              </p>
+            </div>
+          </form>
+        </div>
+
+        <!-- ===== STEP 3: SUCCESS ===== -->
+        <div id="step-success" class="step-panel">
+          <div class="text-center py-6">
+            <div class="w-20 h-20 rounded-full bg-accent-emerald/10 flex items-center justify-center mx-auto mb-6 animate-bounce">
+              <i class="fas fa-check-circle text-4xl text-accent-emerald"></i>
+            </div>
+            <h3 class="font-display text-2xl font-bold text-white mb-2">Welcome back! 🎉</h3>
+            <p class="text-sm text-gray-400 mb-8" id="loginSuccessText">You're logged in to KGPConnect.</p>
+            <a href="index.html"
+              class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet text-white font-semibold text-sm transition-all shadow-lg hover:-translate-y-0.5">
+              <i class="fas fa-home"></i>
+              Go to Home
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom link -->
+      <p class="text-center text-sm text-gray-600 mt-6">
+        First time on KGPConnect? <a href="signup.html" class="text-kgp-400 hover:text-kgp-300 font-semibold transition-colors">Sign up (Email OTP required)</a>
+      </p>
+
+      <!-- IIT KGP note -->
+      <p class="text-center text-[11px] text-gray-700 mt-4">
+        <i class="fas fa-shield-alt mr-1"></i> First-time sign up requires Email OTP • Returning users log in with Email & Password
+      </p>
+    </div>
+  </main>
+
+
+  <script>
+    let currentEmail = '';
+    let resendInterval;
+
+    function isValidKgpEmail(email) {
+      return /^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9-]+\.)?iitkgp\.ac\.in$/i.test((email || '').trim());
+    }
+
+    function togglePasswordVisibility(inputId, iconId) {
+      const inp = document.getElementById(inputId);
+      const icn = document.getElementById(iconId);
+      if (!inp || !icn) return;
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        icn.className = 'far fa-eye-slash text-sm';
+      } else {
+        inp.type = 'password';
+        icn.className = 'far fa-eye text-sm';
+      }
+    }
+
+    // ===== Check if already logged in =====
+    (async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        const data = await res.json();
+        if (data.loggedIn) {
+          window.location.href = 'index.html';
+        }
+      } catch(e) {}
+    })();
+
+    // ===== Helpers =====
+    function showStep(stepId) {
+      document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById(stepId).classList.add('active');
+      const header = document.getElementById('loginCardHeader');
+      if (header) {
+        header.style.display = stepId === 'step-email' ? 'block' : 'none';
+      }
+    }
+
+    function openForgotPasswordStep() {
+      const existingEmail = document.getElementById('loginEmail')?.value.trim() || '';
+      if (existingEmail && document.getElementById('resetEmailInput')) {
+        document.getElementById('resetEmailInput').value = existingEmail;
+      }
+      showStep('step-forgot-email');
+    }
+
+    function showError(msg) {
+      document.querySelectorAll('.error-toast').forEach(e => e.remove());
+      const toast = document.createElement('div');
+      toast.className = 'error-toast fixed top-4 right-4 z-50 px-5 py-3 rounded-xl bg-red-500/90 backdrop-blur text-white text-sm font-medium shadow-lg shadow-red-500/25 flex items-center gap-2';
+      toast.innerHTML = `<i class="fas fa-exclamation-circle"></i>${msg}`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 4500);
+    }
+
+    function otpMove(el, dir, event) {
+      if (dir === 'next' && el.value.length === 1) {
+        let next = el.nextElementSibling;
+        if (next && !next.classList.contains('otp-input')) next = next.nextElementSibling;
+        if (next && next.classList.contains('otp-input')) next.focus();
+      }
+      if (dir === 'prev' && event && event.key === 'Backspace' && el.value === '') {
+        let prev = el.previousElementSibling;
+        if (prev && !prev.classList.contains('otp-input')) prev = prev.previousElementSibling;
+        if (prev && prev.classList.contains('otp-input')) { prev.focus(); prev.select(); }
+      }
+    }
+
+    function startResendTimer() {
+      const btn = document.getElementById('resendBtn');
+      const timerSpan = document.getElementById('resendTimer');
+      const countSpan = document.getElementById('timerCount');
+      btn.classList.add('hidden');
+      timerSpan.classList.remove('hidden');
+      let seconds = 30;
+      countSpan.textContent = seconds;
+      clearInterval(resendInterval);
+      resendInterval = setInterval(() => {
+        seconds--;
+        countSpan.textContent = seconds;
+        if (seconds <= 0) {
+          clearInterval(resendInterval);
+          btn.classList.remove('hidden');
+          timerSpan.classList.add('hidden');
+        }
+      }, 1000);
+    }
+
+    // ===== Returning User Login: Email + Password ONLY (No OTP) =====
+    async function handlePasswordLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const remember = document.getElementById('remember')?.checked || false;
+      const btn = document.getElementById('loginSubmitBtn');
+
+      if (!isValidKgpEmail(email)) {
+        showError('KGP Email ID (@iitkgp.ac.in or @kgpian.iitkgp.ac.in) is compulsory.');
+        return;
+      }
+
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Logging in…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, remember }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error || 'Login failed.');
+          if (data.needsPasswordSetup) {
+            if (document.getElementById('resetEmailInput')) {
+              document.getElementById('resetEmailInput').value = email;
+            }
+            showStep('step-forgot-email');
+          }
+          btn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>Log In';
+          btn.disabled = false;
+          return;
+        }
+
+        if (data.user) {
+          if (window.setStoredKgpUser) window.setStoredKgpUser(data.user);
+          localStorage.setItem('kgp-user', JSON.stringify(data.user));
+        }
+        window.location.replace('index.html');
+      } catch (err) {
+        showError('Network error. Please try again.');
+      }
+      btn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>Log In';
+      btn.disabled = false;
+    }
+
+    // ===== Send OTP for Forgot / Set Password =====
+    async function sendResetEmailOTP(e) {
+      if (e) e.preventDefault();
+      const email = document.getElementById('resetEmailInput').value.trim();
+      const btn = document.getElementById('sendResetOtpBtn');
+
+      if (!isValidKgpEmail(email)) {
+        showError('Please enter a valid KGP Email ID (@iitkgp.ac.in or @kgpian.iitkgp.ac.in).');
+        return;
+      }
+
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending OTP to Email…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/auth/send-email-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, mode: 'reset' }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error || 'Could not send OTP.');
+          btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Send OTP to Email';
+          btn.disabled = false;
+          return;
+        }
+
+        currentEmail = email;
+        document.getElementById('otpEmailDisplay').textContent = email;
+
+        document.querySelectorAll('#otpContainer .otp-input').forEach(i => { i.value = ''; });
+        showStep('step-otp');
+        startResendTimer();
+        document.querySelector('#otpContainer .otp-input')?.focus();
+      } catch (err) {
+        showError('Network error. Please try again.');
+      }
+      btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Send OTP to Email';
+      btn.disabled = false;
+    }
+
+    async function resendLoginOTP() {
+      await sendResetEmailOTP();
+    }
+
+    // ===== Verify OTP & Save New Password =====
+    async function verifyResetOTPAndSetPassword(e) {
+      e.preventDefault();
+      const inputs = document.querySelectorAll('#otpContainer .otp-input');
+      let otp = '';
+      inputs.forEach(i => otp += i.value);
+      if (otp.length < 6) {
+        inputs.forEach(i => { i.style.borderColor = 'rgba(244,63,94,0.5)'; });
+        setTimeout(() => inputs.forEach(i => { i.style.borderColor = ''; }), 1500);
+        return;
+      }
+
+      const newPassword = document.getElementById('resetNewPassword').value;
+      const confirmPassword = document.getElementById('resetConfirmPassword').value;
+      if (!newPassword || newPassword.length < 6) {
+        showError('New password must be at least 6 characters.');
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        showError('Passwords do not match.');
+        return;
+      }
+
+      const btn = document.getElementById('verifyLoginOtpBtn');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving Password…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/auth/reset-password-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: currentEmail, code: otp, newPassword }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error || 'Invalid OTP.');
+          btn.innerHTML = 'Save Password & Log In';
+          btn.disabled = false;
+          inputs.forEach(i => { i.value = ''; i.style.borderColor = 'rgba(244,63,94,0.5)'; });
+          setTimeout(() => inputs.forEach(i => { i.style.borderColor = ''; }), 1500);
+          inputs[0].focus();
+          return;
+        }
+
+        if (data.user) {
+          if (window.setStoredKgpUser) window.setStoredKgpUser(data.user);
+          localStorage.setItem('kgp-user', JSON.stringify(data.user));
+        }
+        document.getElementById('loginSuccessText').textContent = 'Your password has been updated and you are now logged in!';
+        showStep('step-success');
+      } catch (err) {
+        showError('Network error. Please try again.');
+      }
+      btn.innerHTML = 'Save Password & Log In';
+      btn.disabled = false;
+    }
+
+    // OTP paste support
+    document.getElementById('otpContainer')?.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const paste = (e.clipboardData || window.clipboardData).getData('text').trim();
+      const inputs = document.querySelectorAll('#otpContainer .otp-input');
+      let idx = 0;
+      for (const char of paste) {
+        if (idx < inputs.length) { inputs[idx].value = char; idx++; }
+      }
+    });
+
+    // ===== Dark / Light Mode Toggle =====
+    function applyTheme(theme) {
+      const isLight = theme === 'light';
+      document.body.classList.toggle('light-mode', isLight);
+      const icon = document.getElementById('themeIcon');
+      if (icon) {
+        icon.className = isLight ? 'fas fa-moon text-indigo-600 text-sm' : 'fas fa-sun text-amber-400 text-sm';
+      }
+    }
+    function toggleTheme() {
+      const nextTheme = document.body.classList.contains('light-mode') ? 'dark' : 'light';
+      localStorage.setItem('kgp-theme', nextTheme);
+      applyTheme(nextTheme);
+    }
+    applyTheme(localStorage.getItem('kgp-theme') || 'dark');
+  </script>
+
+</body>
+</html>

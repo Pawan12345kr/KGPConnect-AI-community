@@ -1,0 +1,2305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile — KGPConnect</title>
+  <script src="auth-client.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            kgp: {
+              50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
+              400: '#60a5fa', 500: '#3b82f6', 600: '#1d4ed8', 700: '#1e3a8a',
+              800: '#1e2d5f', 900: '#0f172a',
+            },
+            accent: {
+              orange: '#f97316', emerald: '#10b981', violet: '#8b5cf6',
+              rose: '#f43f5e', amber: '#f59e0b', cyan: '#06b6d4', pink: '#ec4899',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .gradient-text {
+      background: linear-gradient(135deg, #60a5fa, #8b5cf6, #f43f5e);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .glass {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-light {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .grid-pattern {
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .article-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .article-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    /* ==================== ARTICLE CODE BLOCKS & RICH CONTENT ==================== */
+    #articleModalContent pre,
+    #articleModalContent pre.kgp-code-block {
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+      font-size: 0.875rem !important;
+      line-height: 1.7 !important;
+      background-color: #1e293b !important;
+      border: 1px solid rgba(96, 165, 250, 0.4) !important;
+      border-radius: 14px !important;
+      padding: 1.15rem 1.25rem !important;
+      margin: 1.25rem 0 !important;
+      overflow-x: auto !important;
+      color: #f8fafc !important;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important;
+      white-space: pre !important;
+    }
+    #articleModalContent pre code {
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+      color: #6ee7b7 !important;
+      font-size: inherit !important;
+      font-family: inherit !important;
+    }
+    #articleModalContent :not(pre) > code,
+    #articleModalContent code.inline-code {
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+      font-size: 0.875em !important;
+      font-weight: 600 !important;
+      background-color: rgba(59, 130, 246, 0.22) !important;
+      color: #93c5fd !important;
+      border: 1px solid rgba(96, 165, 250, 0.4) !important;
+      padding: 0.15rem 0.45rem !important;
+      border-radius: 6px !important;
+    }
+    body.light-mode #articleModalContent pre,
+    body.light-mode #articleModalContent pre.kgp-code-block {
+      background-color: #f1f5f9 !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #0f172a !important;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06) !important;
+    }
+    body.light-mode #articleModalContent pre code {
+      color: #047857 !important;
+    }
+    body.light-mode #articleModalContent .kgp-copy-code-btn {
+      background-color: #ffffff !important;
+      color: #1e293b !important;
+      border-color: #cbd5e1 !important;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+    }
+    body.light-mode #articleModalContent .kgp-copy-code-btn:hover {
+      background-color: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    body.light-mode #articleModalContent :not(pre) > code,
+    body.light-mode #articleModalContent code.inline-code {
+      background-color: #e2e8f0 !important;
+      color: #be185d !important;
+      border: 1px solid #cbd5e1 !important;
+    }
+
+    /* Dark & Light Mode Select and Input Visibility */
+    select {
+      background-color: #1e293b !important;
+      color: #f8fafc !important;
+      color-scheme: dark;
+    }
+    select option {
+      background-color: #0f172a !important;
+      color: #f8fafc !important;
+    }
+    body:not(.light-mode) .text-gray-500 { color: #94a3b8 !important; }
+
+    /* Light Mode */
+    body.light-mode {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+    }
+    body.light-mode .glass {
+      background: rgba(255, 255, 255, 0.96) !important;
+      border: 1px solid rgba(15, 23, 42, 0.12) !important;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06) !important;
+    }
+    body.light-mode .glass-light {
+      background: #ffffff !important;
+      border: 1px solid rgba(15, 23, 42, 0.1) !important;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04) !important;
+    }
+    body.light-mode .text-white { color: #0f172a !important; }
+    body.light-mode .text-gray-200,
+    body.light-mode .text-gray-300 { color: #1e293b !important; }
+    body.light-mode .text-gray-400 { color: #334155 !important; }
+    body.light-mode .text-gray-500,
+    body.light-mode .text-gray-600 { color: #475569 !important; }
+    body.light-mode .border-white\/10,
+    body.light-mode .border-white\/5 { border-color: rgba(15, 23, 42, 0.14) !important; }
+    body.light-mode .bg-white\/5,
+    body.light-mode .bg-white\/10,
+    body.light-mode .bg-white\/\[0\.02\] { background-color: #f1f5f9 !important; }
+    body.light-mode input,
+    body.light-mode textarea,
+    body.light-mode select {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      border-color: rgba(15, 23, 42, 0.2) !important;
+      color-scheme: light;
+    }
+    body.light-mode select option {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+    }
+    body.light-mode .text-amber-300 { color: #b45309 !important; }
+    body.light-mode .bg-gradient-to-r.text-white,
+    body.light-mode .bg-gradient-to-r .text-white,
+    body.light-mode .bg-gradient-to-br.text-white,
+    body.light-mode .bg-gradient-to-br .text-white { color: #ffffff !important; }
+    body.light-mode .from-kgp-800 span {
+      background-color: rgba(15, 23, 42, 0.75) !important;
+      color: #ffffff !important;
+    }
+  </style>
+</head>
+
+<body class="bg-kgp-900 text-gray-100 min-h-screen grid-pattern">
+
+  <!-- ==================== NAVBAR ==================== -->
+  <nav class="sticky top-0 z-40 glass border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 lg:h-20">
+        
+        <a href="index.html" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-kgp-500 to-accent-violet flex items-center justify-center shadow-lg shadow-kgp-500/20">
+            <span class="text-white font-display font-bold text-lg">K</span>
+          </div>
+          <div>
+            <span class="font-display font-bold text-xl text-white tracking-tight">KGP</span><span class="font-display font-bold text-xl gradient-text tracking-tight">Connect</span>
+            <p class="text-[10px] text-gray-500 -mt-1 tracking-widest uppercase">IIT Kharagpur</p>
+          </div>
+        </a>
+
+        <div class="hidden md:flex items-center gap-2">
+          <a href="index.html" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white rounded-lg hover:bg-white/5 transition-all">
+            <i class="fas fa-arrow-left mr-1.5 text-xs"></i> Back to Feed
+          </a>
+          <a href="write.html" class="px-4 py-2 text-sm font-semibold text-white rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet hover:from-kgp-400 hover:to-violet-500 transition-all shadow-lg shadow-kgp-500/20">
+            <i class="fas fa-pen-nib mr-1.5"></i> Write Article
+          </a>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button onclick="toggleTheme()" title="Toggle Dark/Light Mode"
+            class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-gray-300 hover:text-white transition-all">
+            <i id="themeIcon" class="fas fa-sun text-amber-400 text-sm"></i>
+          </button>
+
+          <a id="myProfileNavBtn" href="profile.html"
+            class="hidden px-4 py-2 text-xs sm:text-sm font-semibold text-kgp-300 hover:bg-kgp-500/15 border border-kgp-500/30 rounded-xl transition-all flex items-center gap-2">
+            <i class="fas fa-user"></i>
+            <span>My Profile</span>
+          </a>
+
+          <button id="logoutNavBtn" onclick="logoutUser()"
+            class="px-4 py-2 text-xs sm:text-sm font-semibold text-rose-400 hover:bg-rose-500/10 border border-rose-500/20 rounded-xl transition-all flex items-center gap-2">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Log Out</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- ==================== PROFILE HEADER & INFO ==================== -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Cover Banner + Profile Card -->
+    <div class="glass-light rounded-3xl overflow-hidden mb-10 shadow-2xl">
+      
+      <!-- LinkedIn-Style Cover Image Banner -->
+      <div id="profileCoverBanner" class="h-40 sm:h-56 bg-gradient-to-r from-kgp-600 via-accent-violet to-accent-rose relative group/cover overflow-hidden">
+        <img id="profileCoverImageDisplay" src="" alt="Profile Cover Banner" onclick="openCoverLightbox()"
+          title="Click to view full cover photo"
+          class="hidden absolute inset-0 w-full h-full object-cover cursor-pointer transition-transform duration-500 group-hover/cover:scale-[1.01]" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/25 pointer-events-none"></div>
+
+        <!-- LinkedIn-Style Top-Right Cover Photo Controls (Own Profile) -->
+        <div id="coverEditActions" class="absolute top-4 right-4 sm:right-6 z-20 flex items-center gap-2">
+          <button type="button" onclick="document.getElementById('profileCoverInput').click()"
+            title="Upload or change cover photo"
+            class="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-black/55 hover:bg-black/75 backdrop-blur-md border border-white/20 text-xs font-semibold text-white shadow-lg transition-all">
+            <i class="fas fa-camera text-accent-cyan"></i>
+            <span id="coverActionBtnText">Add Cover Photo</span>
+          </button>
+          <button id="removeCoverBtn" type="button" onclick="removeCoverImage()"
+            title="Remove cover photo"
+            class="hidden w-8 h-8 rounded-full bg-black/55 hover:bg-rose-600/80 backdrop-blur-md border border-white/20 flex items-center justify-center text-white text-xs shadow-lg transition-all">
+            <i class="fas fa-trash-alt text-[11px]"></i>
+          </button>
+          <input type="file" id="profileCoverInput" accept="image/*" class="hidden" onchange="handleCoverImageUpload(event)" />
+        </div>
+
+        <!-- Public Profile View Cover Button (When visiting another user who has a cover image) -->
+        <button id="viewCoverPublicBtn" type="button" onclick="openCoverLightbox()"
+          class="hidden absolute top-4 right-4 sm:right-6 z-20 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black/55 hover:bg-black/75 backdrop-blur-md border border-white/20 text-xs font-semibold text-white shadow-lg transition-all">
+          <i class="fas fa-expand text-accent-cyan text-[11px]"></i>
+          <span>View Cover</span>
+        </button>
+
+        <div class="absolute bottom-4 right-6 hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-black/45 backdrop-blur text-xs text-white/90 pointer-events-none">
+          <i class="fas fa-university text-kgp-300"></i>
+          <span>IIT Kharagpur Student Community</span>
+        </div>
+      </div>
+
+      <!-- Profile Details Body -->
+      <div class="px-6 sm:px-10 pb-8">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 -mt-14 sm:-mt-16 mb-6 relative z-10">
+          
+          <!-- Avatar + Camera Upload Button -->
+          <div class="flex flex-col sm:flex-row sm:items-end gap-5">
+            <div class="relative group w-28 h-28 sm:w-32 sm:h-32 rounded-3xl p-1 bg-kgp-900 shadow-2xl">
+              <img id="profileImageDisplay" src="" alt="Profile Photo" onclick="openPhotoLightbox()"
+                title="Click to view full photo"
+                class="hidden w-full h-full object-cover rounded-2xl cursor-pointer" />
+              <div id="profileAvatarFallback"
+                class="w-full h-full rounded-2xl bg-gradient-to-br from-kgp-500 to-accent-violet flex items-center justify-center text-white font-display font-bold text-3xl sm:text-4xl">
+                U
+              </div>
+
+              <!-- Upload Photo Overlay Button (Own Profile Only) -->
+              <button id="cameraOverlayBtn" type="button" onclick="document.getElementById('profilePhotoInput').click()"
+                title="Upload Profile Picture"
+                class="absolute inset-1 rounded-2xl bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white text-xs font-medium transition-opacity cursor-pointer">
+                <i class="fas fa-camera text-lg mb-1 text-kgp-300"></i>
+                <span>Change Photo</span>
+              </button>
+              <input type="file" id="profilePhotoInput" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload(event)" />
+            </div>
+
+            <div class="pt-2 sm:pb-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <h1 id="profileFullName" class="font-display text-2xl sm:text-3xl font-bold text-white">Loading…</h1>
+                <span id="profileVerifiedBadge" class="hidden px-2.5 py-0.5 text-[11px] font-semibold rounded-full bg-kgp-500/20 text-kgp-300 border border-kgp-500/30 flex items-center gap-1">
+                  <i class="fas fa-circle-check text-kgp-400"></i> Verified KGPian
+                </span>
+              </div>
+              <p id="profileSubheader" class="text-sm text-gray-400 mt-0.5">IIT Kharagpur</p>
+            </div>
+          </div>
+
+          <!-- Action Buttons: Upload Photo + Password + Edit Profile + Delete Account (Own Profile) OR View Photo / Back (Public Profile) -->
+          <div id="ownProfileActions" class="flex flex-wrap items-center gap-3">
+            <button type="button" onclick="document.getElementById('profilePhotoInput').click()"
+              class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-gray-300 hover:text-white transition-all flex items-center gap-2">
+              <i class="fas fa-camera text-accent-cyan"></i>
+              Upload Photo
+            </button>
+            <button id="profilePasswordBtn" type="button" onclick="openPasswordModal()"
+              class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-gray-300 hover:text-white transition-all flex items-center gap-2">
+              <i class="fas fa-key text-amber-400"></i>
+              <span id="profilePasswordBtnLabel">Set Password</span>
+            </button>
+            <button type="button" onclick="openEditProfileModal()"
+              class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet hover:from-kgp-400 hover:to-violet-500 text-xs font-semibold text-white transition-all shadow-lg shadow-kgp-500/20 flex items-center gap-2">
+              <i class="fas fa-user-pen"></i>
+              Edit Profile
+            </button>
+            <button type="button" onclick="openDeleteAccountModal()"
+              class="px-4 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-xs font-semibold text-rose-400 hover:text-rose-300 transition-all flex items-center gap-2">
+              <i class="fas fa-user-xmark"></i>
+              Delete Account
+            </button>
+          </div>
+
+          <div id="publicProfileActions" class="hidden flex flex-wrap items-center gap-3">
+            <button id="viewPhotoBtn" type="button" onclick="openPhotoLightbox()"
+              class="hidden px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-gray-300 hover:text-white transition-all flex items-center gap-2">
+              <i class="fas fa-expand text-accent-cyan"></i>
+              View Photo
+            </button>
+            <a href="index.html#articles"
+              class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-gray-300 hover:text-white transition-all flex items-center gap-2">
+              <i class="fas fa-arrow-left text-xs"></i>
+              Back to Community Feed
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Prompt Banner for Current Users Who Haven't Set a Password Yet -->
+        <div id="noPasswordWarningBanner" class="hidden mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 flex-shrink-0">
+              <i class="fas fa-key text-sm"></i>
+            </div>
+            <div>
+              <div class="text-xs sm:text-sm font-semibold text-white">Set a password for faster login</div>
+              <div class="text-xs text-gray-400">You haven't set a password yet. Set one now so you can log in next time with just your KGP Email & Password (no OTP required).</div>
+            </div>
+          </div>
+          <button type="button" onclick="openPasswordModal('set')"
+            class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition-all flex-shrink-0 shadow">
+            Set Password Now
+          </button>
+        </div>
+
+        <!-- Bio -->
+        <p id="profileBio" class="text-sm text-gray-300 leading-relaxed max-w-2xl mb-6"></p>
+
+        <!-- Info Pills Grid (Email, Phone, Dept, Grad Year, Roll Number) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+          <div class="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-kgp-500/15 flex items-center justify-center text-kgp-400">
+              <i class="fas fa-envelope text-sm"></i>
+            </div>
+            <div class="min-w-0">
+              <div class="text-[10px] uppercase tracking-wider text-gray-500">Email</div>
+              <div id="infoEmail" class="text-xs font-medium text-gray-300 truncate">—</div>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-accent-violet/15 flex items-center justify-center text-accent-violet">
+              <i class="fas fa-building-columns text-sm"></i>
+            </div>
+            <div>
+              <div class="text-[10px] uppercase tracking-wider text-gray-500">Department & Batch</div>
+              <div id="infoDept" class="text-xs font-medium text-gray-300">—</div>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-accent-emerald/15 flex items-center justify-center text-accent-emerald">
+              <i class="fas fa-id-card text-sm"></i>
+            </div>
+            <div>
+              <div class="text-[10px] uppercase tracking-wider text-gray-500">Roll Number</div>
+              <div id="infoRoll" class="text-xs font-medium text-gray-300">—</div>
+            </div>
+          </div>
+
+          <div id="infoPhoneCard" class="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-accent-amber/15 flex items-center justify-center text-accent-amber">
+              <i id="infoFourthIcon" class="fas fa-award text-sm"></i>
+            </div>
+            <div>
+              <div id="infoFourthLabel" class="text-[10px] uppercase tracking-wider text-gray-500">Community Role</div>
+              <div id="infoPhone" class="text-xs font-medium text-gray-300">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topic Interests -->
+        <div id="interestsSection" class="mb-6">
+          <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2.5">Topics & Interests</div>
+          <div id="profileInterestsList" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- Stats Row -->
+        <div id="profileStatsRow" class="grid grid-cols-2 sm:grid-cols-5 gap-4 pt-6 border-t border-white/10">
+          <div class="text-center p-3 rounded-2xl bg-white/[0.02]">
+            <div id="statPublished" class="font-display text-2xl font-bold text-white">0</div>
+            <div class="text-xs text-gray-500">Published Articles</div>
+          </div>
+          <div id="statSavedCard" class="text-center p-3 rounded-2xl bg-white/[0.02]">
+            <div id="statSaved" class="font-display text-2xl font-bold text-white">0</div>
+            <div class="text-xs text-gray-500">Saved Articles</div>
+          </div>
+          <div id="statLikedCard" class="text-center p-3 rounded-2xl bg-white/[0.02]">
+            <div id="statLiked" class="font-display text-2xl font-bold text-white">0</div>
+            <div class="text-xs text-gray-500">Liked Articles</div>
+          </div>
+          <div id="statCommentedCard" class="text-center p-3 rounded-2xl bg-white/[0.02]">
+            <div id="statCommented" class="font-display text-2xl font-bold text-white">0</div>
+            <div class="text-xs text-gray-500">Commented Posts</div>
+          </div>
+          <div class="text-center p-3 rounded-2xl bg-white/[0.02]">
+            <div id="statTotalLikesReceived" class="font-display text-2xl font-bold text-accent-rose">0</div>
+            <div class="text-xs text-gray-500">Total Likes Received</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- ==================== TABS: PUBLISHED / SAVED / LIKED / COMMENTED ==================== -->
+    <div class="flex items-center justify-between flex-wrap gap-4 mb-8">
+      <div class="flex items-center flex-wrap gap-2 bg-white/5 p-1.5 rounded-2xl border border-white/10">
+        <button id="tabBtn-published" onclick="switchProfileTab('published')"
+          class="profile-tab px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-kgp-500 text-white shadow transition-all flex items-center gap-2">
+          <i class="fas fa-feather-pointed"></i>
+          Published Articles (<span id="tabCountPublished">0</span>)
+        </button>
+        <button id="tabBtn-saved" onclick="switchProfileTab('saved')"
+          class="profile-tab px-5 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-gray-400 hover:text-white transition-all flex items-center gap-2">
+          <i class="fas fa-bookmark"></i>
+          Saved (<span id="tabCountSaved">0</span>)
+        </button>
+        <button id="tabBtn-liked" onclick="switchProfileTab('liked')"
+          class="profile-tab px-5 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-gray-400 hover:text-white transition-all flex items-center gap-2">
+          <i class="fas fa-heart"></i>
+          Liked (<span id="tabCountLiked">0</span>)
+        </button>
+        <button id="tabBtn-commented" onclick="switchProfileTab('commented')"
+          class="profile-tab px-5 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-gray-400 hover:text-white transition-all flex items-center gap-2">
+          <i class="fas fa-comment-dots"></i>
+          Commented (<span id="tabCountCommented">0</span>)
+        </button>
+      </div>
+
+      <a id="writeNewArticleBtn" href="write.html" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-emerald to-teal-500 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-emerald-500/20 hover:-translate-y-0.5 transition-all">
+        <i class="fas fa-plus"></i> Write New Article
+      </a>
+    </div>
+
+    <!-- Articles Grid Container -->
+    <div id="profileArticlesGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+  </main>
+
+
+  <!-- ==================== EDIT PROFILE MODAL ==================== -->
+  <div id="editProfileModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" onclick="closeEditProfileModal()"></div>
+    <div class="relative w-full max-w-lg glass rounded-3xl p-6 sm:p-8 shadow-2xl z-10 my-8">
+      <div class="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+        <h3 class="font-display text-xl font-bold text-white">Edit Your Profile</h3>
+        <button onclick="closeEditProfileModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+      </div>
+
+      <form onsubmit="saveProfileChanges(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Full Name</label>
+          <input type="text" id="editFullName" required
+            class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white focus:outline-none focus:border-kgp-500" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1">Department</label>
+            <select id="editDepartment"
+              class="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white focus:outline-none">
+              <option value="" class="bg-kgp-900">Select Dept</option>
+              <option value="CSE" class="bg-kgp-900">CSE</option>
+              <option value="ECE" class="bg-kgp-900">ECE</option>
+              <option value="EE" class="bg-kgp-900">EE</option>
+              <option value="ME" class="bg-kgp-900">ME</option>
+              <option value="CE" class="bg-kgp-900">CE</option>
+              <option value="MA" class="bg-kgp-900">MA</option>
+              <option value="BT" class="bg-kgp-900">BT</option>
+              <option value="CH" class="bg-kgp-900">CH</option>
+              <option value="AE" class="bg-kgp-900">AE</option>
+              <option value="IE" class="bg-kgp-900">IE</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1">Graduation Year</label>
+            <select id="editGradYear"
+              class="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white focus:outline-none">
+              <option value="" class="bg-kgp-900">Select Year</option>
+              <option value="2025" class="bg-kgp-900">2025</option>
+              <option value="2026" class="bg-kgp-900">2026</option>
+              <option value="2027" class="bg-kgp-900">2027</option>
+              <option value="2028" class="bg-kgp-900">2028</option>
+              <option value="2029" class="bg-kgp-900">2029</option>
+              <option value="2030" class="bg-kgp-900">2030</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Roll Number</label>
+          <input type="text" id="editRollNumber" placeholder="e.g. 22CS10045"
+            class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white focus:outline-none focus:border-kgp-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Short Bio</label>
+          <textarea id="editBio" rows="3" maxlength="160" placeholder="ML enthusiast | GSoC '26 | KGPian"
+            class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white focus:outline-none focus:border-kgp-500 resize-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1">Interests (comma-separated)</label>
+          <input type="text" id="editInterests" placeholder="Machine Learning, LLM, Agentic AI"
+            class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white focus:outline-none focus:border-kgp-500" />
+        </div>
+
+        <div class="pt-4 flex items-center justify-end gap-3">
+          <button type="button" onclick="closeEditProfileModal()"
+            class="px-5 py-2.5 rounded-xl border border-white/10 text-xs font-medium text-gray-300 hover:text-white">
+            Cancel
+          </button>
+          <button type="submit" id="saveProfileBtn"
+            class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet text-xs font-semibold text-white shadow-lg">
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ==================== PASSWORD & SECURITY MODAL (SET / UPDATE / FORGOT PASSWORD) ==================== -->
+  <div id="passwordModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" onclick="closePasswordModal()"></div>
+    <div class="relative w-full max-w-md glass rounded-3xl p-6 sm:p-8 shadow-2xl z-10 my-8">
+      <div class="flex items-center justify-between mb-5 pb-4 border-b border-white/10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-amber-500/15 flex items-center justify-center text-amber-400">
+            <i class="fas fa-key text-sm"></i>
+          </div>
+          <h3 class="font-display text-lg font-bold text-white" id="passwordModalTitle">Password & Security</h3>
+        </div>
+        <button type="button" onclick="closePasswordModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+      </div>
+
+      <!-- Mode Switcher Tabs (Set Password / Update Password / Forgot Password via OTP) -->
+      <div class="flex items-center gap-1.5 bg-white/5 p-1 rounded-xl border border-white/10 mb-6 text-xs">
+        <button type="button" id="pwdTabBtn-set" onclick="switchPasswordModalTab('set')"
+          class="flex-1 py-2 px-2.5 rounded-lg font-semibold bg-kgp-500 text-white transition-all">
+          Set Password
+        </button>
+        <button type="button" id="pwdTabBtn-update" onclick="switchPasswordModalTab('update')"
+          class="flex-1 py-2 px-2.5 rounded-lg font-medium text-gray-400 hover:text-white transition-all">
+          Update Password
+        </button>
+        <button type="button" id="pwdTabBtn-forgot" onclick="switchPasswordModalTab('forgot')"
+          class="flex-1 py-2 px-2.5 rounded-lg font-medium text-gray-400 hover:text-white transition-all">
+          Forgot Password
+        </button>
+      </div>
+
+      <!-- TAB 1: SET PASSWORD (for users who haven't set a password yet) -->
+      <div id="pwdPanel-set">
+        <p class="text-xs text-gray-400 mb-4">
+          Set a password for your account (<strong id="setPwdEmailLabel" class="text-white"></strong>) so you can log in with your Email ID & Password without needing an OTP.
+        </p>
+        <form onsubmit="submitSetPassword(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1">New Password</label>
+            <input type="password" id="setNewPassword" minlength="6" required placeholder="Minimum 6 characters"
+              class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white focus:outline-none focus:border-kgp-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1">Confirm New Password</label>
+            <input type="password" id="setConfirmPassword" minlength="6" required placeholder="Re-enter password"
+              class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white focus:outline-none focus:border-kgp-500" />
+          </div>
+          <div class="pt-2 flex items-center justify-end gap-2.5">
+            <button type="button" onclick="closePasswordModal()" class="px-4 py-2 rounded-xl border border-white/10 text-xs font-medium text-gray-300 hover:text-white">Cancel</button>
+            <button type="submit" id="setPasswordSubmitBtn" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet text-xs font-semibold text-white shadow-lg">
+              Save Password
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- TAB 2: UPDATE PASSWORD (using current password) -->
+      <div id="pwdPanel-update" class="hidden">
+        <p class="text-xs text-gray-400 mb-4">
+          Enter your current password and choose a new password. Don't remember your current password? Switch to the <button type="button" onclick="switchPasswordModalTab('forgot')" class="text-kgp-400 hover:underline font-semibold">Forgot Password</button> tab.
+        </p>
+        <form onsubmit="submitUpdatePassword(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1">Current Password</label>
+            <input type="password" id="updateCurrentPassword" required placeholder="Enter current password"
+              class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white focus:outline-none focus:border-kgp-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1">New Password</label>
+            <input type="password" id="updateNewPassword" minlength="6" required placeholder="Minimum 6 characters"
+              class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white focus:outline-none focus:border-kgp-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1">Confirm New Password</label>
+            <input type="password" id="updateConfirmPassword" minlength="6" required placeholder="Re-enter new password"
+              class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white focus:outline-none focus:border-kgp-500" />
+          </div>
+          <div class="pt-2 flex items-center justify-end gap-2.5">
+            <button type="button" onclick="closePasswordModal()" class="px-4 py-2 rounded-xl border border-white/10 text-xs font-medium text-gray-300 hover:text-white">Cancel</button>
+            <button type="submit" id="updatePasswordSubmitBtn" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet text-xs font-semibold text-white shadow-lg">
+              Update Password
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- TAB 3: FORGOT PASSWORD (RESET VIA EMAIL OTP) -->
+      <div id="pwdPanel-forgot" class="hidden">
+        <p class="text-xs text-gray-400 mb-4">
+          Reset your password by sending a 6-digit verification OTP to your KGP Email (<strong id="forgotPwdEmailLabel" class="text-white"></strong>).
+        </p>
+
+        <div id="forgotOtpRequestBox" class="mb-4">
+          <button type="button" id="sendProfileForgotOtpBtn" onclick="sendProfileForgotPasswordOtp()"
+            class="w-full py-2.5 rounded-xl bg-kgp-500/20 hover:bg-kgp-500/30 border border-kgp-500/40 text-kgp-300 text-xs font-semibold transition-all flex items-center justify-center gap-2">
+            <i class="fas fa-paper-plane"></i>
+            <span>Send 6-Digit OTP to My Email</span>
+          </button>
+        </div>
+
+        <form id="forgotOtpVerifyForm" onsubmit="submitForgotPasswordOtp(event)" class="hidden space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1">6-Digit Email OTP</label>
+            <input type="text" id="forgotOtpCodeInput" maxlength="6" required placeholder="Enter 6-digit OTP from email"
+              class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white tracking-widest font-mono text-center focus:outline-none focus:border-kgp-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1">New Password</label>
+            <input type="password" id="forgotNewPassword" minlength="6" required placeholder="Minimum 6 characters"
+              class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white focus:outline-none focus:border-kgp-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1">Confirm New Password</label>
+            <input type="password" id="forgotConfirmPassword" minlength="6" required placeholder="Re-enter new password"
+              class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white focus:outline-none focus:border-kgp-500" />
+          </div>
+          <div class="pt-2 flex items-center justify-between gap-2.5">
+            <button type="button" onclick="sendProfileForgotPasswordOtp()" class="text-xs text-kgp-400 hover:underline">Resend OTP</button>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="closePasswordModal()" class="px-4 py-2 rounded-xl border border-white/10 text-xs font-medium text-gray-300 hover:text-white">Cancel</button>
+              <button type="submit" id="forgotPasswordSubmitBtn" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet text-xs font-semibold text-white shadow-lg">
+                Reset Password
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ==================== PERMANENT DELETE ACCOUNT WARNING POPUP MODAL ==================== -->
+  <div id="deleteAccountModal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="fixed inset-0 bg-black/85 backdrop-blur-sm" onclick="closeDeleteAccountModal()"></div>
+    <div class="relative w-full max-w-md glass rounded-3xl p-6 sm:p-8 shadow-2xl border border-rose-500/30 z-10 my-8">
+      <div class="w-14 h-14 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center mx-auto mb-4 text-rose-400">
+        <i class="fas fa-triangle-exclamation text-2xl"></i>
+      </div>
+
+      <h3 class="font-display text-xl font-bold text-white text-center mb-2">Delete Account Permanently?</h3>
+      <p class="text-xs sm:text-sm text-gray-400 text-center leading-relaxed mb-5">
+        Warning: This action will <strong class="text-rose-400">permanently delete</strong> your KGPConnect account (<span id="deleteAccountEmailLabel" class="text-white font-medium"></span>) and cannot be undone.
+      </p>
+
+      <div class="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-xs text-gray-300 space-y-2 mb-6">
+        <div class="font-semibold text-rose-300 mb-1">Everything below will be permanently erased:</div>
+        <div class="flex items-center gap-2"><i class="fas fa-xmark text-rose-400 w-4"></i><span>Your profile details, photos, bio, and interests</span></div>
+        <div class="flex items-center gap-2"><i class="fas fa-xmark text-rose-400 w-4"></i><span>All articles you have published</span></div>
+        <div class="flex items-center gap-2"><i class="fas fa-xmark text-rose-400 w-4"></i><span>All comments and replies you have posted</span></div>
+        <div class="flex items-center gap-2"><i class="fas fa-xmark text-rose-400 w-4"></i><span>All your liked and saved articles</span></div>
+        <div class="pt-2 mt-2 border-t border-rose-500/20 text-[11px] text-gray-400">
+          <i class="fas fa-rotate-right text-emerald-400 mr-1"></i>You can sign up again anytime in the future using the same KGP Email ID.
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-3">
+        <button type="button" onclick="closeDeleteAccountModal()"
+          class="flex-1 py-2.5 px-4 rounded-xl border border-white/10 text-xs font-semibold text-gray-300 hover:text-white hover:bg-white/5 transition-all">
+          Cancel
+        </button>
+        <button type="button" id="confirmDeleteAccountBtn" onclick="confirmPermanentAccountDeletion()"
+          class="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-xs font-bold text-white shadow-lg shadow-rose-600/30 transition-all">
+          <i class="fas fa-trash-alt mr-1.5"></i>Yes, Delete Permanently
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== ARTICLE READER MODAL ==================== -->
+  <div id="articleModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 sm:p-6">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeArticleModal()"></div>
+    <div id="profileArticleContainer" class="relative w-full max-w-3xl mx-auto glass rounded-3xl overflow-hidden max-h-[88vh] overflow-y-auto shadow-2xl transition-all duration-300 z-10">
+      <div class="sticky top-0 z-20 flex items-center justify-between px-6 py-3.5 glass border-b border-white/10">
+        <div class="flex items-center gap-2 text-xs font-medium text-gray-400">
+          <div class="w-6 h-6 rounded-lg bg-gradient-to-br from-kgp-500 to-accent-violet flex items-center justify-center text-white font-display font-bold text-[11px]">K</div>
+          <span>KGPConnect Reader</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="toggleProfileArticleFullscreen()" title="Expand to Full Screen"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs font-semibold text-gray-300 hover:text-white transition-all">
+            <i id="profileFullscreenIcon" class="fas fa-expand-alt text-[11px]"></i>
+            <span id="profileFullscreenLabel">Full Screen</span>
+          </button>
+          <button type="button" onclick="closeArticleModal()"
+            class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-gray-400 hover:text-white transition-all">
+            <i class="fas fa-times text-sm"></i>
+          </button>
+        </div>
+      </div>
+      <div class="p-6 sm:p-10 lg:p-12 max-w-3xl mx-auto" id="articleModalContent"></div>
+    </div>
+  </div>
+
+  <!-- ==================== PROFILE PHOTO / COVER LIGHTBOX MODAL ==================== -->
+  <div id="photoLightboxModal" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/85 backdrop-blur-md" onclick="closePhotoLightbox()"></div>
+    <div id="lightboxCardContainer" class="relative z-10 max-w-md w-full glass rounded-3xl p-4 shadow-2xl text-center transition-all">
+      <div class="flex items-center justify-between mb-3 px-2">
+        <span id="lightboxUserName" class="font-display font-bold text-white text-sm">Profile Photo</span>
+        <button type="button" onclick="closePhotoLightbox()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-gray-300 hover:text-white">
+          <i class="fas fa-times text-xs"></i>
+        </button>
+      </div>
+      <img id="lightboxImage" src="" alt="Profile Photo" class="w-full max-h-[70vh] object-contain rounded-2xl mx-auto" />
+    </div>
+  </div>
+
+
+  <!-- ==================== JAVASCRIPT ==================== -->
+  <script>
+    let profileUser = null;
+    let publishedArticles = [];
+    let savedArticles = [];
+    let likedArticles = [];
+    let commentedArticles = [];
+    let currentTab = 'published';
+    let isViewingOtherProfile = false;
+
+    const topicColors = {
+      'Read Stories': { bg: 'bg-amber-500/20', text: 'text-amber-300' },
+      'LLM': { bg: 'bg-accent-violet/20', text: 'text-accent-violet' },
+      'Computer Vision': { bg: 'bg-accent-cyan/20', text: 'text-accent-cyan' },
+      'Data Engineering': { bg: 'bg-accent-amber/20', text: 'text-accent-amber' },
+      'Machine Learning': { bg: 'bg-blue-500/20', text: 'text-blue-400' },
+      'Agentic AI': { bg: 'bg-accent-rose/20', text: 'text-accent-rose' },
+      'Deep Learning': { bg: 'bg-accent-emerald/20', text: 'text-accent-emerald' },
+      'Systems': { bg: 'bg-accent-orange/20', text: 'text-accent-orange' },
+      'RL': { bg: 'bg-accent-pink/20', text: 'text-accent-pink' },
+    };
+
+    function openPhotoLightbox() {
+      if (!profileUser || !profileUser.profile_image) return;
+      const card = document.getElementById('lightboxCardContainer');
+      if (card) {
+        card.classList.remove('max-w-3xl');
+        card.classList.add('max-w-md');
+      }
+      document.getElementById('lightboxImage').src = profileUser.profile_image;
+      document.getElementById('lightboxUserName').textContent = `${profileUser.full_name}'s Profile Photo`;
+      document.getElementById('photoLightboxModal').classList.remove('hidden');
+    }
+
+    function openCoverLightbox() {
+      if (!profileUser || !profileUser.cover_image) return;
+      const card = document.getElementById('lightboxCardContainer');
+      if (card) {
+        card.classList.remove('max-w-md');
+        card.classList.add('max-w-3xl');
+      }
+      document.getElementById('lightboxImage').src = profileUser.cover_image;
+      document.getElementById('lightboxUserName').textContent = `${profileUser.full_name}'s Cover Photo`;
+      document.getElementById('photoLightboxModal').classList.remove('hidden');
+    }
+
+    function closePhotoLightbox() {
+      document.getElementById('photoLightboxModal').classList.add('hidden');
+    }
+
+    function configureProfileModeUI(isOther) {
+      isViewingOtherProfile = isOther;
+      const cameraOverlay = document.getElementById('cameraOverlayBtn');
+      const coverEditActions = document.getElementById('coverEditActions');
+      const viewCoverPublicBtn = document.getElementById('viewCoverPublicBtn');
+      const ownActions = document.getElementById('ownProfileActions');
+      const publicActions = document.getElementById('publicProfileActions');
+      const tabSaved = document.getElementById('tabBtn-saved');
+      const tabLiked = document.getElementById('tabBtn-liked');
+      const tabCommented = document.getElementById('tabBtn-commented');
+      const statSavedCard = document.getElementById('statSavedCard');
+      const statLikedCard = document.getElementById('statLikedCard');
+      const statCommentedCard = document.getElementById('statCommentedCard');
+      const statsRow = document.getElementById('profileStatsRow');
+      const writeBtn = document.getElementById('writeNewArticleBtn');
+      const myProfileNavBtn = document.getElementById('myProfileNavBtn');
+      const logoutNavBtn = document.getElementById('logoutNavBtn');
+
+      const cachedMe = window.getStoredKgpUser ? window.getStoredKgpUser() : null;
+      if (!cachedMe && logoutNavBtn) {
+        logoutNavBtn.classList.add('hidden');
+      }
+
+      if (isOther) {
+        if (cameraOverlay) cameraOverlay.classList.add('hidden');
+        if (coverEditActions) coverEditActions.classList.add('hidden');
+        if (ownActions) ownActions.classList.add('hidden');
+        if (publicActions) publicActions.classList.remove('hidden');
+        if (tabSaved) tabSaved.classList.add('hidden');
+        if (tabLiked) tabLiked.classList.add('hidden');
+        if (tabCommented) tabCommented.classList.add('hidden');
+        if (statSavedCard) statSavedCard.classList.add('hidden');
+        if (statLikedCard) statLikedCard.classList.add('hidden');
+        if (statCommentedCard) statCommentedCard.classList.add('hidden');
+        if (statsRow) statsRow.classList.replace('sm:grid-cols-5', 'sm:grid-cols-2');
+        if (writeBtn) writeBtn.classList.add('hidden');
+        if (cachedMe && myProfileNavBtn) myProfileNavBtn.classList.remove('hidden');
+      } else {
+        if (cameraOverlay) cameraOverlay.classList.remove('hidden');
+        if (coverEditActions) coverEditActions.classList.remove('hidden');
+        if (viewCoverPublicBtn) viewCoverPublicBtn.classList.add('hidden');
+        if (ownActions) ownActions.classList.remove('hidden');
+        if (publicActions) publicActions.classList.add('hidden');
+        if (tabSaved) tabSaved.classList.remove('hidden');
+        if (tabLiked) tabLiked.classList.remove('hidden');
+        if (tabCommented) tabCommented.classList.remove('hidden');
+        if (statSavedCard) statSavedCard.classList.remove('hidden');
+        if (statLikedCard) statLikedCard.classList.remove('hidden');
+        if (statCommentedCard) statCommentedCard.classList.remove('hidden');
+        if (statsRow) statsRow.classList.replace('sm:grid-cols-2', 'sm:grid-cols-5');
+        if (writeBtn) writeBtn.classList.remove('hidden');
+        if (myProfileNavBtn) myProfileNavBtn.classList.add('hidden');
+      }
+    }
+
+    // ===== Load Dashboard or Another User's Public Profile =====
+    async function loadDashboard() {
+      const params = new URLSearchParams(window.location.search);
+      const targetUserId = params.get('userId');
+      const targetAuthor = params.get('author');
+
+      // Check if visiting another user's profile
+      if (targetUserId || targetAuthor) {
+        try {
+          const qs = new URLSearchParams();
+          if (targetUserId) qs.set('userId', targetUserId);
+          if (targetAuthor) qs.set('author', targetAuthor);
+          const res = await fetch(`/api/users/public-profile?${qs.toString()}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (!data.isOwnProfile) {
+              profileUser = data.user;
+              publishedArticles = data.publishedArticles || [];
+              savedArticles = [];
+              likedArticles = [];
+              commentedArticles = [];
+              configureProfileModeUI(true);
+              renderProfileInfo();
+              renderTabArticles();
+              return;
+            }
+          }
+        } catch (err) {}
+      }
+
+      configureProfileModeUI(false);
+      const cached = window.getStoredKgpUser ? window.getStoredKgpUser() : null;
+      if (cached && !profileUser) {
+        profileUser = cached;
+        renderProfileInfo();
+      }
+
+      try {
+        const res = await fetch('/api/user/dashboard', { cache: 'no-store' });
+        if (!res.ok) {
+          if (window.setStoredKgpUser) window.setStoredKgpUser(null);
+          localStorage.removeItem('kgp-user');
+          localStorage.removeItem('kgp_user');
+          window.location.replace('login.html');
+          return;
+        }
+        const data = await res.json();
+        profileUser = data.user;
+        publishedArticles = data.publishedArticles || [];
+        savedArticles = data.savedArticles || [];
+        likedArticles = data.likedArticles || [];
+        commentedArticles = data.commentedArticles || [];
+
+        renderProfileInfo();
+        renderTabArticles();
+      } catch (err) {
+        if (!cached || window.location.protocol !== 'file:') {
+          window.location.replace('login.html');
+        }
+      }
+    }
+
+    function renderProfileInfo() {
+      if (!profileUser) return;
+      document.title = `${profileUser.full_name} — KGPConnect Profile`;
+      document.getElementById('profileFullName').textContent = profileUser.full_name;
+
+      if (profileUser.is_verified) {
+        document.getElementById('profileVerifiedBadge').classList.remove('hidden');
+      } else {
+        document.getElementById('profileVerifiedBadge').classList.add('hidden');
+      }
+
+      const deptText = profileUser.department
+        ? `${profileUser.department}${profileUser.grad_year ? " • Class of " + profileUser.grad_year : ''}`
+        : 'IIT Kharagpur AI Community Member';
+      document.getElementById('profileSubheader').textContent = deptText;
+
+      document.getElementById('profileBio').textContent =
+        profileUser.bio || (isViewingOtherProfile
+          ? `${profileUser.full_name} is an active member of the IIT Kharagpur AI Community.`
+          : 'No bio added yet — click "Edit Profile" to introduce yourself to KGPians!');
+
+      document.getElementById('infoEmail').textContent = profileUser.email || 'Not linked';
+      document.getElementById('infoDept').textContent = profileUser.department
+        ? `${profileUser.department} (${profileUser.grad_year || 'KGP'})`
+        : 'Not set';
+      document.getElementById('infoRoll').textContent = profileUser.roll_number || 'Optional / Not set';
+
+      const fourthIcon = document.getElementById('infoFourthIcon');
+      const fourthLabel = document.getElementById('infoFourthLabel');
+      if (fourthIcon) fourthIcon.className = 'fas fa-award text-sm';
+      if (fourthLabel) fourthLabel.textContent = 'Community Role';
+      document.getElementById('infoPhone').textContent = publishedArticles.length > 0 ? 'AI Author & Contributor' : 'Verified KGPian';
+
+      // Profile Image or Initials Fallback
+      const imgEl = document.getElementById('profileImageDisplay');
+      const fallbackEl = document.getElementById('profileAvatarFallback');
+      const viewPhotoBtn = document.getElementById('viewPhotoBtn');
+      const initials = (profileUser.full_name || 'U').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+      fallbackEl.textContent = initials;
+      if (profileUser.avatar_color) {
+        fallbackEl.className = `w-full h-full rounded-2xl bg-gradient-to-br ${profileUser.avatar_color} flex items-center justify-center text-white font-display font-bold text-3xl sm:text-4xl`;
+      }
+
+      if (profileUser.profile_image) {
+        imgEl.src = profileUser.profile_image;
+        imgEl.classList.remove('hidden');
+        fallbackEl.classList.add('hidden');
+        if (isViewingOtherProfile && viewPhotoBtn) viewPhotoBtn.classList.remove('hidden');
+      } else {
+        imgEl.classList.add('hidden');
+        fallbackEl.classList.remove('hidden');
+        if (viewPhotoBtn) viewPhotoBtn.classList.add('hidden');
+      }
+
+      // LinkedIn-Style Cover Image Banner
+      const coverImgEl = document.getElementById('profileCoverImageDisplay');
+      const coverActionBtnText = document.getElementById('coverActionBtnText');
+      const removeCoverBtn = document.getElementById('removeCoverBtn');
+      const viewCoverPublicBtn = document.getElementById('viewCoverPublicBtn');
+
+      if (profileUser.cover_image) {
+        if (coverImgEl) {
+          coverImgEl.src = profileUser.cover_image;
+          coverImgEl.classList.remove('hidden');
+        }
+        if (coverActionBtnText) coverActionBtnText.textContent = 'Change Cover';
+        if (!isViewingOtherProfile && removeCoverBtn) removeCoverBtn.classList.remove('hidden');
+        if (isViewingOtherProfile && viewCoverPublicBtn) viewCoverPublicBtn.classList.remove('hidden');
+      } else {
+        if (coverImgEl) {
+          coverImgEl.src = '';
+          coverImgEl.classList.add('hidden');
+        }
+        if (coverActionBtnText) coverActionBtnText.textContent = 'Add Cover Photo';
+        if (removeCoverBtn) removeCoverBtn.classList.add('hidden');
+        if (viewCoverPublicBtn) viewCoverPublicBtn.classList.add('hidden');
+      }
+
+      // Interests
+      const interestsContainer = document.getElementById('profileInterestsList');
+      const interestsArr = Array.isArray(profileUser.interests) ? profileUser.interests.filter(Boolean) : [];
+      if (interestsArr.length > 0) {
+        interestsContainer.innerHTML = interestsArr.map(topic => `
+          <span class="px-3 py-1 rounded-full text-xs font-medium bg-kgp-500/15 text-kgp-300 border border-kgp-500/25">
+            ${topic.trim()}
+          </span>
+        `).join('');
+      } else {
+        interestsContainer.innerHTML = `<span class="text-xs text-gray-500">No topics selected yet.</span>`;
+      }
+
+      // Counts
+      document.getElementById('statPublished').textContent = publishedArticles.length;
+      document.getElementById('statSaved').textContent = savedArticles.length;
+      document.getElementById('statLiked').textContent = likedArticles.length;
+      const statCommentedEl = document.getElementById('statCommented');
+      if (statCommentedEl) statCommentedEl.textContent = commentedArticles.length;
+      document.getElementById('tabCountPublished').textContent = publishedArticles.length;
+      document.getElementById('tabCountSaved').textContent = savedArticles.length;
+      document.getElementById('tabCountLiked').textContent = likedArticles.length;
+      const tabCountCommentedEl = document.getElementById('tabCountCommented');
+      if (tabCountCommentedEl) tabCountCommentedEl.textContent = commentedArticles.length;
+
+      const totalLikes = publishedArticles.reduce((acc, a) => acc + (a.likes || 0), 0);
+      document.getElementById('statTotalLikesReceived').textContent = totalLikes;
+
+      // Password Status Banner & Button (Own Profile Only)
+      const noPwdBanner = document.getElementById('noPasswordWarningBanner');
+      const pwdBtnLabel = document.getElementById('profilePasswordBtnLabel');
+      if (isViewingOtherProfile) {
+        if (noPwdBanner) noPwdBanner.classList.add('hidden');
+      } else {
+        if (profileUser.has_password) {
+          if (noPwdBanner) noPwdBanner.classList.add('hidden');
+          if (pwdBtnLabel) pwdBtnLabel.textContent = 'Password & Security';
+        } else {
+          if (noPwdBanner) noPwdBanner.classList.remove('hidden');
+          if (pwdBtnLabel) pwdBtnLabel.textContent = 'Set Password';
+        }
+      }
+    }
+
+    // ===== Password & Security Modal (Set / Update / Forgot Password) =====
+    function openPasswordModal(preferredTab) {
+      if (!profileUser) return;
+      const emailStr = profileUser.email || '';
+      const setLabel = document.getElementById('setPwdEmailLabel');
+      const forgotLabel = document.getElementById('forgotPwdEmailLabel');
+      if (setLabel) setLabel.textContent = emailStr;
+      if (forgotLabel) forgotLabel.textContent = emailStr;
+
+      const tabSetBtn = document.getElementById('pwdTabBtn-set');
+      const tabUpdateBtn = document.getElementById('pwdTabBtn-update');
+
+      if (profileUser.has_password) {
+        if (tabSetBtn) tabSetBtn.classList.add('hidden');
+        if (tabUpdateBtn) tabUpdateBtn.classList.remove('hidden');
+        switchPasswordModalTab(preferredTab === 'forgot' ? 'forgot' : 'update');
+      } else {
+        if (tabSetBtn) tabSetBtn.classList.remove('hidden');
+        if (tabUpdateBtn) tabUpdateBtn.classList.add('hidden');
+        switchPasswordModalTab(preferredTab === 'forgot' ? 'forgot' : 'set');
+      }
+
+      document.getElementById('passwordModal').classList.remove('hidden');
+    }
+
+    function closePasswordModal() {
+      document.getElementById('passwordModal').classList.add('hidden');
+    }
+
+    function switchPasswordModalTab(tab) {
+      ['set', 'update', 'forgot'].forEach(t => {
+        const btn = document.getElementById(`pwdTabBtn-${t}`);
+        const panel = document.getElementById(`pwdPanel-${t}`);
+        if (btn) {
+          if (t === tab) {
+            btn.className = 'flex-1 py-2 px-2.5 rounded-lg font-semibold bg-kgp-500 text-white transition-all';
+          } else {
+            btn.className = `${btn.classList.contains('hidden') ? 'hidden ' : ''}flex-1 py-2 px-2.5 rounded-lg font-medium text-gray-400 hover:text-white transition-all`;
+          }
+        }
+        if (panel) {
+          panel.classList.toggle('hidden', t !== tab);
+        }
+      });
+    }
+
+    async function submitSetPassword(e) {
+      e.preventDefault();
+      const newPassword = document.getElementById('setNewPassword').value;
+      const confirmPassword = document.getElementById('setConfirmPassword').value;
+      if (!newPassword || newPassword.length < 6) {
+        showToast('Password must be at least 6 characters.', 'error');
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        showToast('Passwords do not match.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('setPasswordSubmitBtn');
+      btn.textContent = 'Saving…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/auth/set-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ newPassword }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          profileUser = data.user;
+          if (window.setStoredKgpUser) window.setStoredKgpUser(data.user);
+          document.getElementById('setNewPassword').value = '';
+          document.getElementById('setConfirmPassword').value = '';
+          closePasswordModal();
+          showToast('Password set! Next time you can log in with Email & Password.', 'success');
+          renderProfileInfo();
+        } else {
+          showToast(data.error || 'Could not set password.', 'error');
+        }
+      } catch (err) {
+        showToast('Network error.', 'error');
+      }
+      btn.textContent = 'Save Password';
+      btn.disabled = false;
+    }
+
+    async function submitUpdatePassword(e) {
+      e.preventDefault();
+      const currentPassword = document.getElementById('updateCurrentPassword').value;
+      const newPassword = document.getElementById('updateNewPassword').value;
+      const confirmPassword = document.getElementById('updateConfirmPassword').value;
+      if (!newPassword || newPassword.length < 6) {
+        showToast('New password must be at least 6 characters.', 'error');
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        showToast('New passwords do not match.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('updatePasswordSubmitBtn');
+      btn.textContent = 'Updating…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/auth/update-password', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ currentPassword, newPassword }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          profileUser = data.user;
+          if (window.setStoredKgpUser) window.setStoredKgpUser(data.user);
+          document.getElementById('updateCurrentPassword').value = '';
+          document.getElementById('updateNewPassword').value = '';
+          document.getElementById('updateConfirmPassword').value = '';
+          closePasswordModal();
+          showToast('Password updated successfully!', 'success');
+          renderProfileInfo();
+        } else {
+          showToast(data.error || 'Failed to update password.', 'error');
+        }
+      } catch (err) {
+        showToast('Network error.', 'error');
+      }
+      btn.textContent = 'Update Password';
+      btn.disabled = false;
+    }
+
+    async function sendProfileForgotPasswordOtp() {
+      if (!profileUser || !profileUser.email) return;
+      const btn = document.getElementById('sendProfileForgotOtpBtn');
+      if (btn) {
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i><span>Sending OTP…</span>`;
+        btn.disabled = true;
+      }
+
+      try {
+        const res = await fetch('/api/auth/send-email-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: profileUser.email, mode: 'reset' }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showToast(`6-digit OTP sent to ${profileUser.email}`, 'success');
+          document.getElementById('forgotOtpRequestBox').classList.add('hidden');
+          document.getElementById('forgotOtpVerifyForm').classList.remove('hidden');
+          document.getElementById('forgotOtpCodeInput').focus();
+        } else {
+          showToast(data.error || 'Could not send OTP.', 'error');
+        }
+      } catch (err) {
+        showToast('Network error.', 'error');
+      }
+
+      if (btn) {
+        btn.innerHTML = `<i class="fas fa-paper-plane"></i><span>Send 6-Digit OTP to My Email</span>`;
+        btn.disabled = false;
+      }
+    }
+
+    async function submitForgotPasswordOtp(e) {
+      e.preventDefault();
+      if (!profileUser || !profileUser.email) return;
+      const code = document.getElementById('forgotOtpCodeInput').value.trim();
+      const newPassword = document.getElementById('forgotNewPassword').value;
+      const confirmPassword = document.getElementById('forgotConfirmPassword').value;
+
+      if (!code || code.length < 6) {
+        showToast('Please enter the 6-digit OTP sent to your email.', 'error');
+        return;
+      }
+      if (!newPassword || newPassword.length < 6) {
+        showToast('New password must be at least 6 characters.', 'error');
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        showToast('Passwords do not match.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('forgotPasswordSubmitBtn');
+      btn.textContent = 'Resetting…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/auth/reset-password-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: profileUser.email, code, newPassword }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          profileUser = data.user;
+          if (window.setStoredKgpUser) window.setStoredKgpUser(data.user);
+          document.getElementById('forgotOtpCodeInput').value = '';
+          document.getElementById('forgotNewPassword').value = '';
+          document.getElementById('forgotConfirmPassword').value = '';
+          document.getElementById('forgotOtpVerifyForm').classList.add('hidden');
+          document.getElementById('forgotOtpRequestBox').classList.remove('hidden');
+          closePasswordModal();
+          showToast('Password reset successfully!', 'success');
+          renderProfileInfo();
+        } else {
+          showToast(data.error || 'Invalid OTP or could not reset password.', 'error');
+        }
+      } catch (err) {
+        showToast('Network error.', 'error');
+      }
+      btn.textContent = 'Reset Password';
+      btn.disabled = false;
+    }
+
+    // ===== Profile Picture Upload =====
+    function handleProfilePhotoUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (ev) => {
+        const base64Image = ev.target.result;
+        try {
+          const res = await fetch('/api/auth/profile', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ profileImage: base64Image }),
+          });
+          const data = await res.json();
+          if (res.ok) {
+            profileUser = data.user;
+            showToast('Profile photo updated!', 'success');
+            loadDashboard();
+          } else {
+            showToast(data.error || 'Could not update photo.', 'error');
+          }
+        } catch (err) {
+          showToast('Network error while uploading photo.', 'error');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // ===== LinkedIn-Style Cover Image Upload & Remove =====
+    function handleCoverImageUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (ev) => {
+        const base64Cover = ev.target.result;
+        try {
+          const res = await fetch('/api/auth/profile', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ coverImage: base64Cover }),
+          });
+          const data = await res.json();
+          if (res.ok) {
+            profileUser = data.user;
+            showToast('Cover photo updated!', 'success');
+            loadDashboard();
+          } else {
+            showToast(data.error || 'Could not update cover photo.', 'error');
+          }
+        } catch (err) {
+          showToast('Network error while uploading cover photo.', 'error');
+        }
+        event.target.value = '';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function removeCoverImage() {
+      if (!confirm('Remove your cover photo?')) return;
+      try {
+        const res = await fetch('/api/auth/profile', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ coverImage: '' }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          profileUser = data.user;
+          showToast('Cover photo removed.', 'success');
+          loadDashboard();
+        }
+      } catch (err) {
+        showToast('Failed to remove cover photo.', 'error');
+      }
+    }
+
+    // ===== Edit Profile Modal =====
+    function openEditProfileModal() {
+      if (!profileUser) return;
+      document.getElementById('editFullName').value = profileUser.full_name || '';
+      document.getElementById('editDepartment').value = profileUser.department || '';
+      document.getElementById('editGradYear').value = profileUser.grad_year || '';
+      document.getElementById('editRollNumber').value = profileUser.roll_number || '';
+      document.getElementById('editBio').value = profileUser.bio || '';
+      document.getElementById('editInterests').value = Array.isArray(profileUser.interests)
+        ? profileUser.interests.join(', ')
+        : '';
+      document.getElementById('editProfileModal').classList.remove('hidden');
+    }
+
+    function closeEditProfileModal() {
+      document.getElementById('editProfileModal').classList.add('hidden');
+    }
+
+    async function saveProfileChanges(e) {
+      e.preventDefault();
+      const btn = document.getElementById('saveProfileBtn');
+      btn.textContent = 'Saving…';
+      btn.disabled = true;
+
+      const fullName = document.getElementById('editFullName').value.trim();
+      const department = document.getElementById('editDepartment').value;
+      const gradYear = document.getElementById('editGradYear').value;
+      const rollNumber = document.getElementById('editRollNumber').value.trim();
+      const bio = document.getElementById('editBio').value.trim();
+      const interests = document.getElementById('editInterests').value
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      try {
+        const res = await fetch('/api/auth/profile', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fullName, department, gradYear, rollNumber, bio, interests }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          profileUser = data.user;
+          closeEditProfileModal();
+          showToast('Profile updated!', 'success');
+          loadDashboard();
+        } else {
+          showToast(data.error || 'Failed to update profile.', 'error');
+        }
+      } catch (err) {
+        showToast('Network error.', 'error');
+      }
+      btn.textContent = 'Save Changes';
+      btn.disabled = false;
+    }
+
+    // ===== Tabs Switching & Rendering =====
+    function switchProfileTab(tab) {
+      currentTab = tab;
+      ['published', 'saved', 'liked', 'commented'].forEach(t => {
+        const btn = document.getElementById(`tabBtn-${t}`);
+        if (!btn) return;
+        if (t === tab) {
+          btn.className = 'profile-tab px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-kgp-500 text-white shadow transition-all flex items-center gap-2';
+        } else {
+          btn.className = 'profile-tab px-5 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-gray-400 hover:text-white transition-all flex items-center gap-2';
+        }
+      });
+      renderTabArticles();
+    }
+
+    function getActiveList() {
+      if (currentTab === 'published') return publishedArticles;
+      if (currentTab === 'saved') return savedArticles;
+      if (currentTab === 'commented') return commentedArticles;
+      return likedArticles;
+    }
+
+    function renderTabArticles() {
+      const grid = document.getElementById('profileArticlesGrid');
+      const list = getActiveList();
+
+      if (list.length === 0) {
+        const emptyMessages = {
+          published: {
+            icon: 'fa-feather-pointed',
+            title: isViewingOtherProfile
+              ? `${profileUser ? profileUser.full_name : 'This member'} hasn't published any articles yet`
+              : "You haven't published any articles yet",
+            sub: isViewingOtherProfile
+              ? 'Check back later for AI research & articles from this KGPian.'
+              : 'Share your research, tutorials, or insights with the IIT KGP community.',
+            cta: isViewingOtherProfile
+              ? '<a href="index.html#articles" class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 text-white text-xs font-semibold">Browse Community Articles</a>'
+              : '<a href="write.html" class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-kgp-500 text-white text-xs font-semibold"><i class="fas fa-pen-nib"></i> Write Your First Article</a>'
+          },
+          saved: {
+            icon: 'fa-bookmark',
+            title: 'No saved articles yet',
+            sub: 'Click the Save button on any article to bookmark it for later reading.',
+            cta: '<a href="index.html#articles" class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 text-white text-xs font-semibold">Browse Articles</a>'
+          },
+          liked: {
+            icon: 'fa-heart',
+            title: 'No liked articles yet',
+            sub: 'Articles you like on the community feed will appear here.',
+            cta: '<a href="index.html#articles" class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 text-white text-xs font-semibold">Explore Feed</a>'
+          },
+          commented: {
+            icon: 'fa-comment-dots',
+            title: 'No commented articles yet',
+            sub: 'When you post a comment on any article, it will automatically be saved here so you can easily revisit it.',
+            cta: '<a href="index.html#articles" class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 text-white text-xs font-semibold">Join the Discussion</a>'
+          }
+        };
+        const msg = emptyMessages[currentTab] || emptyMessages.published;
+        grid.innerHTML = `
+          <div class="col-span-full glass-light rounded-3xl p-12 text-center">
+            <div class="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-4 text-gray-500">
+              <i class="fas ${msg.icon} text-2xl"></i>
+            </div>
+            <h3 class="font-display text-lg font-bold text-white mb-1">${msg.title}</h3>
+            <p class="text-xs text-gray-400 max-w-md mx-auto">${msg.sub}</p>
+            ${msg.cta}
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = list.map((article, idx) => {
+        const colors = topicColors[article.topic] || topicColors['Machine Learning'];
+        const bannerContent = article.coverImage
+          ? `<img src="${article.coverImage}" alt="${article.title}" class="w-full h-full object-cover" />`
+          : `<div class="absolute inset-0 flex items-center justify-center opacity-20">
+               <i class="fas fa-book-open text-5xl text-white"></i>
+             </div>`;
+        const avatarHtml = article.authorImage
+          ? `<img src="${article.authorImage}" class="w-7 h-7 rounded-full object-cover" />`
+          : `<div class="w-7 h-7 rounded-full bg-gradient-to-br ${article.authorAvatar || 'from-kgp-500 to-accent-violet'}"></div>`;
+        const deleteBtn = (!isViewingOtherProfile && currentTab === 'published')
+          ? `<button onclick="event.stopPropagation(); deletePublishedArticle(${article.id})" title="Delete Article" class="text-gray-500 hover:text-rose-400 transition-colors ml-2"><i class="fas fa-trash-alt"></i></button>`
+          : '';
+        const commentSnippetHtml = (currentTab === 'commented' && article.myLatestComment)
+          ? `<div class="mb-3 px-3 py-2 rounded-xl bg-kgp-500/10 border border-kgp-500/20 text-[11px] text-gray-300 line-clamp-2">
+               <i class="fas fa-comment-dots text-kgp-400 mr-1.5"></i><span class="font-semibold text-kgp-300">Your comment:</span> "${article.myLatestComment}"
+             </div>`
+          : '';
+
+        return `
+          <div class="article-card glass-light rounded-2xl overflow-hidden cursor-pointer group" onclick="openProfileArticle(${idx})">
+            <div class="relative h-44 bg-gradient-to-br from-kgp-800 to-slate-800 overflow-hidden">
+              ${bannerContent}
+              <div class="absolute bottom-3 left-3">
+                <span class="px-2.5 py-1 text-[10px] font-bold rounded-full ${colors.bg} ${colors.text} backdrop-blur-md">${article.topic}</span>
+              </div>
+              <div class="absolute bottom-3 right-3 text-xs text-gray-200 bg-black/50 backdrop-blur px-2 py-0.5 rounded-md">
+                ${article.readTime} read
+              </div>
+            </div>
+            <div class="p-5">
+              <h3 class="font-display font-semibold text-white mb-2 leading-snug group-hover:text-kgp-300 transition-colors line-clamp-2 text-[15px]">
+                ${article.title}
+              </h3>
+              <p class="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">${article.excerpt}</p>
+              ${commentSnippetHtml}
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  ${avatarHtml}
+                  <div>
+                    <div class="text-xs font-semibold text-gray-300">${article.author}</div>
+                    <div class="text-[10px] text-gray-600">${article.date}</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3 text-xs text-gray-500">
+                  <span><i class="${article.likedByMe ? 'fas text-rose-500' : 'far'} fa-heart mr-1"></i>${article.likes}</span>
+                  <span><i class="${currentTab === 'commented' ? 'fas text-kgp-400' : 'far'} fa-comment mr-1"></i>${article.comments}</span>
+                  ${deleteBtn}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function deletePublishedArticle(articleId) {
+      if (!confirm('Are you sure you want to delete this article?')) return;
+      try {
+        const res = await fetch(`/api/articles/${articleId}`, { method: 'DELETE' });
+        if (res.ok) {
+          showToast('Article deleted.', 'success');
+          loadDashboard();
+        }
+      } catch (err) {
+        showToast('Failed to delete article.', 'error');
+      }
+    }
+
+    let activeModalArticle = null;
+    let profileCommentDeleteTimer = null;
+
+    function openAuthorProfileFromModal(userId, authorName) {
+      const qs = new URLSearchParams();
+      if (userId && userId !== 'null') qs.set('userId', userId);
+      if (authorName) qs.set('author', authorName);
+      window.location.href = `profile.html?${qs.toString()}`;
+    }
+
+    function escapeCommentHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function normalizeHref(url) {
+      const trimmed = String(url || '').trim();
+      if (/^https?:\/\//i.test(trimmed)) return trimmed;
+      return 'https://' + trimmed;
+    }
+
+    function friendlyUrlLabel(url) {
+      try {
+        const u = new URL(normalizeHref(url));
+        const host = u.hostname.replace(/^www\./i, '');
+        const path = (u.pathname && u.pathname !== '/') ? u.pathname : '';
+        const combined = host + path;
+        return combined.length > 42 ? combined.slice(0, 40) + '…' : combined;
+      } catch (e) {
+        return url.replace(/^https?:\/\/(www\.)?/i, '').slice(0, 40);
+      }
+    }
+
+    function buildAnchorBadge(href, labelText) {
+      const safeHref = escapeCommentHtml(normalizeHref(href));
+      const safeLabel = escapeCommentHtml(labelText);
+      return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-kgp-500/15 hover:bg-kgp-500/25 text-kgp-300 hover:text-kgp-200 border border-kgp-500/30 font-medium underline decoration-kgp-400/60 underline-offset-2 transition-all"><i class="fas fa-link text-[10px]"></i><span>${safeLabel}</span><i class="fas fa-arrow-up-right-from-square text-[9px] opacity-80"></i></a>`;
+    }
+
+    function formatCommentContent(rawText) {
+      if (!rawText) return '';
+      const links = [];
+      let working = String(rawText);
+
+      working = working.replace(/<a\s+[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi, (_, url, label) => {
+        const cleanLabel = label.replace(/<[^>]+>/g, '').trim() || friendlyUrlLabel(url);
+        const token = `\x00LINK_${links.length}\x00`;
+        links.push(buildAnchorBadge(url, cleanLabel));
+        return token;
+      });
+
+      working = working.replace(/\[([^\]]+)\]\(((?:https?:\/\/|www\.)[^\s)]+)\)/gi, (_, label, url) => {
+        const cleanLabel = label.trim() || friendlyUrlLabel(url);
+        const token = `\x00LINK_${links.length}\x00`;
+        links.push(buildAnchorBadge(url, cleanLabel));
+        return token;
+      });
+
+      working = working.replace(/((?:https?:\/\/|www\.)[^\s<\x00]+)/gi, (match) => {
+        let url = match;
+        let trailing = '';
+        const trailMatch = url.match(/([.,!?;:)]+)$/);
+        if (trailMatch) {
+          trailing = trailMatch[1];
+          url = url.slice(0, -trailing.length);
+        }
+        const token = `\x00LINK_${links.length}\x00`;
+        links.push(buildAnchorBadge(url, friendlyUrlLabel(url)));
+        return token + trailing;
+      });
+
+      let escaped = escapeCommentHtml(working).replace(/\n/g, '<br/>');
+      escaped = escaped.replace(/\x00LINK_(\d+)\x00/g, (_, idx) => links[Number(idx)] || '');
+      return escaped;
+    }
+
+    function insertCommentLink(textareaId) {
+      const textarea = document.getElementById(textareaId);
+      if (!textarea) return;
+      const start = textarea.selectionStart || 0;
+      const end = textarea.selectionEnd || 0;
+      const selectedText = textarea.value.slice(start, end).trim();
+
+      const url = prompt('Enter URL (opens in a new tab):', 'https://');
+      if (!url || url.trim() === '' || url.trim() === 'https://') return;
+
+      const label = prompt('Enter display text for this link:', selectedText || friendlyUrlLabel(url));
+      const finalLabel = (label && label.trim()) ? label.trim() : friendlyUrlLabel(url);
+      const markdownLink = `[${finalLabel}](${normalizeHref(url)})`;
+
+      textarea.value = textarea.value.slice(0, start) + markdownLink + textarea.value.slice(end);
+      textarea.focus();
+    }
+
+    function buildCommentTree(flatComments) {
+      const map = new Map();
+      const roots = [];
+      flatComments.forEach(c => {
+        map.set(c.id, { ...c, replies: [] });
+      });
+      flatComments.forEach(c => {
+        const node = map.get(c.id);
+        if (c.parentId && map.has(c.parentId)) {
+          map.get(c.parentId).replies.push(node);
+        } else {
+          roots.push(node);
+        }
+      });
+      return roots.reverse();
+    }
+
+    function formatRemainingDeleteTime(remainingSec) {
+      const s = Math.max(0, Math.floor(remainingSec));
+      const m = Math.floor(s / 60);
+      const sec = s % 60;
+      return `${m}:${sec < 10 ? '0' : ''}${sec}`;
+    }
+
+    function startProfileCommentDeleteCountdowns() {
+      if (profileCommentDeleteTimer) clearInterval(profileCommentDeleteTimer);
+      profileCommentDeleteTimer = setInterval(() => {
+        const btns = document.querySelectorAll('[data-delete-expires-at]');
+        const now = Date.now();
+        btns.forEach(btn => {
+          const expiresAt = Number(btn.getAttribute('data-delete-expires-at'));
+          const remainingSec = Math.ceil((expiresAt - now) / 1000);
+          const timerSpan = btn.querySelector('.delete-countdown-text');
+          if (remainingSec <= 0) {
+            btn.remove();
+          } else if (timerSpan) {
+            timerSpan.textContent = formatRemainingDeleteTime(remainingSec);
+          }
+        });
+      }, 1000);
+    }
+
+    async function openProfileArticle(idx) {
+      const list = getActiveList();
+      const article = list[idx];
+      if (!article) return;
+      activeModalArticle = article;
+
+      const cachedMe = window.getStoredKgpUser ? window.getStoredKgpUser() : (!isViewingOtherProfile ? profileUser : null);
+      const isUserLoggedIn = Boolean(cachedMe);
+      const colors = topicColors[article.topic] || topicColors['Machine Learning'];
+      const coverBanner = article.coverImage
+        ? `<div class="mb-6 rounded-2xl overflow-hidden border border-white/10"><img src="${article.coverImage}" alt="${escapeCommentHtml(article.title)}" class="w-full max-h-80 object-cover" /></div>`
+        : '';
+      const authorAvatarHtml = article.authorImage
+        ? `<img src="${article.authorImage}" alt="${escapeCommentHtml(article.author)}" class="w-10 h-10 rounded-full object-cover ring-2 ring-transparent group-hover/author:ring-kgp-400 transition-all" />`
+        : `<div class="w-10 h-10 rounded-full bg-gradient-to-br ${article.authorAvatar || 'from-kgp-500 to-accent-violet'} ring-2 ring-transparent group-hover/author:ring-kgp-400 transition-all"></div>`;
+
+      const isLiked = !!article.likedByMe;
+      const isSaved = !!article.savedByMe;
+      const safeAuthorAttr = JSON.stringify(article.author || '').replace(/"/g, '&quot;');
+
+      document.getElementById('articleModalContent').innerHTML = `
+        <div class="mb-4">
+          <span class="px-3 py-1 text-xs font-bold rounded-full ${colors.bg} ${colors.text}">${article.topic}</span>
+          <span class="text-sm text-gray-500 ml-2">${article.readTime} read</span>
+        </div>
+        <h1 class="font-display text-2xl lg:text-3xl font-bold text-white mb-6 leading-tight">${article.title}</h1>
+        <div class="flex items-center gap-3 mb-8 pb-8 border-b border-white/10">
+          <div class="flex items-center gap-3 cursor-pointer group/author" onclick="openAuthorProfileFromModal(${article.userId || 'null'}, ${safeAuthorAttr})" title="View ${escapeCommentHtml(article.author)}'s Profile">
+            ${authorAvatarHtml}
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-semibold text-white group-hover/author:text-kgp-400 group-hover/author:underline transition-colors">${article.author}</span>
+                <span class="px-2 py-0.5 text-[10px] font-medium rounded-full bg-kgp-500/15 text-kgp-300 border border-kgp-500/25 group-hover/author:bg-kgp-500/25 transition-colors">View Profile</span>
+              </div>
+              <div class="text-xs text-gray-500">${article.authorDept || 'KGPian'} • ${article.date}</div>
+            </div>
+          </div>
+          <div class="ml-auto flex items-center gap-4 text-sm text-gray-500">
+            <span id="modalLikeCount"><i class="${isLiked ? 'fas text-rose-500' : 'far'} fa-heart mr-1"></i>${article.likes}</span>
+            <span id="modalCommentCount"><i class="far fa-comment mr-1"></i>${article.comments}</span>
+          </div>
+        </div>
+        ${coverBanner}
+        <div class="prose prose-invert prose-sm max-w-none text-gray-300 leading-relaxed space-y-4">
+          ${article.content}
+        </div>
+
+        <!-- Action Bar: Toggle Like & Toggle Save -->
+        <div class="mt-10 pt-6 border-t border-white/10 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <button id="modalLikeBtn" onclick="likeProfileArticle()"
+              class="inline-flex items-center gap-2 px-4 py-2 text-sm rounded-xl border transition-all ${isLiked ? 'bg-rose-500/20 border-rose-500/40 text-rose-400 font-semibold' : 'bg-white/5 border-white/10 hover:bg-rose-500/15 text-gray-300 hover:text-rose-400'}">
+              <i id="modalLikeIcon" class="${isLiked ? 'fas text-rose-500' : 'far'} fa-heart"></i>
+              <span id="modalLikeLabel">${isLiked ? 'Liked' : 'Like'}</span>
+              (<span id="btnLikeNum">${article.likes}</span>)
+            </button>
+
+            <button id="modalSaveBtn" onclick="saveProfileArticle()"
+              class="inline-flex items-center gap-2 px-4 py-2 text-sm rounded-xl border transition-all ${isSaved ? 'bg-kgp-500/20 border-kgp-500/40 text-kgp-300 font-semibold' : 'bg-white/5 border-white/10 hover:bg-white/10 text-gray-300 hover:text-white'}">
+              <i id="modalSaveIcon" class="${isSaved ? 'fas text-kgp-400' : 'far'} fa-bookmark"></i>
+              <span id="modalSaveLabel">${isSaved ? 'Saved' : 'Save'}</span>
+            </button>
+          </div>
+          <button onclick="navigator.clipboard?.writeText(window.location.origin + '/index.html?articleId=' + ${article.id}); showToast('Article link copied!', 'success')" class="inline-flex items-center gap-2 px-4 py-2 text-sm rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all">
+            <i class="fas fa-share-alt"></i> Share
+          </button>
+        </div>
+
+        <!-- ==================== COMMENTS SECTION ==================== -->
+        <div class="mt-10 pt-8 border-t border-white/10">
+          <h3 class="font-display text-lg font-bold text-white mb-6 flex items-center gap-2">
+            <i class="far fa-comments text-kgp-400"></i>
+            Discussion & Comments (<span id="commentsSectionCount">${article.comments}</span>)
+          </h3>
+
+          ${isUserLoggedIn ? `
+            <form onsubmit="submitProfileComment(event, null)" class="mb-8 p-4 rounded-2xl bg-white/[0.03] border border-white/10">
+              <div class="flex items-center justify-between gap-2 mb-3 text-xs text-gray-400">
+                <span>Commenting as <strong class="text-white">${escapeCommentHtml(cachedMe.full_name)}</strong></span>
+                <button type="button" onclick="insertCommentLink('commentInputText')"
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-kgp-500/15 hover:bg-kgp-500/25 text-kgp-300 text-[11px] font-semibold transition-all"
+                  title="Insert a clickable hyperlink that opens in a new tab">
+                  <i class="fas fa-link text-[10px]"></i> Add Hyperlink
+                </button>
+              </div>
+              <textarea id="commentInputText" rows="3" required placeholder="Share your thoughts, questions, or feedback… (Paste any URL or click 'Add Hyperlink')"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-kgp-500 resize-none mb-3"></textarea>
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] text-gray-500"><i class="fas fa-arrow-up-right-from-square mr-1 text-[10px]"></i>Links automatically open in a new tab</span>
+                <button type="submit" id="submitCommentBtn"
+                  class="px-5 py-2 rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet hover:from-kgp-400 hover:to-violet-500 text-xs font-semibold text-white shadow-lg transition-all">
+                  Post Comment
+                </button>
+              </div>
+            </form>
+          ` : `
+            <div class="mb-8 p-5 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-kgp-500/15 flex items-center justify-center text-kgp-400">
+                  <i class="fas fa-lock text-sm"></i>
+                </div>
+                <div>
+                  <div class="text-sm font-semibold text-white">Log in to like or comment</div>
+                  <div class="text-xs text-gray-400">You can read all articles freely. Sign in to join the KGP discussion!</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <a href="login.html" class="px-4 py-2 text-xs font-semibold text-white rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet hover:from-kgp-400 hover:to-violet-500 shadow-lg transition-all">
+                  Log In
+                </a>
+              </div>
+            </div>
+          `}
+
+          <!-- Comments List -->
+          <div id="articleCommentsList" class="space-y-4">
+            <div class="text-xs text-gray-500 py-4 text-center">Loading comments…</div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('articleModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+
+      document.querySelectorAll('#articleModalContent .prose a').forEach(a => {
+        a.setAttribute('target', '_blank');
+        a.setAttribute('rel', 'noopener noreferrer');
+      });
+
+      enhanceCodeBlocksWithCopy('#articleModalContent');
+
+      await loadProfileArticleComments();
+    }
+
+    function enhanceCodeBlocksWithCopy(containerSelector) {
+      const container = document.querySelector(containerSelector);
+      if (!container) return;
+
+      container.querySelectorAll('pre').forEach((pre) => {
+        if (pre.dataset.copyEnhanced === 'true') return;
+        pre.dataset.copyEnhanced = 'true';
+
+        let codeEl = pre.querySelector('code');
+        let headerDiv = pre.querySelector(':scope > div');
+
+        if (!codeEl) {
+          const rawHtml = pre.innerHTML;
+          pre.innerHTML = '';
+          codeEl = document.createElement('code');
+          codeEl.innerHTML = rawHtml;
+          pre.appendChild(codeEl);
+        }
+
+        if (!headerDiv) {
+          headerDiv = document.createElement('div');
+          headerDiv.className = 'kgp-code-toolbar flex items-center justify-between text-[11px] text-gray-400 pb-2.5 mb-3 border-b border-white/10 font-sans select-none';
+          const langLabel = pre.getAttribute('data-lang') || 'Code';
+          headerDiv.innerHTML = `<span class="inline-flex items-center gap-1.5 font-semibold text-gray-300"><i class="fas fa-terminal text-emerald-400"></i>${langLabel}</span>`;
+          pre.insertBefore(headerDiv, pre.firstChild);
+        } else {
+          headerDiv.classList.add('kgp-code-toolbar', 'select-none');
+          const spans = headerDiv.querySelectorAll('span');
+          if (spans.length > 1) {
+            spans[spans.length - 1].remove();
+          }
+        }
+
+        const copyBtn = document.createElement('button');
+        copyBtn.type = 'button';
+        copyBtn.className = 'kgp-copy-code-btn inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 text-[11px] font-semibold text-gray-200 hover:text-white transition-all cursor-pointer';
+        copyBtn.title = 'Copy code to clipboard';
+        copyBtn.innerHTML = `<i class="far fa-copy text-[11px]"></i><span>Copy</span>`;
+
+        copyBtn.addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          const textToCopy = (codeEl ? codeEl.innerText : pre.innerText).trim();
+          try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              await navigator.clipboard.writeText(textToCopy);
+            } else {
+              const ta = document.createElement('textarea');
+              ta.value = textToCopy;
+              ta.style.position = 'fixed';
+              ta.style.opacity = '0';
+              document.body.appendChild(ta);
+              ta.select();
+              document.execCommand('copy');
+              ta.remove();
+            }
+            copyBtn.innerHTML = `<i class="fas fa-check text-emerald-400 text-[11px]"></i><span class="text-emerald-300">Copied!</span>`;
+            copyBtn.classList.add('border-emerald-500/40', 'bg-emerald-500/15');
+            setTimeout(() => {
+              copyBtn.innerHTML = `<i class="far fa-copy text-[11px]"></i><span>Copy</span>`;
+              copyBtn.classList.remove('border-emerald-500/40', 'bg-emerald-500/15');
+            }, 2000);
+          } catch (err) {}
+        });
+
+        headerDiv.appendChild(copyBtn);
+      });
+    }
+
+    async function loadProfileArticleComments() {
+      const article = activeModalArticle;
+      const listEl = document.getElementById('articleCommentsList');
+      if (!article || !listEl) return;
+
+      try {
+        const res = await fetch(`/api/articles/${article.id}/comments`);
+        const data = await res.json();
+        const comments = data.comments || [];
+        if (comments.length === 0) {
+          listEl.innerHTML = `<p class="text-xs text-gray-500 text-center py-4">No comments yet. Be the first to start the discussion!</p>`;
+          return;
+        }
+        const tree = buildCommentTree(comments);
+        listEl.innerHTML = tree.map(c => renderProfileCommentItem(c, 0)).join('');
+        startProfileCommentDeleteCountdowns();
+      } catch (err) {
+        listEl.innerHTML = `<p class="text-xs text-gray-500 text-center py-4">Unable to load comments.</p>`;
+      }
+    }
+
+    function renderProfileCommentItem(c, depth = 0) {
+      const cachedMe = window.getStoredKgpUser ? window.getStoredKgpUser() : (!isViewingOtherProfile ? profileUser : null);
+      const isUserLoggedIn = Boolean(cachedMe);
+
+      const avatarHtml = c.authorImage
+        ? `<img src="${c.authorImage}" alt="${escapeCommentHtml(c.author)}" class="w-8 h-8 rounded-full object-cover flex-shrink-0" />`
+        : `<div class="w-8 h-8 rounded-full bg-gradient-to-br ${c.authorAvatar || 'from-kgp-500 to-accent-violet'} flex items-center justify-center text-white text-xs font-bold flex-shrink-0">${escapeCommentHtml((c.author || 'U')[0].toUpperCase())}</div>`;
+
+      const repliesHtml = (c.replies && c.replies.length > 0)
+        ? `<div class="mt-3 ml-3 sm:ml-6 pl-3.5 sm:pl-4 border-l-2 border-kgp-500/25 space-y-3">
+             ${c.replies.map(r => renderProfileCommentItem(r, depth + 1)).join('')}
+           </div>`
+        : '';
+
+      const replyTextareaId = `replyInputText_${c.id}`;
+      const replyBoxId = `replyBox_${c.id}`;
+
+      const currentArticle = activeModalArticle;
+      const isArticleOwner = Boolean(
+        isUserLoggedIn &&
+        cachedMe &&
+        (c.isArticleOwner || (currentArticle && currentArticle.userId && Number(currentArticle.userId) === Number(cachedMe.id)))
+      );
+      const isMyComment = Boolean(
+        isUserLoggedIn &&
+        cachedMe &&
+        (c.isOwner || (c.userId && Number(c.userId) === Number(cachedMe.id)))
+      );
+      const elapsedSec = typeof c.elapsedSeconds === 'number' ? c.elapsedSeconds : 999999;
+      const remainingSec = Math.max(0, 600 - elapsedSec);
+      const canStillDeleteOwn = isMyComment && remainingSec > 0;
+      const expiresAtMs = Date.now() + remainingSec * 1000;
+
+      let deleteActionHtml = '';
+      if (isArticleOwner) {
+        deleteActionHtml = `
+          <button type="button" onclick="deleteProfileComment(event, ${c.id})"
+            class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-rose-500/10 hover:bg-rose-500/20 font-medium text-rose-400 hover:text-rose-300 transition-colors cursor-pointer"
+            title="As the author of this article, you can delete any comment at any time">
+            <i class="far fa-trash-alt text-[10px]"></i>
+            <span>Delete</span>
+          </button>
+        `;
+      } else if (canStillDeleteOwn) {
+        deleteActionHtml = `
+          <button type="button" data-delete-expires-at="${expiresAtMs}" onclick="deleteProfileComment(event, ${c.id})"
+            class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-rose-500/10 hover:bg-rose-500/20 font-medium text-rose-400 hover:text-rose-300 transition-colors cursor-pointer"
+            title="You can delete your comment within 10 minutes of posting">
+            <i class="far fa-trash-alt text-[10px]"></i>
+            <span>Delete</span>
+            <span class="text-[10px] px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300 font-mono delete-countdown-text">${formatRemainingDeleteTime(remainingSec)}</span>
+          </button>
+        `;
+      }
+
+      const safeCommentAuthorAttr = JSON.stringify(c.author || '').replace(/"/g, '&quot;');
+
+      return `
+        <div class="comment-thread">
+          <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex gap-3">
+            <div class="cursor-pointer flex-shrink-0" onclick="openAuthorProfileFromModal(${c.userId || 'null'}, ${safeCommentAuthorAttr})" title="View ${escapeCommentHtml(c.author)}'s Profile">
+              ${avatarHtml}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2 mb-1">
+                <div>
+                  <span onclick="openAuthorProfileFromModal(${c.userId || 'null'}, ${safeCommentAuthorAttr})" class="text-xs font-semibold text-white hover:text-kgp-400 hover:underline cursor-pointer transition-colors" title="View ${escapeCommentHtml(c.author)}'s Profile">${escapeCommentHtml(c.author)}</span>
+                  <span class="text-[11px] text-gray-500 ml-1.5">${escapeCommentHtml(c.authorDept || 'KGPian')}</span>
+                </div>
+                <span class="text-[10px] text-gray-600">${escapeCommentHtml(c.date || 'Just now')}</span>
+              </div>
+              <div class="text-xs sm:text-sm text-gray-300 leading-relaxed break-words">${formatCommentContent(c.content)}</div>
+
+              <div class="mt-2.5 flex flex-wrap items-center gap-4 text-[11px] text-gray-500">
+                <button type="button" onclick="toggleProfileReplyBox(${c.id})"
+                  class="inline-flex items-center gap-1.5 font-medium text-gray-400 hover:text-kgp-400 transition-colors">
+                  <i class="fas fa-reply text-[10px]"></i>
+                  <span>Reply</span>
+                </button>
+                ${deleteActionHtml}
+                ${c.replies && c.replies.length > 0 ? `
+                  <span class="text-gray-600">• ${c.replies.length} ${c.replies.length === 1 ? 'reply' : 'replies'}</span>
+                ` : ''}
+              </div>
+
+              <div id="${replyBoxId}" class="hidden mt-3 pt-3 border-t border-white/5">
+                <form onsubmit="submitProfileComment(event, ${c.id})" class="space-y-2.5">
+                  <div class="flex items-center justify-between text-[11px] text-gray-400">
+                    <span>Replying to <strong class="text-white">@${escapeCommentHtml(c.author)}</strong></span>
+                    <button type="button" onclick="insertCommentLink('${replyTextareaId}')"
+                      class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-kgp-500/15 hover:bg-kgp-500/25 text-kgp-300 font-semibold transition-all">
+                      <i class="fas fa-link text-[9px]"></i> Add Hyperlink
+                    </button>
+                  </div>
+                  <textarea id="${replyTextareaId}" rows="2" required placeholder="Write a reply to ${escapeCommentHtml(c.author)}…"
+                    class="w-full px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-kgp-500 resize-none"></textarea>
+                  <div class="flex items-center justify-end gap-2">
+                    <button type="button" onclick="toggleProfileReplyBox(${c.id})"
+                      class="px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+                      Cancel
+                    </button>
+                    <button type="submit" id="submitReplyBtn_${c.id}"
+                      class="px-4 py-1.5 rounded-lg bg-gradient-to-r from-kgp-500 to-accent-violet text-xs font-semibold text-white shadow transition-all">
+                      Post Reply
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          ${repliesHtml}
+        </div>
+      `;
+    }
+
+    function toggleProfileReplyBox(commentId) {
+      const box = document.getElementById(`replyBox_${commentId}`);
+      if (!box) return;
+      box.classList.toggle('hidden');
+      if (!box.classList.contains('hidden')) {
+        const input = document.getElementById(`replyInputText_${commentId}`);
+        if (input) input.focus();
+      }
+    }
+
+    async function submitProfileComment(event, parentId = null) {
+      event.preventDefault();
+      const article = activeModalArticle;
+      if (!article || !article.id) return;
+
+      const inputId = parentId ? `replyInputText_${parentId}` : 'commentInputText';
+      const btnId = parentId ? `submitReplyBtn_${parentId}` : 'submitCommentBtn';
+      const input = document.getElementById(inputId);
+      const btn = document.getElementById(btnId);
+      if (!input) return;
+
+      const content = input.value.trim();
+      if (!content) return;
+
+      const originalLabel = parentId ? 'Post Reply' : 'Post Comment';
+      if (btn) {
+        btn.textContent = 'Posting…';
+        btn.disabled = true;
+      }
+
+      try {
+        const res = await fetch(`/api/articles/${article.id}/comments`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content, parentId }),
+        });
+        const data = await res.json();
+        if (res.ok && data.comment) {
+          article.comments = data.totalComments;
+          article.myLatestComment = content;
+          input.value = '';
+          const countEl = document.getElementById('commentsSectionCount');
+          const modalCountEl = document.getElementById('modalCommentCount');
+          if (countEl) countEl.textContent = article.comments;
+          if (modalCountEl) modalCountEl.innerHTML = `<i class="far fa-comment mr-1"></i>${article.comments}`;
+          await loadProfileArticleComments();
+          loadDashboard();
+        }
+      } catch (err) {}
+
+      if (btn) {
+        btn.textContent = originalLabel;
+        btn.disabled = false;
+      }
+    }
+
+    async function deleteProfileComment(event, commentId) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      const article = activeModalArticle;
+      if (!article || !article.id) return;
+
+      const btn = event && event.currentTarget ? event.currentTarget : null;
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin text-[10px]"></i><span>Deleting…</span>`;
+      }
+
+      try {
+        const res = await fetch(`/api/articles/${article.id}/comments/${commentId}`, {
+          method: 'DELETE',
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showToast(data.error || 'Cannot delete this comment.', 'error');
+          await loadProfileArticleComments();
+          return;
+        }
+        article.comments = data.totalComments;
+        const countEl = document.getElementById('commentsSectionCount');
+        const modalCountEl = document.getElementById('modalCommentCount');
+        if (countEl) countEl.textContent = article.comments;
+        if (modalCountEl) modalCountEl.innerHTML = `<i class="far fa-comment mr-1"></i>${article.comments}`;
+        await loadProfileArticleComments();
+        loadDashboard();
+      } catch (err) {
+        showToast('Network error while deleting comment.', 'error');
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    async function likeProfileArticle() {
+      const article = activeModalArticle;
+      if (!article || !article.id) return;
+      try {
+        const res = await fetch(`/api/articles/${article.id}/like`, { method: 'POST' });
+        const data = await res.json();
+        if (res.ok) {
+          article.likedByMe = data.liked;
+          article.likes = data.likes;
+          const modalSpan = document.getElementById('modalLikeCount');
+          const btnSpan = document.getElementById('btnLikeNum');
+          const btn = document.getElementById('modalLikeBtn');
+          const icon = document.getElementById('modalLikeIcon');
+          const label = document.getElementById('modalLikeLabel');
+          if (modalSpan) modalSpan.innerHTML = `<i class="${article.likedByMe ? 'fas text-rose-500' : 'far'} fa-heart mr-1"></i>${article.likes}`;
+          if (btnSpan) btnSpan.textContent = article.likes;
+          if (icon) icon.className = `${article.likedByMe ? 'fas text-rose-500' : 'far'} fa-heart`;
+          if (label) label.textContent = article.likedByMe ? 'Liked' : 'Like';
+          if (btn) {
+            btn.className = `inline-flex items-center gap-2 px-4 py-2 text-sm rounded-xl border transition-all ${
+              article.likedByMe
+                ? 'bg-rose-500/20 border-rose-500/40 text-rose-400 font-semibold'
+                : 'bg-white/5 border-white/10 hover:bg-rose-500/15 text-gray-300 hover:text-rose-400'
+            }`;
+          }
+          loadDashboard();
+        }
+      } catch (err) {}
+    }
+
+    async function saveProfileArticle() {
+      const article = activeModalArticle;
+      if (!article || !article.id) return;
+      try {
+        const res = await fetch(`/api/articles/${article.id}/save`, { method: 'POST' });
+        const data = await res.json();
+        if (res.ok) {
+          article.savedByMe = data.saved;
+          const btn = document.getElementById('modalSaveBtn');
+          const icon = document.getElementById('modalSaveIcon');
+          const label = document.getElementById('modalSaveLabel');
+          if (icon) icon.className = `${article.savedByMe ? 'fas text-kgp-400' : 'far'} fa-bookmark`;
+          if (label) label.textContent = article.savedByMe ? 'Saved' : 'Save';
+          if (btn) {
+            btn.className = `inline-flex items-center gap-2 px-4 py-2 text-sm rounded-xl border transition-all ${
+              article.savedByMe
+                ? 'bg-kgp-500/20 border-kgp-500/40 text-kgp-300 font-semibold'
+                : 'bg-white/5 border-white/10 hover:bg-white/10 text-gray-300 hover:text-white'
+            }`;
+          }
+          loadDashboard();
+        }
+      } catch (err) {}
+    }
+
+    let isProfileArticleFull = false;
+
+    function toggleProfileArticleFullscreen() {
+      isProfileArticleFull = !isProfileArticleFull;
+      const modal = document.getElementById('articleModal');
+      const container = document.getElementById('profileArticleContainer');
+      const icon = document.getElementById('profileFullscreenIcon');
+      const label = document.getElementById('profileFullscreenLabel');
+      if (!modal || !container) return;
+
+      if (isProfileArticleFull) {
+        modal.classList.remove('p-4', 'sm:p-6');
+        modal.classList.add('p-0');
+        container.classList.remove('max-w-3xl', 'rounded-3xl', 'max-h-[88vh]');
+        container.classList.add('w-screen', 'h-screen', 'max-w-none', 'max-h-none', 'rounded-none');
+        if (icon) icon.className = 'fas fa-compress-alt text-[11px]';
+        if (label) label.textContent = 'Exit Full Screen';
+      } else {
+        modal.classList.remove('p-0');
+        modal.classList.add('p-4', 'sm:p-6');
+        container.classList.remove('w-screen', 'h-screen', 'max-w-none', 'max-h-none', 'rounded-none');
+        container.classList.add('max-w-3xl', 'rounded-3xl', 'max-h-[88vh]');
+        if (icon) icon.className = 'fas fa-expand-alt text-[11px]';
+        if (label) label.textContent = 'Full Screen';
+      }
+    }
+
+    function closeArticleModal() {
+      if (isProfileArticleFull) toggleProfileArticleFullscreen();
+      document.getElementById('articleModal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    // ===== Permanent Account Deletion =====
+    function openDeleteAccountModal() {
+      if (!profileUser || isViewingOtherProfile) return;
+      const label = document.getElementById('deleteAccountEmailLabel');
+      if (label) label.textContent = profileUser.email || profileUser.full_name || '';
+      document.getElementById('deleteAccountModal').classList.remove('hidden');
+    }
+
+    function closeDeleteAccountModal() {
+      document.getElementById('deleteAccountModal').classList.add('hidden');
+    }
+
+    async function confirmPermanentAccountDeletion() {
+      const btn = document.getElementById('confirmDeleteAccountBtn');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1.5"></i>Deleting…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/auth/account', { method: 'DELETE', cache: 'no-store' });
+        const data = await res.json();
+        if (!res.ok) {
+          showToast(data.error || 'Failed to delete account.', 'error');
+          btn.innerHTML = '<i class="fas fa-trash-alt mr-1.5"></i>Yes, Delete Permanently';
+          btn.disabled = false;
+          return;
+        }
+
+        if (window.setStoredKgpUser) window.setStoredKgpUser(null);
+        localStorage.removeItem('kgp-user');
+        localStorage.removeItem('kgp_user');
+        closeDeleteAccountModal();
+        showToast('Your account has been permanently deleted.', 'success');
+        setTimeout(() => window.location.replace('index.html'), 1200);
+      } catch (err) {
+        showToast('Network error while deleting account.', 'error');
+        btn.innerHTML = '<i class="fas fa-trash-alt mr-1.5"></i>Yes, Delete Permanently';
+        btn.disabled = false;
+      }
+    }
+
+    async function logoutUser() {
+      try {
+        await fetch('/api/auth/logout', { method: 'POST', cache: 'no-store' });
+      } catch (e) {}
+      if (window.setStoredKgpUser) window.setStoredKgpUser(null);
+      localStorage.removeItem('kgp-user');
+      localStorage.removeItem('kgp_user');
+      window.location.replace('index.html');
+    }
+
+    // Re-check auth when user presses browser Back button (bfcache)
+    window.addEventListener('pageshow', () => {
+      loadDashboard();
+    });
+
+    function showToast(msg, type = 'success') {
+      document.querySelectorAll('.toast-alert').forEach(e => e.remove());
+      const toast = document.createElement('div');
+      const bg = type === 'success' ? 'bg-emerald-500/95' : 'bg-rose-500/95';
+      toast.className = `toast-alert fixed top-5 right-5 z-[120] px-5 py-3 rounded-xl ${bg} text-white text-sm font-medium shadow-xl flex items-center gap-2`;
+      toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>${msg}`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3500);
+    }
+
+    // ===== Dark / Light Mode Toggle =====
+    function applyTheme(theme) {
+      const isLight = theme === 'light';
+      document.body.classList.toggle('light-mode', isLight);
+      const icon = document.getElementById('themeIcon');
+      if (icon) {
+        icon.className = isLight ? 'fas fa-moon text-indigo-600 text-sm' : 'fas fa-sun text-amber-400 text-sm';
+      }
+    }
+    function toggleTheme() {
+      const nextTheme = document.body.classList.contains('light-mode') ? 'dark' : 'light';
+      localStorage.setItem('kgp-theme', nextTheme);
+      applyTheme(nextTheme);
+    }
+    applyTheme(localStorage.getItem('kgp-theme') || 'dark');
+
+    loadDashboard();
+  </script>
+
+</body>
+</html>

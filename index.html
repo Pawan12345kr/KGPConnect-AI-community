@@ -1,0 +1,2454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KGPConnect — IIT Kharagpur AI Community</title>
+  <script src="auth-client.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            kgp: {
+              50:  '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              300: '#93c5fd',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#1d4ed8',
+              700: '#1e3a8a',
+              800: '#1e2d5f',
+              900: '#0f172a',
+            },
+            accent: {
+              orange: '#f97316',
+              emerald: '#10b981',
+              violet: '#8b5cf6',
+              rose: '#f43f5e',
+              amber: '#f59e0b',
+              cyan: '#06b6d4',
+              pink: '#ec4899',
+              lime: '#84cc16',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, #60a5fa, #8b5cf6, #f43f5e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Glass morphism */
+    .glass {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-light {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* Animated gradient border */
+    .glow-border {
+      position: relative;
+    }
+    .glow-border::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6, #f43f5e, #3b82f6);
+      background-size: 300% 300%;
+      animation: borderGlow 4s ease infinite;
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .glow-border:hover::before {
+      opacity: 1;
+    }
+
+    @keyframes borderGlow {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    /* Floating animation */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    .float { animation: float 6s ease-in-out infinite; }
+    .float-delay { animation: float 6s ease-in-out 2s infinite; }
+    .float-delay-2 { animation: float 6s ease-in-out 4s infinite; }
+
+    /* Pulse glow */
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.1); }
+      50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.2); }
+    }
+
+    /* Topic card hover */
+    .topic-card {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .topic-card:hover {
+      transform: translateY(-8px) scale(1.02);
+    }
+
+    /* Article card */
+    .article-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .article-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Hero background pattern */
+    .hero-pattern {
+      background-image: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+                         radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                         radial-gradient(circle at 40% 80%, rgba(244, 63, 94, 0.06) 0%, transparent 50%);
+    }
+
+    /* Navbar scroll effect */
+    .navbar-scrolled {
+      background: rgba(15, 23, 42, 0.95) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Tag pill */
+    .tag-pill {
+      transition: all 0.2s ease;
+    }
+    .tag-pill:hover {
+      transform: scale(1.05);
+      filter: brightness(1.2);
+    }
+
+    /* Read more link */
+    .read-more::after {
+      content: ' →';
+      transition: transform 0.2s ease;
+      display: inline-block;
+    }
+    .read-more:hover::after {
+      transform: translateX(4px);
+    }
+
+    /* Mobile menu */
+    .mobile-menu {
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .mobile-menu.open {
+      transform: translateX(0);
+    }
+
+    /* Fade in animation */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Grid pattern overlay */
+    .grid-pattern {
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* ==================== ARTICLE CODE BLOCKS & RICH CONTENT ==================== */
+    #articleModalContent pre,
+    #articleModalContent pre.kgp-code-block {
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+      font-size: 0.875rem !important;
+      line-height: 1.7 !important;
+      background-color: #1e293b !important;
+      border: 1px solid rgba(96, 165, 250, 0.4) !important;
+      border-radius: 14px !important;
+      padding: 1.15rem 1.25rem !important;
+      margin: 1.25rem 0 !important;
+      overflow-x: auto !important;
+      color: #f8fafc !important;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important;
+      white-space: pre !important;
+    }
+    #articleModalContent pre code {
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+      color: #6ee7b7 !important;
+      font-size: inherit !important;
+      font-family: inherit !important;
+    }
+    #articleModalContent :not(pre) > code,
+    #articleModalContent code.inline-code {
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+      font-size: 0.875em !important;
+      font-weight: 600 !important;
+      background-color: rgba(59, 130, 246, 0.22) !important;
+      color: #93c5fd !important;
+      border: 1px solid rgba(96, 165, 250, 0.4) !important;
+      padding: 0.15rem 0.45rem !important;
+      border-radius: 6px !important;
+    }
+    #articleModalContent h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-top: 1.75rem;
+      margin-bottom: 0.75rem;
+    }
+    #articleModalContent h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    #articleModalContent blockquote {
+      border-left: 4px solid #8b5cf6;
+      padding: 0.75rem 1.25rem;
+      margin: 1.25rem 0;
+      font-style: italic;
+      color: #e2e8f0;
+      background: rgba(139, 92, 246, 0.12);
+      border-radius: 0 12px 12px 0;
+    }
+    #articleModalContent ul { list-style-type: disc; padding-left: 1.5rem; }
+    #articleModalContent ol { list-style-type: decimal; padding-left: 1.5rem; }
+
+    /* Light Mode code block & inline code overrides */
+    body.light-mode #articleModalContent pre,
+    body.light-mode #articleModalContent pre.kgp-code-block {
+      background-color: #f1f5f9 !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #0f172a !important;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06) !important;
+    }
+    body.light-mode #articleModalContent pre code {
+      color: #047857 !important;
+    }
+    body.light-mode #articleModalContent .kgp-copy-code-btn {
+      background-color: #ffffff !important;
+      color: #1e293b !important;
+      border-color: #cbd5e1 !important;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+    }
+    body.light-mode #articleModalContent .kgp-copy-code-btn:hover {
+      background-color: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    body.light-mode #articleModalContent :not(pre) > code,
+    body.light-mode #articleModalContent code.inline-code {
+      background-color: #e2e8f0 !important;
+      color: #be185d !important;
+      border: 1px solid #cbd5e1 !important;
+    }
+    body.light-mode #articleModalContent h2,
+    body.light-mode #articleModalContent h3 {
+      color: #0f172a !important;
+    }
+    body.light-mode #articleModalContent blockquote {
+      color: #334155 !important;
+      background: rgba(139, 92, 246, 0.08) !important;
+    }
+
+    /* ==================== DARK & LIGHT MODE VISIBILITY ==================== */
+    /* Dark Mode contrast enhancements */
+    body:not(.light-mode) .text-gray-500 {
+      color: #94a3b8 !important;
+    }
+    body:not(.light-mode) .text-gray-600 {
+      color: #64748b !important;
+    }
+    body:not(.light-mode) .bg-white\/\[0\.02\],
+    body:not(.light-mode) .bg-white\/\[0\.03\] {
+      background-color: rgba(30, 41, 59, 0.55) !important;
+      border-color: rgba(148, 163, 184, 0.16) !important;
+    }
+
+    /* Light Mode overrides */
+    body.light-mode {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+    }
+    body.light-mode .glass {
+      background: rgba(255, 255, 255, 0.96) !important;
+      border: 1px solid rgba(15, 23, 42, 0.12) !important;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08) !important;
+    }
+    body.light-mode .glass-light {
+      background: #ffffff !important;
+      border: 1px solid rgba(15, 23, 42, 0.1) !important;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05) !important;
+    }
+    body.light-mode .navbar-scrolled {
+      background: rgba(255, 255, 255, 0.95) !important;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+    }
+    body.light-mode .grid-pattern {
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+    }
+    body.light-mode .text-white {
+      color: #0f172a !important;
+    }
+    body.light-mode .text-gray-200,
+    body.light-mode .text-gray-300 {
+      color: #1e293b !important;
+    }
+    body.light-mode .text-gray-400 {
+      color: #334155 !important;
+    }
+    body.light-mode .text-gray-500,
+    body.light-mode .text-gray-600 {
+      color: #475569 !important;
+    }
+    body.light-mode .border-white\/5,
+    body.light-mode .border-white\/10,
+    body.light-mode .border-white\/15 {
+      border-color: rgba(15, 23, 42, 0.14) !important;
+    }
+    body.light-mode .bg-white\/5,
+    body.light-mode .bg-white\/10,
+    body.light-mode .bg-white\/\[0\.02\],
+    body.light-mode .bg-white\/\[0\.03\] {
+      background-color: #f1f5f9 !important;
+    }
+    body.light-mode input,
+    body.light-mode textarea {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      border-color: rgba(15, 23, 42, 0.2) !important;
+    }
+    body.light-mode input::placeholder,
+    body.light-mode textarea::placeholder {
+      color: #64748b !important;
+    }
+    /* High-contrast badge & accent colors in Light Mode */
+    body.light-mode .text-amber-300,
+    body.light-mode .text-amber-400,
+    body.light-mode .text-accent-amber {
+      color: #b45309 !important;
+    }
+    body.light-mode .text-kgp-300,
+    body.light-mode .text-kgp-200,
+    body.light-mode .text-blue-400 {
+      color: #1d4ed8 !important;
+    }
+    body.light-mode .text-violet-300,
+    body.light-mode .text-accent-violet {
+      color: #6d28d9 !important;
+    }
+    body.light-mode .text-emerald-300,
+    body.light-mode .text-accent-emerald {
+      color: #047857 !important;
+    }
+    body.light-mode .text-accent-cyan,
+    body.light-mode .text-cyan-400 {
+      color: #0e7490 !important;
+    }
+    body.light-mode .text-accent-rose,
+    body.light-mode .text-rose-400,
+    body.light-mode .text-rose-300 {
+      color: #be123c !important;
+    }
+    /* Fix CTA Section background in Light Mode */
+    body.light-mode .via-kgp-900 {
+      background: linear-gradient(135deg, rgba(219, 234, 254, 0.7), #f8fafc, rgba(237, 233, 254, 0.7)) !important;
+    }
+    body.light-mode footer {
+      background-color: #f1f5f9 !important;
+      border-top-color: rgba(15, 23, 42, 0.1) !important;
+    }
+    body.light-mode #mobileMenu {
+      background-color: rgba(255, 255, 255, 0.98) !important;
+    }
+    /* Keep white text on colorful gradients, dark card banners & solid buttons */
+    body.light-mode .bg-gradient-to-r.text-white,
+    body.light-mode .bg-gradient-to-r .text-white,
+    body.light-mode .bg-gradient-to-br.text-white,
+    body.light-mode .bg-gradient-to-br .text-white,
+    body.light-mode .bg-kgp-500.text-white,
+    body.light-mode .bg-black\/50.text-gray-200,
+    body.light-mode span.bg-accent-rose\/90 {
+      color: #ffffff !important;
+    }
+    /* Keep topic badge on dark article card banner readable */
+    body.light-mode .from-kgp-800 .tag-pill {
+      background-color: rgba(15, 23, 42, 0.75) !important;
+      color: #f8fafc !important;
+    }
+  </style>
+</head>
+
+<body class="bg-kgp-900 text-gray-100 min-h-screen">
+
+  <!-- ==================== NAVBAR ==================== -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 lg:h-20">
+        
+        <!-- Logo -->
+        <a href="#" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-kgp-500 to-accent-violet flex items-center justify-center shadow-lg shadow-kgp-500/20 group-hover:shadow-kgp-500/40 transition-shadow">
+            <span class="text-white font-display font-bold text-lg">K</span>
+          </div>
+          <div>
+            <span class="font-display font-bold text-xl text-white tracking-tight">KGP</span><span class="font-display font-bold text-xl gradient-text tracking-tight">Connect</span>
+            <p class="text-[10px] text-gray-500 -mt-1 tracking-widest uppercase">IIT KGP AI Community</p>
+          </div>
+        </a>
+
+        <!-- Desktop Nav Links -->
+        <div class="hidden lg:flex items-center gap-1">
+          <a href="#home" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white rounded-lg hover:bg-white/5 transition-all">Home</a>
+          <a href="#topics" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white rounded-lg hover:bg-white/5 transition-all">Topics</a>
+          <a href="#articles" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white rounded-lg hover:bg-white/5 transition-all">Articles</a>
+          <a href="#articles" onclick="filterByTopic('Read Stories')" class="px-4 py-2 text-sm font-medium text-amber-300 hover:text-amber-200 rounded-lg hover:bg-amber-500/10 transition-all flex items-center gap-1.5">
+            <i class="fas fa-book-open text-xs"></i>
+            <span>Read Stories</span>
+          </a>
+          <a href="#" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white rounded-lg hover:bg-white/5 transition-all">Community</a>
+          <a href="#" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white rounded-lg hover:bg-white/5 transition-all">Events</a>
+        </div>
+
+        <!-- Desktop Right Controls (Theme Toggle + Auth) -->
+        <div class="hidden lg:flex items-center gap-3">
+          <!-- Dark / Light Mode Toggle -->
+          <button id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Dark/Light Mode"
+            class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-gray-300 hover:text-white transition-all">
+            <i id="themeIcon" class="fas fa-sun text-amber-400 text-sm"></i>
+          </button>
+
+          <!-- Desktop Auth Buttons -->
+          <div id="desktopAuthArea" class="flex items-center gap-3">
+            <a href="login.html" class="px-5 py-2 text-sm font-medium text-gray-300 hover:text-white rounded-xl hover:bg-white/5 transition-all border border-transparent hover:border-white/10">
+              Log In
+            </a>
+            <a href="signup.html" class="px-5 py-2.5 text-sm font-semibold text-white rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet hover:from-kgp-400 hover:to-violet-500 transition-all shadow-lg shadow-kgp-500/25 hover:shadow-kgp-500/40 hover:-translate-y-0.5">
+              Sign Up
+            </a>
+          </div>
+        </div>
+
+        <!-- Mobile Controls (Theme Toggle + Hamburger) -->
+        <div class="flex items-center gap-2 lg:hidden">
+          <button onclick="toggleTheme()" title="Toggle Dark/Light Mode"
+            class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-gray-300 hover:text-white transition-all">
+            <i id="themeIconMobile" class="fas fa-sun text-amber-400 text-sm"></i>
+          </button>
+          <button id="menuBtn" class="p-2 text-gray-400 hover:text-white" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu fixed top-0 right-0 w-72 h-full bg-kgp-900/98 backdrop-blur-xl border-l border-white/5 lg:hidden z-50">
+      <div class="p-6">
+        <button class="absolute top-5 right-5 text-gray-400 hover:text-white" onclick="toggleMobileMenu()">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+        <div class="mt-12 flex flex-col gap-2">
+          <a href="#home" class="px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all" onclick="toggleMobileMenu()">Home</a>
+          <a href="#topics" class="px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all" onclick="toggleMobileMenu()">Topics</a>
+          <a href="#articles" class="px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all" onclick="toggleMobileMenu()">Articles</a>
+          <a href="#articles" class="px-4 py-3 text-amber-300 hover:text-white hover:bg-amber-500/10 rounded-xl transition-all flex items-center gap-2" onclick="toggleMobileMenu(); filterByTopic('Read Stories')">
+            <i class="fas fa-book-open text-xs"></i> Read Stories
+          </a>
+          <a href="#" class="px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all">Community</a>
+          <a href="#" class="px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all">Events</a>
+          <hr class="border-white/5 my-4">
+          <div id="mobileAuthArea" class="flex flex-col gap-2">
+            <a href="login.html" class="px-4 py-3 text-sm font-medium text-gray-300 hover:text-white rounded-xl hover:bg-white/5 transition-all text-left block">Log In</a>
+            <a href="signup.html" class="px-4 py-3 text-sm font-semibold text-white rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet text-center block">Sign Up</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile overlay -->
+  <div id="menuOverlay" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden" onclick="toggleMobileMenu()"></div>
+
+
+  <!-- ==================== HERO SECTION ==================== -->
+  <section id="home" class="relative min-h-screen flex items-center hero-pattern grid-pattern overflow-hidden">
+    
+    <!-- Decorative elements -->
+    <div class="absolute top-20 left-10 w-72 h-72 bg-kgp-500/10 rounded-full blur-3xl float"></div>
+    <div class="absolute bottom-20 right-10 w-96 h-96 bg-accent-violet/10 rounded-full blur-3xl float-delay"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent-rose/5 rounded-full blur-3xl float-delay-2"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 relative z-10">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        
+        <!-- Left: Text -->
+        <div class="fade-in">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-kgp-500/30 bg-kgp-500/10 mb-6">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="text-xs font-medium text-kgp-300">IIT Kharagpur's AI & ML Community • 1,200+ Builders & Researchers</span>
+          </div>
+          
+          <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+            Where <span class="gradient-text">KGPians</span> decode,
+            <br />build & pioneer <span class="gradient-text">AI</span> together
+          </h1>
+          
+          <p class="text-lg text-gray-400 leading-relaxed mb-8 max-w-lg">
+            The student-driven Artificial Intelligence & Machine Learning hub of IIT Kharagpur. Explore deep-dive paper breakdowns, LLM & Agentic AI architectures, campus research, and inspiring journeys from fellow KGPians.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-4 mb-10">
+            <a href="#articles" class="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold text-white rounded-2xl bg-gradient-to-r from-kgp-500 to-accent-violet hover:from-kgp-400 hover:to-violet-500 transition-all shadow-lg shadow-kgp-500/25 hover:shadow-kgp-500/40 hover:-translate-y-0.5">
+              <i class="fas fa-microchip"></i>
+              Explore AI Articles
+            </a>
+            <button onclick="handleStartWriting()" class="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold text-gray-300 hover:text-white rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all">
+              <i class="fas fa-pen-fancy"></i>
+              Publish Your Work
+            </button>
+          </div>
+
+          <!-- Stats -->
+          <div class="flex items-center gap-8">
+            <div>
+              <div class="text-2xl font-display font-bold text-white">500+</div>
+              <div class="text-xs text-gray-500 mt-0.5">AI Articles & Guides</div>
+            </div>
+            <div class="w-px h-10 bg-white/10"></div>
+            <div>
+              <div class="text-2xl font-display font-bold text-white">9+</div>
+              <div class="text-xs text-gray-500 mt-0.5">Core AI Domains</div>
+            </div>
+            <div class="w-px h-10 bg-white/10"></div>
+            <div>
+              <div class="text-2xl font-display font-bold text-white">1.2K</div>
+              <div class="text-xs text-gray-500 mt-0.5">KGP AI Builders</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Floating cards illustration -->
+        <div class="hidden lg:block relative fade-in" style="transition-delay: 0.2s;">
+          <div class="relative w-full h-[500px]">
+            
+            <!-- Card 1 -->
+            <div class="absolute top-4 left-8 w-72 glass rounded-2xl p-5 shadow-2xl float">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-accent-orange to-accent-rose"></div>
+                <div>
+                  <div class="text-sm font-semibold text-white">Arjun Mehta</div>
+                  <div class="text-xs text-gray-500">CSE '27</div>
+                </div>
+              </div>
+              <div class="text-sm text-gray-300 leading-relaxed">Exploring the frontiers of transformer architectures for low-resource NLP…</div>
+              <div class="flex items-center gap-2 mt-3">
+                <span class="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-accent-violet/20 text-accent-violet">LLM</span>
+                <span class="text-xs text-gray-600 ml-auto"><i class="far fa-heart mr-1"></i>42</span>
+              </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="absolute top-36 right-4 w-64 glass rounded-2xl p-5 shadow-2xl float-delay">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-accent-emerald to-accent-cyan"></div>
+                <div>
+                  <div class="text-sm font-semibold text-white">Priya Sharma</div>
+                  <div class="text-xs text-gray-500">EE '26</div>
+                </div>
+              </div>
+              <div class="text-sm text-gray-300 leading-relaxed">Building real-time object detection for autonomous drones…</div>
+              <div class="flex items-center gap-2 mt-3">
+                <span class="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-accent-cyan/20 text-accent-cyan">CV</span>
+              </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="absolute bottom-12 left-16 w-60 glass rounded-2xl p-5 shadow-2xl float-delay-2">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-kgp-400 to-kgp-600"></div>
+                <div>
+                  <div class="text-sm font-semibold text-white">Rahul Das</div>
+                  <div class="text-xs text-gray-500">MA '28</div>
+                </div>
+              </div>
+              <div class="text-sm text-gray-300 leading-relaxed">Scaling data pipelines with Apache Spark and Delta Lake…</div>
+              <div class="flex items-center gap-2 mt-3">
+                <span class="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-accent-amber/20 text-accent-amber">Data Eng</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
+      <span class="text-xs text-gray-600">Scroll</span>
+      <i class="fas fa-chevron-down text-gray-600"></i>
+    </div>
+  </section>
+
+
+  <!-- ==================== TOPICS SECTION ==================== -->
+  <section id="topics" class="relative py-24 overflow-hidden">
+    <div class="absolute inset-0 hero-pattern"></div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      
+      <!-- Section Header -->
+      <div class="text-center mb-16 fade-in">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-accent-violet/30 bg-accent-violet/10 mb-4">
+          <i class="fas fa-layer-group text-xs text-accent-violet"></i>
+          <span class="text-xs font-medium text-violet-300">Explore AI Domains</span>
+        </div>
+        <h2 class="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
+          Dive into the frontiers of AI
+        </h2>
+        <p class="text-gray-400 max-w-xl mx-auto">
+          From Large Language Models, Autonomous Agents, and Computer Vision to GPU Systems & inspiring KGPian journeys — explore every pillar of modern AI with fellow KGPians.
+        </p>
+      </div>
+
+      <!-- Topics Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4 lg:gap-5 fade-in" id="topicsGrid">
+
+        <!-- Read Stories (Inspiring Stories & Personal Experiences) -->
+        <div data-category="Read Stories" class="topic-card glass-light rounded-2xl p-6 cursor-pointer group border border-amber-500/30 relative overflow-hidden" onclick="filterByTopic('Read Stories')">
+          <div class="absolute top-3 right-3">
+            <span class="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">✨ Inspiring</span>
+          </div>
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/25 to-rose-500/25 flex items-center justify-center mb-4 group-hover:shadow-lg group-hover:shadow-amber-500/20 transition-shadow">
+            <i class="fas fa-book-open text-xl text-amber-400"></i>
+          </div>
+          <h3 class="font-display font-semibold text-white mb-1">Read Stories</h3>
+          <p class="text-xs text-gray-400 mb-3">Inspiring AI journeys & personal KGP experiences</p>
+          <button type="button" onclick="event.stopPropagation(); handleStartWriting('Read Stories')"
+            class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-amber-400 hover:text-amber-300 transition-colors">
+            <i class="fas fa-pen-nib text-[10px]"></i> Share your story →
+          </button>
+        </div>
+        
+        <!-- ML -->
+        <div data-category="Machine Learning" class="topic-card glass-light rounded-2xl p-6 cursor-pointer group" onclick="filterByTopic('Machine Learning')">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center mb-4 group-hover:shadow-lg group-hover:shadow-blue-500/20 transition-shadow">
+            <i class="fas fa-brain text-xl text-blue-400"></i>
+          </div>
+          <h3 class="font-display font-semibold text-white mb-1">Machine Learning</h3>
+          <p class="text-xs text-gray-500 topic-count" data-count-for="Machine Learning">View articles →</p>
+        </div>
+
+        <!-- Computer Vision -->
+        <div data-category="Computer Vision" class="topic-card glass-light rounded-2xl p-6 cursor-pointer group" onclick="filterByTopic('Computer Vision')">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-cyan-600/20 flex items-center justify-center mb-4 group-hover:shadow-lg group-hover:shadow-cyan-500/20 transition-shadow">
+            <i class="fas fa-eye text-xl text-cyan-400"></i>
+          </div>
+          <h3 class="font-display font-semibold text-white mb-1">Computer Vision</h3>
+          <p class="text-xs text-gray-500 topic-count" data-count-for="Computer Vision">View articles →</p>
+        </div>
+
+        <!-- LLM -->
+        <div data-category="LLM" class="topic-card glass-light rounded-2xl p-6 cursor-pointer group" onclick="filterByTopic('LLM')">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500/20 to-violet-600/20 flex items-center justify-center mb-4 group-hover:shadow-lg group-hover:shadow-violet-500/20 transition-shadow">
+            <i class="fas fa-comments text-xl text-violet-400"></i>
+          </div>
+          <h3 class="font-display font-semibold text-white mb-1">LLM</h3>
+          <p class="text-xs text-gray-500 topic-count" data-count-for="LLM">View articles →</p>
+        </div>
+
+        <!-- Data Engineering -->
+        <div data-category="Data Engineering" class="topic-card glass-light rounded-2xl p-6 cursor-pointer group" onclick="filterByTopic('Data Engineering')">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-600/20 flex items-center justify-center mb-4 group-hover:shadow-lg group-hover:shadow-amber-500/20 transition-shadow">
+            <i class="fas fa-database text-xl text-amber-400"></i>
+          </div>
+          <h3 class="font-display font-semibold text-white mb-1">Data Engineering</h3>
+          <p class="text-xs text-gray-500 topic-count" data-count-for="Data Engineering">View articles →</p>
+        </div>
+
+        <!-- Agentic AI -->
+        <div data-category="Agentic AI" class="topic-card glass-light rounded-2xl p-6 cursor-pointer group" onclick="filterByTopic('Agentic AI')">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-500/20 to-rose-600/20 flex items-center justify-center mb-4 group-hover:shadow-lg group-hover:shadow-rose-500/20 transition-shadow">
+            <i class="fas fa-robot text-xl text-rose-400"></i>
+          </div>
+          <h3 class="font-display font-semibold text-white mb-1">Agentic AI</h3>
+          <p class="text-xs text-gray-500 topic-count" data-count-for="Agentic AI">View articles →</p>
+        </div>
+
+        <!-- Deep Learning -->
+        <div data-category="Deep Learning" class="topic-card glass-light rounded-2xl p-6 cursor-pointer group" onclick="filterByTopic('Deep Learning')">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 flex items-center justify-center mb-4 group-hover:shadow-lg group-hover:shadow-emerald-500/20 transition-shadow">
+            <i class="fas fa-network-wired text-xl text-emerald-400"></i>
+          </div>
+          <h3 class="font-display font-semibold text-white mb-1">Deep Learning</h3>
+          <p class="text-xs text-gray-500 topic-count" data-count-for="Deep Learning">View articles →</p>
+        </div>
+
+        <!-- Systems & Infra -->
+        <div data-category="Systems" class="topic-card glass-light rounded-2xl p-6 cursor-pointer group" onclick="filterByTopic('Systems')">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-600/20 flex items-center justify-center mb-4 group-hover:shadow-lg group-hover:shadow-orange-500/20 transition-shadow">
+            <i class="fas fa-server text-xl text-orange-400"></i>
+          </div>
+          <h3 class="font-display font-semibold text-white mb-1">Systems & Infra</h3>
+          <p class="text-xs text-gray-500 topic-count" data-count-for="Systems">View articles →</p>
+        </div>
+
+        <!-- Reinforcement Learning -->
+        <div data-category="RL" class="topic-card glass-light rounded-2xl p-6 cursor-pointer group" onclick="filterByTopic('RL')">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500/20 to-pink-600/20 flex items-center justify-center mb-4 group-hover:shadow-lg group-hover:shadow-pink-500/20 transition-shadow">
+            <i class="fas fa-gamepad text-xl text-pink-400"></i>
+          </div>
+          <h3 class="font-display font-semibold text-white mb-1">Reinforcement Learning</h3>
+          <p class="text-xs text-gray-500 topic-count" data-count-for="RL">View articles →</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==================== RECENT ARTICLES SECTION ==================== -->
+  <section id="articles" class="relative py-24">
+    <div class="absolute inset-0 hero-pattern"></div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      
+      <!-- Section Header -->
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-12 fade-in">
+        <div>
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-accent-emerald/30 bg-accent-emerald/10 mb-4">
+            <i id="articlesBadgeIcon" class="fas fa-fire text-xs text-accent-emerald"></i>
+            <span id="articlesBadgeText" class="text-xs font-medium text-emerald-300">Recent Articles • All Categories</span>
+          </div>
+          <h2 id="articlesSectionTitle" class="font-display text-3xl sm:text-4xl font-bold text-white mb-2">
+            Recent Articles
+          </h2>
+          <p id="articlesSectionSubtitle" class="text-gray-400">Featured recent articles across all AI categories by KGPians</p>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="flex items-center gap-2 mt-6 sm:mt-0 overflow-x-auto pb-2" id="filterTabs">
+          <button class="filter-tab active px-4 py-2 text-xs font-semibold rounded-full bg-white/10 text-white whitespace-nowrap transition-all hover:bg-white/15" onclick="filterArticles('all', this)">Recent (All)</button>
+          <button class="filter-tab px-4 py-2 text-xs font-medium rounded-full text-amber-300 whitespace-nowrap transition-all hover:bg-amber-500/15 border border-amber-500/20" onclick="filterArticles('Read Stories', this)">✨ Read Stories</button>
+          <button class="filter-tab px-4 py-2 text-xs font-medium rounded-full text-gray-400 whitespace-nowrap transition-all hover:bg-white/5 hover:text-gray-300" onclick="filterArticles('Machine Learning', this)">ML</button>
+          <button class="filter-tab px-4 py-2 text-xs font-medium rounded-full text-gray-400 whitespace-nowrap transition-all hover:bg-white/5 hover:text-gray-300" onclick="filterArticles('LLM', this)">LLM</button>
+          <button class="filter-tab px-4 py-2 text-xs font-medium rounded-full text-gray-400 whitespace-nowrap transition-all hover:bg-white/5 hover:text-gray-300" onclick="filterArticles('Computer Vision', this)">CV</button>
+          <button class="filter-tab px-4 py-2 text-xs font-medium rounded-full text-gray-400 whitespace-nowrap transition-all hover:bg-white/5 hover:text-gray-300" onclick="filterArticles('Data Engineering', this)">Data Eng</button>
+          <button class="filter-tab px-4 py-2 text-xs font-medium rounded-full text-gray-400 whitespace-nowrap transition-all hover:bg-white/5 hover:text-gray-300" onclick="filterArticles('Agentic AI', this)">Agentic AI</button>
+          <button class="filter-tab px-4 py-2 text-xs font-medium rounded-full text-gray-400 whitespace-nowrap transition-all hover:bg-white/5 hover:text-gray-300" onclick="filterArticles('Deep Learning', this)">DL</button>
+          <button class="filter-tab px-4 py-2 text-xs font-medium rounded-full text-gray-400 whitespace-nowrap transition-all hover:bg-white/5 hover:text-gray-300" onclick="filterArticles('Systems', this)">Systems</button>
+          <button class="filter-tab px-4 py-2 text-xs font-medium rounded-full text-gray-400 whitespace-nowrap transition-all hover:bg-white/5 hover:text-gray-300" onclick="filterArticles('RL', this)">RL</button>
+        </div>
+      </div>
+
+      <!-- Articles Grid (Shows 6 Recent Articles by default, or All / Category Articles) -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="articlesGrid">
+        <!-- Articles injected by JS -->
+      </div>
+
+      <!-- Show All Button -->
+      <div class="text-center mt-12 fade-in" id="showAllContainer">
+        <button id="showAllArticlesBtn" type="button" onclick="toggleShowAllArticles()"
+          class="inline-flex items-center gap-2.5 px-8 py-3.5 text-sm font-semibold text-white rounded-2xl bg-gradient-to-r from-kgp-500 to-accent-violet hover:from-kgp-400 hover:to-violet-500 shadow-lg shadow-kgp-500/20 hover:shadow-kgp-500/35 hover:-translate-y-0.5 transition-all">
+          <i id="showAllBtnIcon" class="fas fa-th-large"></i>
+          <span id="showAllBtnLabel">Show All</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==================== CTA SECTION ==================== -->
+  <section class="relative py-24 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-kgp-700/50 via-kgp-900 to-violet-900/30"></div>
+    <div class="absolute inset-0 grid-pattern"></div>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center fade-in">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-kgp-400/30 bg-kgp-400/10 mb-6">
+        <i class="fas fa-pen text-xs text-kgp-300"></i>
+        <span class="text-xs font-medium text-kgp-200">Contribute to KGP's AI Ecosystem</span>
+      </div>
+      
+      <h2 class="font-display text-3xl sm:text-5xl font-bold text-white mb-6 leading-tight">
+        Built a model or decoded a paper?<br/>
+        <span class="gradient-text">Share it with KGP's AI Community</span>
+      </h2>
+      <p class="text-lg text-gray-400 mb-10 max-w-2xl mx-auto">
+        Whether it's an arXiv paper breakdown, an LLM fine-tuning guide, a CUDA & systems deep-dive, or your personal AI journey at IIT Kharagpur — your insights can inspire thousands of KGPians.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <button onclick="handleStartWriting()" class="inline-flex items-center gap-2 px-8 py-4 text-sm font-semibold text-white rounded-2xl bg-gradient-to-r from-kgp-500 to-accent-violet hover:from-kgp-400 hover:to-violet-500 transition-all shadow-xl shadow-kgp-500/25 hover:shadow-kgp-500/40 hover:-translate-y-1">
+          <i class="fas fa-pen-fancy"></i>
+          Start Writing
+        </button>
+        <button class="inline-flex items-center gap-2 px-8 py-4 text-sm font-semibold text-gray-300 hover:text-white rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all">
+          <i class="fas fa-book-open"></i>
+          Writing Guidelines
+        </button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="border-t border-white/5 bg-kgp-900/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        
+        <!-- Brand -->
+        <div class="lg:col-span-1">
+          <a href="#" class="flex items-center gap-3 mb-4">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-kgp-500 to-accent-violet flex items-center justify-center">
+              <span class="text-white font-display font-bold">K</span>
+            </div>
+            <div>
+              <span class="font-display font-bold text-lg text-white">KGP</span><span class="font-display font-bold text-lg gradient-text">Connect</span>
+            </div>
+          </a>
+          <p class="text-sm text-gray-500 leading-relaxed mb-6">
+            The AI & Machine Learning community hub of IIT Kharagpur. Built by KGPians, for KGPians exploring the frontiers of Artificial Intelligence.
+          </p>
+          <div class="flex items-center gap-3">
+            <a href="#" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all">
+              <i class="fab fa-github"></i>
+            </a>
+            <a href="#" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all">
+              <i class="fab fa-discord"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h4 class="font-display font-semibold text-white mb-4">Quick Links</h4>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Home</a></li>
+            <li><a href="#topics" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Topics</a></li>
+            <li><a href="#articles" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Articles</a></li>
+            <li><a href="#" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Community</a></li>
+            <li><a href="#" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Events</a></li>
+          </ul>
+        </div>
+
+        <!-- Topics -->
+        <div>
+          <h4 class="font-display font-semibold text-white mb-4">Popular Topics</h4>
+          <ul class="space-y-3">
+            <li><a href="#articles" onclick="filterByTopic('Machine Learning')" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Machine Learning</a></li>
+            <li><a href="#articles" onclick="filterByTopic('LLM')" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Large Language Models</a></li>
+            <li><a href="#articles" onclick="filterByTopic('Computer Vision')" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Computer Vision</a></li>
+            <li><a href="#articles" onclick="filterByTopic('Data Engineering')" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Data Engineering</a></li>
+            <li><a href="#articles" onclick="filterByTopic('Agentic AI')" class="text-sm text-gray-500 hover:text-gray-300 transition-colors">Agentic AI</a></li>
+          </ul>
+        </div>
+
+        <!-- Newsletter -->
+        <div>
+          <h4 class="font-display font-semibold text-white mb-4">Weekly AI Digest</h4>
+          <p class="text-sm text-gray-500 mb-4">Get top AI research breakdowns, campus ML projects & KGPian stories in your inbox every week.</p>
+          <div class="flex gap-2">
+            <input type="email" placeholder="your@kgpian.iitkgp.ac.in" class="flex-1 px-4 py-2.5 text-sm rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-600 focus:outline-none focus:border-kgp-500/50 focus:ring-1 focus:ring-kgp-500/30 transition-all" />
+            <button class="px-4 py-2.5 rounded-xl bg-kgp-500 hover:bg-kgp-400 text-white text-sm font-semibold transition-all">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-white/5 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p class="text-xs text-gray-600">© 2026 KGPConnect — IIT Kharagpur AI Community. Built with ❤️ by KGPians.</p>
+        <div class="flex items-center gap-6">
+          <a href="#" class="text-xs text-gray-600 hover:text-gray-400 transition-colors">Privacy</a>
+          <a href="#" class="text-xs text-gray-600 hover:text-gray-400 transition-colors">Terms</a>
+          <a href="#" class="text-xs text-gray-600 hover:text-gray-400 transition-colors">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ==================== ARTICLE MODAL ==================== -->
+  <div id="articleModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 sm:p-6">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeArticle()"></div>
+    <div id="articleModalContainer" class="relative w-full max-w-3xl mx-auto glass rounded-3xl overflow-hidden max-h-[88vh] overflow-y-auto shadow-2xl transition-all duration-300 z-10">
+      <!-- Sticky Reader Header Bar (Expand Full Screen + Close) -->
+      <div class="sticky top-0 z-20 flex items-center justify-between px-6 py-3.5 glass border-b border-white/10">
+        <div class="flex items-center gap-2 text-xs font-medium text-gray-400">
+          <div class="w-6 h-6 rounded-lg bg-gradient-to-br from-kgp-500 to-accent-violet flex items-center justify-center text-white font-display font-bold text-[11px]">K</div>
+          <span>KGPConnect Reader</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" id="articleFullscreenBtn" onclick="toggleArticleFullscreen()" title="Expand to Full Screen (Medium view)"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs font-semibold text-gray-300 hover:text-white transition-all">
+            <i id="articleFullscreenIcon" class="fas fa-expand-alt text-[11px]"></i>
+            <span id="articleFullscreenLabel">Full Screen</span>
+          </button>
+          <button type="button" onclick="closeArticle()" title="Close Article (Esc)"
+            class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-gray-400 hover:text-white transition-all">
+            <i class="fas fa-times text-sm"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-6 sm:p-10 lg:p-12 max-w-3xl mx-auto" id="articleModalContent">
+        <!-- Content injected by JS -->
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== JAVASCRIPT ==================== -->
+  <script>
+    // ===== Article Data =====
+    const articles = [
+      {
+        title: "Attention Is All You Need — But Is It? Revisiting Efficient Alternatives to Transformers",
+        excerpt: "An exploration of Mamba, RWKV, and linear attention models that challenge the transformer's dominance in sequence modeling. We benchmark performance on KGP's internal NLP datasets.",
+        content: `<p>The transformer architecture has dominated the AI landscape since 2017, but recent innovations suggest we may be at an inflection point. In this article, we explore three promising alternatives that challenge the transformer's computational bottleneck.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">The Quadratic Problem</h3>
+        <p>Standard self-attention scales quadratically with sequence length — O(n²) — making it prohibitively expensive for long documents, genomic sequences, and real-time applications.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">Mamba: Selective State Spaces</h3>
+        <p>Mamba introduces a selection mechanism into state space models (SSMs), allowing the model to dynamically filter information based on input content. Our benchmarks on the KGP NLP corpus show Mamba achieving 94% of GPT-2's perplexity at 3x throughput on sequences of 8K tokens.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">Key Takeaways</h3>
+        <ul class="list-disc list-inside space-y-2">
+          <li>Linear attention and SSMs offer compelling tradeoffs for latency-sensitive applications</li>
+          <li>Hybrid architectures (transformer + SSM layers) may be the future</li>
+          <li>For most practical KGP research projects, transformers remain the safe choice — for now</li>
+        </ul>`,
+        author: "Vikram Iyer",
+        authorDept: "CSE '26",
+        date: "Oct 20, 2026",
+        readTime: "8 min",
+        topic: "LLM",
+        topicColor: "violet",
+        likes: 87,
+        comments: 23
+      },
+      {
+        title: "Zero-Shot Object Detection with Grounding DINO: A Practical Guide",
+        excerpt: "How to build a zero-shot detection pipeline using Grounding DINO and SAM2 — no labeled data needed. Tested on campus surveillance footage for smart campus research.",
+        content: `<p>Object detection traditionally requires thousands of labeled examples. Grounding DINO changes this by accepting natural language prompts to detect arbitrary objects — zero-shot.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">Architecture Overview</h3>
+        <p>Grounding DINO combines a text encoder (BERT) with a visual backbone (Swin Transformer) through cross-modality fusion. It outputs bounding boxes for any text-described object.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">Our Campus Experiment</h3>
+        <p>We deployed a Grounding DINO + SAM2 pipeline on IIT KGP's campus footage to detect and segment bicycles, pedestrians, and stray animals — achieving 82% mAP without any fine-tuning.</p>`,
+        author: "Ananya Roy",
+        authorDept: "ECE '27",
+        date: "Oct 18, 2026",
+        readTime: "10 min",
+        topic: "Computer Vision",
+        topicColor: "cyan",
+        likes: 64,
+        comments: 18
+      },
+      {
+        title: "Building a Real-Time Feature Store with Apache Kafka and Redis",
+        excerpt: "A step-by-step guide to building a low-latency feature store for ML inference, handling 10K+ requests/sec — architecture inspired by our placement prep platform.",
+        content: `<p>Feature stores bridge the gap between data engineering and ML. In this guide, we build one that serves features in under 5ms for real-time model inference.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">Architecture</h3>
+        <p>Our stack: Kafka for event streaming, Flink for real-time feature computation, Redis for low-latency serving, and a PostgreSQL offline store for batch training.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">Results</h3>
+        <p>P99 latency of 4.2ms at 10K RPS on a 3-node cluster. Total cost: ~$50/month on AWS spot instances.</p>`,
+        author: "Karthik Nair",
+        authorDept: "CSE '25",
+        date: "Oct 17, 2026",
+        readTime: "15 min",
+        topic: "Data Engineering",
+        topicColor: "amber",
+        likes: 53,
+        comments: 11
+      },
+      {
+        title: "Fine-Tuning LLaMA 3.2 on Custom Datasets with QLoRA: Lessons Learned",
+        excerpt: "We fine-tuned LLaMA 3.2 8B on KGP course notes for an AI teaching assistant. Here's what worked, what didn't, and the hyperparameters that matter.",
+        content: `<p>Building a course-specific AI tutor requires fine-tuning on domain data. We share our journey of adapting LLaMA 3.2 for IIT KGP's CS curriculum.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">Data Preparation</h3>
+        <p>We curated 2,500 Q&A pairs from CS course notes, past papers, and professor slides. Data quality > quantity was our core insight.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">Training Setup</h3>
+        <p>QLoRA with rank 64, alpha 128, on a single A100 40GB GPU. Training converged in 3 epochs (~2 hours). Total compute cost: ₹500 on a cloud GPU.</p>`,
+        author: "Deepika Singh",
+        authorDept: "CSE '26",
+        date: "Oct 16, 2026",
+        readTime: "12 min",
+        topic: "LLM",
+        topicColor: "violet",
+        likes: 112,
+        comments: 34
+      },
+      {
+        title: "Multi-Agent Systems for Automated Code Review: An Experiment",
+        excerpt: "We built a multi-agent system where specialized AI agents review code for style, security, and performance — tested on 200+ pull requests from KGP open-source projects.",
+        content: `<p>Can AI agents collaborate to review code as effectively as a senior developer? We built a system to find out.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">Agent Architecture</h3>
+        <p>Three specialized agents: StyleAgent (PEP8/ESLint compliance), SecurityAgent (vulnerability scanning), and PerfAgent (algorithmic complexity analysis). An Orchestrator agent synthesizes their findings.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">Results</h3>
+        <p>On 200 PRs from KGP GitHub repos: caught 73% of issues that human reviewers found, plus identified 15 security vulnerabilities that were previously missed.</p>`,
+        author: "Amit Patel",
+        authorDept: "CSE '27",
+        date: "Oct 15, 2026",
+        readTime: "9 min",
+        topic: "Agentic AI",
+        topicColor: "rose",
+        likes: 91,
+        comments: 27
+      },
+      {
+        title: "Diffusion Models for Scientific Image Super-Resolution",
+        excerpt: "Applying latent diffusion models to enhance microscopy images from the KGP biotech labs — achieving 4x super-resolution with physically consistent outputs.",
+        content: `<p>Low-resolution microscopy images limit biological research. We applied diffusion-based super-resolution to enhance images from IIT KGP's biotech labs.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">Method</h3>
+        <p>We adapted Stable Diffusion's latent space with a custom conditioning mechanism that preserves physical structures in microscopy data.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">Results</h3>
+        <p>4x super-resolution with SSIM of 0.94 and PSNR of 32.1 dB. Biologists confirmed structural fidelity in 96% of enhanced images.</p>`,
+        author: "Riya Chatterjee",
+        authorDept: "BT '26",
+        date: "Oct 14, 2026",
+        readTime: "11 min",
+        topic: "Computer Vision",
+        topicColor: "cyan",
+        likes: 45,
+        comments: 8
+      },
+      {
+        title: "Gradient Boosting vs. Neural Networks: When to Use What",
+        excerpt: "A practical comparison of XGBoost, LightGBM and simple neural nets on tabular data from KGP's placement prediction dataset. Spoiler: trees still win (mostly).",
+        content: `<p>The ML community often defaults to deep learning. But for tabular data, gradient-boosted trees frequently outperform neural networks. We test this on real KGP placement data.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">Experiment Setup</h3>
+        <p>Dataset: 5,000 anonymized placement records with 45 features (CGPA, department, internships, skills, etc.). Task: predict placement outcome and package.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">Key Findings</h3>
+        <ul class="list-disc list-inside space-y-2">
+          <li>XGBoost: 89.2% accuracy, 3 seconds training</li>
+          <li>LightGBM: 89.5% accuracy, 1.2 seconds training</li>
+          <li>3-layer MLP: 87.1% accuracy, 45 seconds training</li>
+          <li>TabNet: 88.8% accuracy, 120 seconds training</li>
+        </ul>`,
+        author: "Saurabh Jha",
+        authorDept: "MA '26",
+        date: "Oct 13, 2026",
+        readTime: "7 min",
+        topic: "Machine Learning",
+        topicColor: "blue",
+        likes: 76,
+        comments: 19
+      },
+      {
+        title: "Orchestrating ETL Pipelines with Airflow and dbt at Scale",
+        excerpt: "How we migrated KGP's student data analytics from cron scripts to a proper Airflow + dbt stack — handling 2M+ records with lineage tracking.",
+        content: `<p>Managing data pipelines with cron jobs and bash scripts doesn't scale. Here's how we modernized KGP's student analytics infrastructure.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">The Problem</h3>
+        <p>15 cron jobs running across 3 servers with no dependency management, no alerting, and mysterious failures every Monday morning.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">The Solution</h3>
+        <p>Apache Airflow for orchestration, dbt for SQL transformations, Great Expectations for data quality, and a Slack bot for alerts. All running on a single 4-core VM.</p>`,
+        author: "Meghana Reddy",
+        authorDept: "CSE '25",
+        date: "Oct 12, 2026",
+        readTime: "13 min",
+        topic: "Data Engineering",
+        topicColor: "amber",
+        likes: 38,
+        comments: 14
+      },
+      {
+        title: "Self-Play and RLHF: Training a Chess Engine with Human Feedback",
+        excerpt: "Combining AlphaZero-style self-play with RLHF to create a chess engine that plays 'human-like' moves. Built for the KGP Chess Club's training tool.",
+        content: `<p>AlphaZero plays superhuman chess, but its moves often feel alien to human players. We trained an engine that balances strength with human-like style using RLHF.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">Approach</h3>
+        <p>Phase 1: Self-play pre-training (1M games). Phase 2: Reward model trained on KGP Chess Club members' move preferences. Phase 3: PPO fine-tuning with the reward model.</p>`,
+        author: "Aryan Kapoor",
+        authorDept: "CSE '27",
+        date: "Oct 11, 2026",
+        readTime: "14 min",
+        topic: "Machine Learning",
+        topicColor: "blue",
+        likes: 59,
+        comments: 22
+      },
+      {
+        title: "From Failing My First Semester Coding Test to Research Intern at MIT: My KGP Journey",
+        excerpt: "In my first year at IIT Kharagpur, I barely passed PDS. Here is the honest story of how late-night hall discussions, seniors' mentorship, and small daily habits changed everything.",
+        content: `<p>When I walked through the Puri Gate of IIT Kharagpur in my first year, I felt like everyone around me already knew competitive programming and machine learning while I struggled to write a basic pointer loop in C.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">The Turning Point at 2 AM in Hall</h3>
+        <p>After getting a 4/20 in my first Programming & Data Structures lab test, I almost gave up on CS research. A fourth-year senior in my wing noticed me sitting on the corridor stairs and shared something I never forgot: <em>"At KGP, nobody starts at the finish line. Pick one problem a day and stay curious."</em></p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">What Actually Worked</h3>
+        <ul class="list-disc list-inside space-y-2">
+          <li>Reading one research paper a week with two friends at the Central Library</li>
+          <li>Contributing to open-source campus projects instead of chasing only grades</li>
+          <li>Cold-emailing 40 professors with a genuine 3-sentence summary of how I reproduced their paper</li>
+        </ul>
+        <p class="mt-4">If you are feeling overwhelmed right now at KGP — trust your pace. Your story is just getting started.</p>`,
+        author: "Ritwik Sen",
+        authorDept: "EE '26",
+        date: "Oct 21, 2026",
+        readTime: "6 min",
+        topic: "Read Stories",
+        topicColor: "amber",
+        likes: 142,
+        comments: 31
+      },
+      {
+        title: "The Night Our Autonomous Rover Broke 4 Hours Before the Finale — And How Our Team Pulled Through",
+        excerpt: "A personal story of grit, soldering irons at 3 AM in the technology students' gymkhana workshop, and what building with fellow KGPians taught me about resilience.",
+        content: `<p>Four hours before our final autonomous rover demonstration, the main motor driver board shorted out in a puff of smoke. Six months of work flashed before our eyes.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">When Everything Goes Wrong</h3>
+        <p>Instead of panicking, our 8-member team split up across campus — two cycled through the rain to grab spare MOSFETs from a lab in Kalidas, three rewrote the PID controller to run on a backup microcontroller, and the rest rebuilt the wiring harness from scratch.</p>
+        <h3 class="text-xl font-bold text-white mt-8 mb-4">The Lesson Beyond Engineering</h3>
+        <p>We finished soldering 18 minutes before the judges arrived, and the rover completed the obstacle course on its first run. Years from now, I won't remember the exact code we wrote, but I will always remember the people who refused to quit at 3 AM.</p>`,
+        author: "Nandini Bose",
+        authorDept: "ME '26",
+        date: "Oct 19, 2026",
+        readTime: "5 min",
+        topic: "Read Stories",
+        topicColor: "amber",
+        likes: 98,
+        comments: 19
+      },
+      {
+        title: "FlashAttention-3 & Custom Triton Kernels: Speeding Up ViT Training on KGP's GPU Cluster",
+        excerpt: "How we wrote fused Triton kernels for multi-head attention and LayerNorm to cut Vision Transformer training time by 42% on IIT Kharagpur's A100 nodes.",
+        content: `<p>Memory bandwidth — not raw FLOPs — is often the real bottleneck when training deep neural networks. In this article, we break down how kernel fusion in OpenAI Triton eliminates redundant HBM reads and writes.</p>`,
+        author: "Rohan Verma",
+        authorDept: "CSE '26",
+        date: "Oct 21, 2026",
+        readTime: "9 min",
+        topic: "Deep Learning",
+        topicColor: "emerald",
+        likes: 84,
+        comments: 16
+      },
+      {
+        title: "Distributed LLM Serving with vLLM & PagedAttention on Multi-Node Campus Servers",
+        excerpt: "Deploying a 70B parameter open-weights model across heterogeneous GPUs using tensor parallelism, continuous batching, and KV-cache quantization.",
+        content: `<p>Serving large language models to hundreds of concurrent student users requires careful systems engineering. Here is how we set up high-throughput inference using vLLM.</p>`,
+        author: "Arjun Mehta",
+        authorDept: "CSE '25",
+        date: "Oct 21, 2026",
+        readTime: "10 min",
+        topic: "Systems",
+        topicColor: "orange",
+        likes: 73,
+        comments: 14
+      },
+      {
+        title: "Proximal Policy Optimization (PPO) & GRPO from Scratch: Training Reasoning Agents",
+        excerpt: "A hands-on mathematical and PyTorch walkthrough of PPO and Group Relative Policy Optimization (GRPO) for reinforcement learning on math and locomotion tasks.",
+        content: `<p>Reinforcement Learning has taken center stage in post-training reasoning models. In this guide, we compare classic Actor-Critic PPO against critic-free GRPO.</p>`,
+        author: "Pranav Kulkarni",
+        authorDept: "MA '26",
+        date: "Oct 21, 2026",
+        readTime: "8 min",
+        topic: "RL",
+        topicColor: "pink",
+        likes: 95,
+        comments: 21
+      }
+    ];
+
+    const topicColors = {
+      'Read Stories': { bg: 'bg-amber-500/20', text: 'text-amber-300' },
+      'LLM': { bg: 'bg-accent-violet/20', text: 'text-accent-violet' },
+      'Computer Vision': { bg: 'bg-accent-cyan/20', text: 'text-accent-cyan' },
+      'Data Engineering': { bg: 'bg-accent-amber/20', text: 'text-accent-amber' },
+      'Machine Learning': { bg: 'bg-blue-500/20', text: 'text-blue-400' },
+      'Agentic AI': { bg: 'bg-accent-rose/20', text: 'text-accent-rose' },
+      'Deep Learning': { bg: 'bg-accent-emerald/20', text: 'text-accent-emerald' },
+      'Systems': { bg: 'bg-accent-orange/20', text: 'text-accent-orange' },
+      'RL': { bg: 'bg-accent-pink/20', text: 'text-accent-pink' },
+    };
+
+    const authorColors = [
+      'from-blue-400 to-blue-600',
+      'from-cyan-400 to-cyan-600',
+      'from-amber-400 to-amber-600',
+      'from-violet-400 to-violet-600',
+      'from-rose-400 to-rose-600',
+      'from-emerald-400 to-emerald-600',
+      'from-orange-400 to-orange-600',
+      'from-pink-400 to-pink-600',
+      'from-blue-400 to-violet-600',
+    ];
+
+
+    let isUserLoggedIn = false;
+    let loggedInUser = null;
+    let currentFilter = 'all';
+    let isShowingAll = false;
+    const HOMEPAGE_RECENT_LIMIT = 6;
+
+    // Persistent visitor key for anonymous like toggling
+    let visitorKey = localStorage.getItem('kgp-visitor-key');
+    if (!visitorKey) {
+      visitorKey = 'v_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+      localStorage.setItem('kgp-visitor-key', visitorKey);
+    }
+
+    // ===== Load Articles from Backend DB =====
+    async function loadArticlesFromServer() {
+      try {
+        const res = await fetch('/api/articles');
+        const data = await res.json();
+        if (res.ok && Array.isArray(data.articles) && data.articles.length > 0) {
+          articles.length = 0;
+          data.articles.forEach(a => articles.push(a));
+          updateTopicCounts();
+          renderArticles(currentFilter);
+
+          const urlParams = new URLSearchParams(window.location.search);
+          const targetArticleId = urlParams.get('articleId');
+          if (targetArticleId) {
+            const idx = articles.findIndex(a => String(a.id) === String(targetArticleId));
+            if (idx !== -1) {
+              openArticle(idx);
+            }
+          }
+        }
+      } catch (err) {
+        updateTopicCounts();
+      }
+    }
+
+    function updateTopicCounts() {
+      document.querySelectorAll('.topic-count[data-count-for]').forEach(el => {
+        const cat = el.getAttribute('data-count-for');
+        const count = articles.filter(a => a.topic === cat).length;
+        el.textContent = `${count} ${count === 1 ? 'article' : 'articles'} →`;
+      });
+    }
+
+    function handleStartWriting(defaultTopic) {
+      if (isUserLoggedIn) {
+        window.location.href = defaultTopic
+          ? `write.html?topic=${encodeURIComponent(defaultTopic)}`
+          : 'write.html';
+      } else {
+        window.location.href = 'login.html';
+      }
+    }
+
+    // ===== Render Articles (Default: 6 Recent Articles regardless of category, or All / Category List) =====
+    function renderArticles(filter = 'all') {
+      currentFilter = filter;
+      const grid = document.getElementById('articlesGrid');
+      const filtered = filter === 'all' ? articles : articles.filter(a => a.topic === filter);
+
+      // Update Section Heading & Badge dynamically
+      const titleEl = document.getElementById('articlesSectionTitle');
+      const subtitleEl = document.getElementById('articlesSectionSubtitle');
+      const badgeTextEl = document.getElementById('articlesBadgeText');
+      const showAllBtn = document.getElementById('showAllArticlesBtn');
+      const showAllLabel = document.getElementById('showAllBtnLabel');
+      const showAllIcon = document.getElementById('showAllBtnIcon');
+
+      // Highlight active category card in #topicsGrid
+      document.querySelectorAll('#topicsGrid .topic-card[data-category]').forEach(card => {
+        if (filter !== 'all' && card.getAttribute('data-category') === filter) {
+          card.classList.add('ring-2', 'ring-kgp-400');
+        } else {
+          card.classList.remove('ring-2', 'ring-kgp-400');
+        }
+      });
+
+      let visibleArticles = filtered;
+      if (filter === 'all') {
+        if (isShowingAll) {
+          if (badgeTextEl) badgeTextEl.textContent = `All Community Articles (${filtered.length})`;
+          if (titleEl) titleEl.textContent = 'All Community Articles';
+          if (subtitleEl) subtitleEl.textContent = `Showing all ${filtered.length} published articles across every AI category at IIT Kharagpur`;
+          if (showAllBtn) showAllBtn.classList.remove('hidden');
+          if (showAllIcon) showAllIcon.className = 'fas fa-arrow-up';
+          if (showAllLabel) showAllLabel.textContent = 'Show Only 6 Recent Articles';
+        } else {
+          visibleArticles = filtered.slice(0, HOMEPAGE_RECENT_LIMIT);
+          if (badgeTextEl) badgeTextEl.textContent = 'Recent Articles • All Categories';
+          if (titleEl) titleEl.textContent = 'Recent Articles';
+          if (subtitleEl) subtitleEl.textContent = 'Featured recent articles across all AI categories by KGPians';
+          if (showAllBtn) showAllBtn.classList.remove('hidden');
+          if (showAllIcon) showAllIcon.className = 'fas fa-th-large';
+          if (showAllLabel) showAllLabel.textContent = 'Show All';
+        }
+      } else {
+        // Category filter selected: show all articles related to this category
+        if (badgeTextEl) badgeTextEl.textContent = `Category • ${filter}`;
+        if (titleEl) titleEl.textContent = `${filter} Articles`;
+        if (subtitleEl) subtitleEl.textContent = `Showing ${filtered.length} ${filtered.length === 1 ? 'article' : 'articles'} in ${filter}`;
+        if (showAllBtn) showAllBtn.classList.remove('hidden');
+        if (showAllIcon) showAllIcon.className = 'fas fa-th-large';
+        if (showAllLabel) showAllLabel.textContent = 'Show All';
+      }
+
+      if (visibleArticles.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full glass-light rounded-2xl p-10 text-center">
+            <i class="fas fa-folder-open text-3xl text-gray-500 mb-3"></i>
+            <p class="text-sm text-gray-300 font-medium mb-1">No articles found in ${filter} yet.</p>
+            <p class="text-xs text-gray-500 mb-4">Be the first KGPian to publish an article in this category!</p>
+            <button type="button" onclick="handleStartWriting('${filter}')"
+              class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet text-xs font-semibold text-white">
+              Write in ${filter}
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = visibleArticles.map((article) => {
+        const colors = topicColors[article.topic] || topicColors['Machine Learning'];
+        const actualIndex = articles.indexOf(article);
+        const avatarGrad = article.authorAvatar || authorColors[actualIndex % authorColors.length];
+        const authorAvatarHtml = article.authorImage
+          ? `<img src="${article.authorImage}" alt="${article.author}" class="w-7 h-7 rounded-full object-cover" />`
+          : `<div class="w-7 h-7 rounded-full bg-gradient-to-br ${avatarGrad}"></div>`;
+        const bannerContent = article.coverImage
+          ? `<img src="${article.coverImage}" alt="${article.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />`
+          : `<div class="absolute inset-0 flex items-center justify-center opacity-20 group-hover:opacity-30 transition-opacity">
+               <i class="fas fa-${getTopicIcon(article.topic)} text-6xl text-white"></i>
+             </div>`;
+        const heartIconClass = article.likedByMe ? 'fas fa-heart text-rose-500' : 'far fa-heart';
+
+        return `
+          <div class="article-card glass-light rounded-2xl overflow-hidden cursor-pointer group" data-topic="${article.topic}" onclick="openArticle(${actualIndex})">
+            <div class="relative h-44 bg-gradient-to-br from-kgp-800 to-slate-800 overflow-hidden">
+              ${bannerContent}
+              <div class="absolute bottom-3 left-3">
+                <span onclick="event.stopPropagation(); filterByTopic('${article.topic}')" title="View all ${article.topic} articles" class="px-2.5 py-1 text-[10px] font-bold rounded-full ${colors.bg} ${colors.text} tag-pill backdrop-blur-md hover:opacity-80 transition-opacity">${article.topic}</span>
+              </div>
+              <div class="absolute bottom-3 right-3 text-xs text-gray-200 bg-black/50 backdrop-blur px-2 py-0.5 rounded-md">
+                ${article.readTime} read
+              </div>
+            </div>
+            <div class="p-5">
+              <h3 class="font-display font-semibold text-white mb-2 leading-snug group-hover:text-kgp-300 transition-colors line-clamp-2 text-[15px]">
+                ${article.title}
+              </h3>
+              <p class="text-xs text-gray-500 leading-relaxed mb-4 line-clamp-2">${article.excerpt}</p>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5 cursor-pointer group/author" onclick="event.stopPropagation(); openUserProfile(${article.userId || 'null'}, ${JSON.stringify(article.author).replace(/"/g, '&quot;')})" title="Visit ${article.author}'s Profile">
+                  ${authorAvatarHtml}
+                  <div>
+                    <div class="text-xs font-semibold text-gray-300 group-hover/author:text-kgp-400 group-hover/author:underline transition-colors">${article.author}</div>
+                    <div class="text-[10px] text-gray-600">${article.authorDept ? article.authorDept + ' • ' : ''}${article.date}</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3 text-xs text-gray-500">
+                  <button type="button" onclick="event.stopPropagation(); likeArticle(${actualIndex})" class="hover:text-rose-400 transition-colors flex items-center gap-1" title="Like / Unlike">
+                    <i class="${heartIconClass}"></i><span>${article.likes}</span>
+                  </button>
+                  <span class="flex items-center gap-1"><i class="far fa-comment"></i>${article.comments}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleShowAllArticles() {
+      if (currentFilter !== 'all') {
+        // When viewing a specific category, clicking "Show All" goes to the full All Articles list
+        isShowingAll = true;
+        const allTab = document.querySelector('#filterTabs .filter-tab');
+        if (allTab) {
+          document.querySelectorAll('.filter-tab').forEach(t => {
+            t.classList.remove('active', 'bg-white/10', 'text-white', 'font-semibold');
+            t.classList.add('text-gray-400', 'font-medium');
+          });
+          allTab.classList.add('active', 'bg-white/10', 'text-white', 'font-semibold');
+          allTab.classList.remove('text-gray-400', 'font-medium');
+        }
+        renderArticles('all');
+        document.getElementById('articles').scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+
+      isShowingAll = !isShowingAll;
+      renderArticles('all');
+      if (!isShowingAll) {
+        document.getElementById('articles').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function getTopicIcon(topic) {
+      const icons = {
+        'Read Stories': 'book-open',
+        'LLM': 'comments',
+        'Computer Vision': 'eye',
+        'Data Engineering': 'database',
+        'Machine Learning': 'brain',
+        'Agentic AI': 'robot',
+        'Deep Learning': 'network-wired',
+        'Systems': 'server',
+        'RL': 'gamepad'
+      };
+      return icons[topic] || 'file-alt';
+    }
+
+
+    // ===== Filter Articles =====
+    function filterArticles(topic, btn) {
+      if (topic === 'all') {
+        isShowingAll = false;
+      }
+      // Update active tab
+      document.querySelectorAll('.filter-tab').forEach(t => {
+        t.classList.remove('active', 'bg-white/10', 'text-white', 'font-semibold');
+        t.classList.add('text-gray-400', 'font-medium');
+      });
+      if (btn) {
+        btn.classList.add('active', 'bg-white/10', 'text-white', 'font-semibold');
+        btn.classList.remove('text-gray-400', 'font-medium');
+      }
+      
+      renderArticles(topic);
+    }
+
+    function filterByTopic(topic) {
+      const tabs = document.querySelectorAll('.filter-tab');
+      let matchedTab = null;
+      tabs.forEach(tab => {
+        if (tab.textContent.trim() === getTabLabel(topic)) {
+          matchedTab = tab;
+        }
+      });
+      filterArticles(topic, matchedTab);
+      document.getElementById('articles').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function getTabLabel(topic) {
+      const labels = {
+        'all': 'Recent (All)',
+        'Read Stories': '✨ Read Stories',
+        'Machine Learning': 'ML',
+        'Computer Vision': 'CV',
+        'LLM': 'LLM',
+        'Data Engineering': 'Data Eng',
+        'Agentic AI': 'Agentic AI',
+        'Deep Learning': 'DL',
+        'Systems': 'Systems',
+        'RL': 'RL'
+      };
+      return labels[topic] || topic;
+    }
+
+
+    function openUserProfile(userId, authorName) {
+      const qs = new URLSearchParams();
+      if (userId && userId !== 'null') qs.set('userId', userId);
+      if (authorName) qs.set('author', authorName);
+      window.location.href = `profile.html?${qs.toString()}`;
+    }
+
+    // ===== Article Modal (with Toggle Like, Save & Comments Area) =====
+    function openArticle(index) {
+      const article = articles[index];
+      if (!article) return;
+      const colors = topicColors[article.topic] || topicColors['Machine Learning'];
+      const avatarGrad = article.authorAvatar || authorColors[index % authorColors.length];
+      const authorAvatarHtml = article.authorImage
+        ? `<img src="${article.authorImage}" alt="${article.author}" class="w-10 h-10 rounded-full object-cover ring-2 ring-transparent group-hover/author:ring-kgp-400 transition-all" />`
+        : `<div class="w-10 h-10 rounded-full bg-gradient-to-br ${avatarGrad} ring-2 ring-transparent group-hover/author:ring-kgp-400 transition-all"></div>`;
+      const coverBanner = article.coverImage
+        ? `<div class="mb-6 rounded-2xl overflow-hidden border border-white/10"><img src="${article.coverImage}" alt="${article.title}" class="w-full max-h-80 object-cover" /></div>`
+        : '';
+
+      const isLiked = !!article.likedByMe;
+      const isSaved = !!article.savedByMe;
+      const safeAuthorAttr = JSON.stringify(article.author || '').replace(/"/g, '&quot;');
+
+      document.getElementById('articleModalContent').innerHTML = `
+        <div class="mb-4">
+          <span class="px-3 py-1 text-xs font-bold rounded-full ${colors.bg} ${colors.text}">${article.topic}</span>
+          <span class="text-sm text-gray-500 ml-2">${article.readTime} read</span>
+        </div>
+        <h1 class="font-display text-2xl lg:text-3xl font-bold text-white mb-6 leading-tight">${article.title}</h1>
+        <div class="flex items-center gap-3 mb-8 pb-8 border-b border-white/10">
+          <div class="flex items-center gap-3 cursor-pointer group/author" onclick="openUserProfile(${article.userId || 'null'}, ${safeAuthorAttr})" title="View ${escapeCommentHtml(article.author)}'s Profile">
+            ${authorAvatarHtml}
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-semibold text-white group-hover/author:text-kgp-400 group-hover/author:underline transition-colors">${article.author}</span>
+                <span class="px-2 py-0.5 text-[10px] font-medium rounded-full bg-kgp-500/15 text-kgp-300 border border-kgp-500/25 group-hover/author:bg-kgp-500/25 transition-colors">View Profile</span>
+              </div>
+              <div class="text-xs text-gray-500">${article.authorDept || 'KGPian'} • ${article.date}</div>
+            </div>
+          </div>
+          <div class="ml-auto flex items-center gap-4 text-sm text-gray-500">
+            <span id="modalLikeCount"><i class="${isLiked ? 'fas text-rose-500' : 'far'} fa-heart mr-1"></i>${article.likes}</span>
+            <span id="modalCommentCount"><i class="far fa-comment mr-1"></i>${article.comments}</span>
+          </div>
+        </div>
+        ${coverBanner}
+        <div class="prose prose-invert prose-sm max-w-none text-gray-300 leading-relaxed space-y-4">
+          ${article.content}
+        </div>
+
+        <!-- Action Bar: Toggle Like & Toggle Save -->
+        <div class="mt-10 pt-6 border-t border-white/10 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <button id="modalLikeBtn" onclick="likeArticle(${index})"
+              class="inline-flex items-center gap-2 px-4 py-2 text-sm rounded-xl border transition-all ${isLiked ? 'bg-rose-500/20 border-rose-500/40 text-rose-400 font-semibold' : 'bg-white/5 border-white/10 hover:bg-rose-500/15 text-gray-300 hover:text-rose-400'}">
+              <i id="modalLikeIcon" class="${isLiked ? 'fas text-rose-500' : 'far'} fa-heart"></i>
+              <span id="modalLikeLabel">${isLiked ? 'Liked' : 'Like'}</span>
+              (<span id="btnLikeNum">${article.likes}</span>)
+            </button>
+
+            <button id="modalSaveBtn" onclick="saveArticle(${index})"
+              class="inline-flex items-center gap-2 px-4 py-2 text-sm rounded-xl border transition-all ${isSaved ? 'bg-kgp-500/20 border-kgp-500/40 text-kgp-300 font-semibold' : 'bg-white/5 border-white/10 hover:bg-white/10 text-gray-300 hover:text-white'}">
+              <i id="modalSaveIcon" class="${isSaved ? 'fas text-kgp-400' : 'far'} fa-bookmark"></i>
+              <span id="modalSaveLabel">${isSaved ? 'Saved' : 'Save'}</span>
+            </button>
+          </div>
+          <button onclick="navigator.clipboard?.writeText(window.location.href)" class="inline-flex items-center gap-2 px-4 py-2 text-sm rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all">
+            <i class="fas fa-share-alt"></i> Share
+          </button>
+        </div>
+
+        <!-- ==================== COMMENTS SECTION ==================== -->
+        <div class="mt-10 pt-8 border-t border-white/10">
+          <h3 class="font-display text-lg font-bold text-white mb-6 flex items-center gap-2">
+            <i class="far fa-comments text-kgp-400"></i>
+            Discussion & Comments (<span id="commentsSectionCount">${article.comments}</span>)
+          </h3>
+
+          <!-- Add Comment Form (Only for Logged-In Users) -->
+          ${isUserLoggedIn ? `
+            <form onsubmit="submitComment(event, ${index}, null)" class="mb-8 p-4 rounded-2xl bg-white/[0.03] border border-white/10">
+              <div class="flex items-center justify-between gap-2 mb-3 text-xs text-gray-400">
+                <span>Commenting as <strong class="text-white">${loggedInUser.full_name}</strong></span>
+                <button type="button" onclick="insertCommentLink('commentInputText')"
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-kgp-500/15 hover:bg-kgp-500/25 text-kgp-300 text-[11px] font-semibold transition-all"
+                  title="Insert a clickable hyperlink that opens in a new tab">
+                  <i class="fas fa-link text-[10px]"></i> Add Hyperlink
+                </button>
+              </div>
+              <textarea id="commentInputText" rows="3" required placeholder="Share your thoughts, questions, or feedback… (Paste any URL or click 'Add Hyperlink')"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-kgp-500 resize-none mb-3"></textarea>
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] text-gray-500"><i class="fas fa-arrow-up-right-from-square mr-1 text-[10px]"></i>Links automatically open in a new tab</span>
+                <button type="submit" id="submitCommentBtn"
+                  class="px-5 py-2 rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet hover:from-kgp-400 hover:to-violet-500 text-xs font-semibold text-white shadow-lg transition-all">
+                  Post Comment
+                </button>
+              </div>
+            </form>
+          ` : `
+            <div class="mb-8 p-5 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-kgp-500/15 flex items-center justify-center text-kgp-400">
+                  <i class="fas fa-lock text-sm"></i>
+                </div>
+                <div>
+                  <div class="text-sm font-semibold text-white">Log in to like or comment</div>
+                  <div class="text-xs text-gray-400">You can read all articles freely. Sign in to join the KGP discussion!</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <a href="login.html" class="px-4 py-2 text-xs font-semibold text-white rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet hover:from-kgp-400 hover:to-violet-500 shadow-lg transition-all">
+                  Log In
+                </a>
+                <a href="signup.html" class="px-4 py-2 text-xs font-medium text-gray-300 hover:text-white rounded-xl border border-white/10 hover:bg-white/5 transition-all">
+                  Sign Up
+                </a>
+              </div>
+            </div>
+          `}
+
+          <!-- Comments List -->
+          <div id="articleCommentsList" class="space-y-4">
+            <div class="text-xs text-gray-500 py-4 text-center">Loading comments…</div>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('articleModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+
+      // Ensure any links inside the article content also open in a new tab
+      document.querySelectorAll('#articleModalContent .prose a').forEach(a => {
+        a.setAttribute('target', '_blank');
+        a.setAttribute('rel', 'noopener noreferrer');
+      });
+
+      // Add GeeksforGeeks / Medium style Copy Code button to all code blocks
+      enhanceCodeBlocksWithCopy('#articleModalContent');
+
+      loadArticleComments(index);
+    }
+
+    function enhanceCodeBlocksWithCopy(containerSelector) {
+      const container = document.querySelector(containerSelector);
+      if (!container) return;
+
+      container.querySelectorAll('pre').forEach((pre) => {
+        if (pre.dataset.copyEnhanced === 'true') return;
+        pre.dataset.copyEnhanced = 'true';
+
+        let codeEl = pre.querySelector('code');
+        let headerDiv = pre.querySelector(':scope > div');
+
+        if (!codeEl) {
+          const rawHtml = pre.innerHTML;
+          pre.innerHTML = '';
+          codeEl = document.createElement('code');
+          codeEl.innerHTML = rawHtml;
+          pre.appendChild(codeEl);
+        }
+
+        if (!headerDiv) {
+          headerDiv = document.createElement('div');
+          headerDiv.className = 'kgp-code-toolbar flex items-center justify-between text-[11px] text-gray-400 pb-2.5 mb-3 border-b border-white/10 font-sans select-none';
+          const langLabel = pre.getAttribute('data-lang') || 'Code';
+          headerDiv.innerHTML = `<span class="inline-flex items-center gap-1.5 font-semibold text-gray-300"><i class="fas fa-terminal text-emerald-400"></i>${langLabel}</span>`;
+          pre.insertBefore(headerDiv, pre.firstChild);
+        } else {
+          headerDiv.classList.add('kgp-code-toolbar', 'select-none');
+          const spans = headerDiv.querySelectorAll('span');
+          if (spans.length > 1) {
+            spans[spans.length - 1].remove();
+          }
+        }
+
+        const copyBtn = document.createElement('button');
+        copyBtn.type = 'button';
+        copyBtn.className = 'kgp-copy-code-btn inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 text-[11px] font-semibold text-gray-200 hover:text-white transition-all cursor-pointer';
+        copyBtn.title = 'Copy code to clipboard';
+        copyBtn.innerHTML = `<i class="far fa-copy text-[11px]"></i><span>Copy</span>`;
+
+        copyBtn.addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          const textToCopy = (codeEl ? codeEl.innerText : pre.innerText).trim();
+          try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              await navigator.clipboard.writeText(textToCopy);
+            } else {
+              const ta = document.createElement('textarea');
+              ta.value = textToCopy;
+              ta.style.position = 'fixed';
+              ta.style.opacity = '0';
+              document.body.appendChild(ta);
+              ta.select();
+              document.execCommand('copy');
+              ta.remove();
+            }
+            copyBtn.innerHTML = `<i class="fas fa-check text-emerald-400 text-[11px]"></i><span class="text-emerald-300">Copied!</span>`;
+            copyBtn.classList.add('border-emerald-500/40', 'bg-emerald-500/15');
+            setTimeout(() => {
+              copyBtn.innerHTML = `<i class="far fa-copy text-[11px]"></i><span>Copy</span>`;
+              copyBtn.classList.remove('border-emerald-500/40', 'bg-emerald-500/15');
+            }, 2000);
+          } catch (err) {}
+        });
+
+        headerDiv.appendChild(copyBtn);
+      });
+    }
+
+    function showAuthRequiredToast(actionText) {
+      document.querySelectorAll('.auth-toast').forEach(e => e.remove());
+      const toast = document.createElement('div');
+      toast.className = 'auth-toast fixed top-20 right-5 z-[200] px-5 py-3.5 rounded-2xl glass border border-kgp-500/40 text-white text-xs sm:text-sm font-medium shadow-2xl flex items-center gap-3';
+      toast.innerHTML = `
+        <i class="fas fa-lock text-kgp-400"></i>
+        <span>Please <strong>Log In</strong> to ${actionText}.</span>
+        <a href="login.html" class="ml-2 px-3 py-1 rounded-lg bg-gradient-to-r from-kgp-500 to-accent-violet text-white text-xs font-semibold">Log In</a>
+      `;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+
+    // ===== Toggle Like (Only for Logged-In Users: Increase if not liked, Decrease if already liked) =====
+    async function likeArticle(index) {
+      if (!isUserLoggedIn) {
+        showAuthRequiredToast('like posts');
+        return;
+      }
+
+      const article = articles[index];
+      if (!article) return;
+
+      // Optimistic toggle
+      if (article.likedByMe) {
+        article.likedByMe = false;
+        article.likes = Math.max(0, (article.likes || 1) - 1);
+      } else {
+        article.likedByMe = true;
+        article.likes = (article.likes || 0) + 1;
+      }
+
+      updateModalLikeUI(article);
+      renderArticles(currentFilter);
+
+      if (article.id) {
+        try {
+          const res = await fetch(`/api/articles/${article.id}/like`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+          });
+          const data = await res.json();
+          if (res.ok) {
+            article.likedByMe = data.liked;
+            article.likes = data.likes;
+            updateModalLikeUI(article);
+            renderArticles(currentFilter);
+          }
+        } catch(e) {}
+      }
+    }
+
+    function updateModalLikeUI(article) {
+      const modalSpan = document.getElementById('modalLikeCount');
+      const btnSpan = document.getElementById('btnLikeNum');
+      const btn = document.getElementById('modalLikeBtn');
+      const icon = document.getElementById('modalLikeIcon');
+      const label = document.getElementById('modalLikeLabel');
+
+      if (modalSpan) {
+        modalSpan.innerHTML = `<i class="${article.likedByMe ? 'fas text-rose-500' : 'far'} fa-heart mr-1"></i>${article.likes}`;
+      }
+      if (btnSpan) btnSpan.textContent = article.likes;
+      if (icon) icon.className = `${article.likedByMe ? 'fas text-rose-500' : 'far'} fa-heart`;
+      if (label) label.textContent = article.likedByMe ? 'Liked' : 'Like';
+      if (btn) {
+        btn.className = `inline-flex items-center gap-2 px-4 py-2 text-sm rounded-xl border transition-all ${
+          article.likedByMe
+            ? 'bg-rose-500/20 border-rose-500/40 text-rose-400 font-semibold'
+            : 'bg-white/5 border-white/10 hover:bg-rose-500/15 text-gray-300 hover:text-rose-400'
+        }`;
+      }
+    }
+
+    // ===== Toggle Save / Bookmark Article =====
+    async function saveArticle(index) {
+      if (!isUserLoggedIn) {
+        window.location.href = 'login.html';
+        return;
+      }
+      const article = articles[index];
+      if (!article || !article.id) return;
+
+      try {
+        const res = await fetch(`/api/articles/${article.id}/save`, { method: 'POST' });
+        const data = await res.json();
+        if (res.ok) {
+          article.savedByMe = data.saved;
+          const btn = document.getElementById('modalSaveBtn');
+          const icon = document.getElementById('modalSaveIcon');
+          const label = document.getElementById('modalSaveLabel');
+          if (icon) icon.className = `${article.savedByMe ? 'fas text-kgp-400' : 'far'} fa-bookmark`;
+          if (label) label.textContent = article.savedByMe ? 'Saved' : 'Save';
+          if (btn) {
+            btn.className = `inline-flex items-center gap-2 px-4 py-2 text-sm rounded-xl border transition-all ${
+              article.savedByMe
+                ? 'bg-kgp-500/20 border-kgp-500/40 text-kgp-300 font-semibold'
+                : 'bg-white/5 border-white/10 hover:bg-white/10 text-gray-300 hover:text-white'
+            }`;
+          }
+        }
+      } catch (err) {}
+    }
+
+    // ===== Nested Comments & New-Tab Hyperlink Formatter =====
+    function escapeCommentHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function normalizeHref(url) {
+      const trimmed = String(url || '').trim();
+      if (/^https?:\/\//i.test(trimmed)) return trimmed;
+      return 'https://' + trimmed;
+    }
+
+    function friendlyUrlLabel(url) {
+      try {
+        const u = new URL(normalizeHref(url));
+        const host = u.hostname.replace(/^www\./i, '');
+        const path = (u.pathname && u.pathname !== '/') ? u.pathname : '';
+        const combined = host + path;
+        return combined.length > 42 ? combined.slice(0, 40) + '…' : combined;
+      } catch (e) {
+        return url.replace(/^https?:\/\/(www\.)?/i, '').slice(0, 40);
+      }
+    }
+
+    function buildAnchorBadge(href, labelText) {
+      const safeHref = escapeCommentHtml(normalizeHref(href));
+      const safeLabel = escapeCommentHtml(labelText);
+      return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-kgp-500/15 hover:bg-kgp-500/25 text-kgp-300 hover:text-kgp-200 border border-kgp-500/30 font-medium underline decoration-kgp-400/60 underline-offset-2 transition-all"><i class="fas fa-link text-[10px]"></i><span>${safeLabel}</span><i class="fas fa-arrow-up-right-from-square text-[9px] opacity-80"></i></a>`;
+    }
+
+    function formatCommentContent(rawText) {
+      if (!rawText) return '';
+      const links = [];
+      let working = String(rawText);
+
+      // 1. Convert HTML <a> tags if present
+      working = working.replace(/<a\s+[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi, (_, url, label) => {
+        const cleanLabel = label.replace(/<[^>]+>/g, '').trim() || friendlyUrlLabel(url);
+        const token = `\x00LINK_${links.length}\x00`;
+        links.push(buildAnchorBadge(url, cleanLabel));
+        return token;
+      });
+
+      // 2. Convert Markdown links: [Label](https://example.com)
+      working = working.replace(/\[([^\]]+)\]\(((?:https?:\/\/|www\.)[^\s)]+)\)/gi, (_, label, url) => {
+        const cleanLabel = label.trim() || friendlyUrlLabel(url);
+        const token = `\x00LINK_${links.length}\x00`;
+        links.push(buildAnchorBadge(url, cleanLabel));
+        return token;
+      });
+
+      // 3. Convert raw URLs (https://..., http://..., www....) so they never appear as plain URL text
+      working = working.replace(/((?:https?:\/\/|www\.)[^\s<\x00]+)/gi, (match) => {
+        let url = match;
+        let trailing = '';
+        const trailMatch = url.match(/([.,!?;:)]+)$/);
+        if (trailMatch) {
+          trailing = trailMatch[1];
+          url = url.slice(0, -trailing.length);
+        }
+        const token = `\x00LINK_${links.length}\x00`;
+        links.push(buildAnchorBadge(url, friendlyUrlLabel(url)));
+        return token + trailing;
+      });
+
+      // 4. Escape remaining plain text and restore anchor badges
+      let escaped = escapeCommentHtml(working).replace(/\n/g, '<br/>');
+      escaped = escaped.replace(/\x00LINK_(\d+)\x00/g, (_, idx) => links[Number(idx)] || '');
+      return escaped;
+    }
+
+    function insertCommentLink(textareaId) {
+      const textarea = document.getElementById(textareaId);
+      if (!textarea) return;
+      const start = textarea.selectionStart || 0;
+      const end = textarea.selectionEnd || 0;
+      const selectedText = textarea.value.slice(start, end).trim();
+
+      const url = prompt('Enter URL (opens in a new tab):', 'https://');
+      if (!url || url.trim() === '' || url.trim() === 'https://') return;
+
+      const label = prompt('Enter display text for this link:', selectedText || friendlyUrlLabel(url));
+      const finalLabel = (label && label.trim()) ? label.trim() : friendlyUrlLabel(url);
+      const markdownLink = `[${finalLabel}](${normalizeHref(url)})`;
+
+      textarea.value = textarea.value.slice(0, start) + markdownLink + textarea.value.slice(end);
+      textarea.focus();
+    }
+
+    function buildCommentTree(flatComments) {
+      const map = new Map();
+      const roots = [];
+      flatComments.forEach(c => {
+        map.set(c.id, { ...c, replies: [] });
+      });
+      flatComments.forEach(c => {
+        const node = map.get(c.id);
+        if (c.parentId && map.has(c.parentId)) {
+          map.get(c.parentId).replies.push(node);
+        } else {
+          roots.push(node);
+        }
+      });
+      // Show newest top-level threads first, and chronological replies inside each thread
+      return roots.reverse();
+    }
+
+    let commentDeleteTimerInterval = null;
+
+    function formatRemainingDeleteTime(remainingSec) {
+      const s = Math.max(0, Math.floor(remainingSec));
+      const m = Math.floor(s / 60);
+      const sec = s % 60;
+      return `${m}:${sec < 10 ? '0' : ''}${sec}`;
+    }
+
+    function startCommentDeleteCountdowns() {
+      if (commentDeleteTimerInterval) clearInterval(commentDeleteTimerInterval);
+      commentDeleteTimerInterval = setInterval(() => {
+        const btns = document.querySelectorAll('[data-delete-expires-at]');
+        const now = Date.now();
+        btns.forEach(btn => {
+          const expiresAt = Number(btn.getAttribute('data-delete-expires-at'));
+          const remainingSec = Math.ceil((expiresAt - now) / 1000);
+          const timerSpan = btn.querySelector('.delete-countdown-text');
+          if (remainingSec <= 0) {
+            // 10-minute window exceeded — remove delete button cleanly
+            btn.remove();
+          } else if (timerSpan) {
+            timerSpan.textContent = formatRemainingDeleteTime(remainingSec);
+          }
+        });
+      }, 1000);
+    }
+
+    async function loadArticleComments(index) {
+      const article = articles[index];
+      const listEl = document.getElementById('articleCommentsList');
+      if (!article || !listEl) return;
+
+      if (!article.id) {
+        listEl.innerHTML = `<p class="text-xs text-gray-500 text-center py-4">No comments yet. Be the first to start the discussion!</p>`;
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/articles/${article.id}/comments`);
+        const data = await res.json();
+        const comments = data.comments || [];
+        if (comments.length === 0) {
+          listEl.innerHTML = `<p class="text-xs text-gray-500 text-center py-4">No comments yet. Be the first to start the discussion!</p>`;
+          return;
+        }
+        const tree = buildCommentTree(comments);
+        listEl.innerHTML = tree.map(c => renderCommentItem(c, index, 0)).join('');
+        startCommentDeleteCountdowns();
+      } catch (err) {
+        listEl.innerHTML = `<p class="text-xs text-gray-500 text-center py-4">Unable to load comments.</p>`;
+      }
+    }
+
+    function renderCommentItem(c, articleIndex, depth = 0) {
+      const avatarHtml = c.authorImage
+        ? `<img src="${c.authorImage}" alt="${escapeCommentHtml(c.author)}" class="w-8 h-8 rounded-full object-cover flex-shrink-0" />`
+        : `<div class="w-8 h-8 rounded-full bg-gradient-to-br ${c.authorAvatar || 'from-kgp-500 to-accent-violet'} flex items-center justify-center text-white text-xs font-bold flex-shrink-0">${escapeCommentHtml((c.author || 'U')[0].toUpperCase())}</div>`;
+
+      const repliesHtml = (c.replies && c.replies.length > 0)
+        ? `<div class="mt-3 ml-3 sm:ml-6 pl-3.5 sm:pl-4 border-l-2 border-kgp-500/25 space-y-3">
+             ${c.replies.map(r => renderCommentItem(r, articleIndex, depth + 1)).join('')}
+           </div>`
+        : '';
+
+      const replyTextareaId = `replyInputText_${c.id}`;
+      const replyBoxId = `replyBox_${c.id}`;
+
+      // Check ownership (article owner can delete ANY comment anytime; comment author can delete within 10m = 600s)
+      const currentArticle = articles[articleIndex];
+      const isArticleOwner = Boolean(
+        isUserLoggedIn &&
+        loggedInUser &&
+        (c.isArticleOwner || (currentArticle && currentArticle.userId && Number(currentArticle.userId) === Number(loggedInUser.id)))
+      );
+      const isMyComment = Boolean(
+        isUserLoggedIn &&
+        loggedInUser &&
+        (c.isOwner || (c.userId && Number(c.userId) === Number(loggedInUser.id)))
+      );
+      const elapsedSec = typeof c.elapsedSeconds === 'number' ? c.elapsedSeconds : 999999;
+      const remainingSec = Math.max(0, 600 - elapsedSec);
+      const canStillDeleteOwn = isMyComment && remainingSec > 0;
+      const expiresAtMs = Date.now() + remainingSec * 1000;
+
+      let deleteActionHtml = '';
+      if (isArticleOwner) {
+        deleteActionHtml = `
+          <button type="button" onclick="deleteComment(event, ${articleIndex}, ${c.id})"
+            class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-rose-500/10 hover:bg-rose-500/20 font-medium text-rose-400 hover:text-rose-300 transition-colors cursor-pointer"
+            title="As the author of this article, you can delete any comment at any time">
+            <i class="far fa-trash-alt text-[10px]"></i>
+            <span>Delete</span>
+          </button>
+        `;
+      } else if (canStillDeleteOwn) {
+        deleteActionHtml = `
+          <button type="button" data-delete-expires-at="${expiresAtMs}" onclick="deleteComment(event, ${articleIndex}, ${c.id})"
+            class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-rose-500/10 hover:bg-rose-500/20 font-medium text-rose-400 hover:text-rose-300 transition-colors cursor-pointer"
+            title="You can delete your comment within 10 minutes of posting">
+            <i class="far fa-trash-alt text-[10px]"></i>
+            <span>Delete</span>
+            <span class="text-[10px] px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300 font-mono delete-countdown-text">${formatRemainingDeleteTime(remainingSec)}</span>
+          </button>
+        `;
+      }
+
+      const safeCommentAuthorAttr = JSON.stringify(c.author || '').replace(/"/g, '&quot;');
+
+      return `
+        <div class="comment-thread">
+          <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex gap-3">
+            <div class="cursor-pointer flex-shrink-0" onclick="openUserProfile(${c.userId || 'null'}, ${safeCommentAuthorAttr})" title="View ${escapeCommentHtml(c.author)}'s Profile">
+              ${avatarHtml}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2 mb-1">
+                <div>
+                  <span onclick="openUserProfile(${c.userId || 'null'}, ${safeCommentAuthorAttr})" class="text-xs font-semibold text-white hover:text-kgp-400 hover:underline cursor-pointer transition-colors" title="View ${escapeCommentHtml(c.author)}'s Profile">${escapeCommentHtml(c.author)}</span>
+                  <span class="text-[11px] text-gray-500 ml-1.5">${escapeCommentHtml(c.authorDept || 'KGPian')}</span>
+                </div>
+                <span class="text-[10px] text-gray-600">${escapeCommentHtml(c.date || 'Just now')}</span>
+              </div>
+              <div class="text-xs sm:text-sm text-gray-300 leading-relaxed break-words">${formatCommentContent(c.content)}</div>
+
+              <!-- Comment Footer Actions (Reply & 10-Min Delete) -->
+              <div class="mt-2.5 flex flex-wrap items-center gap-4 text-[11px] text-gray-500">
+                <button type="button" onclick="toggleReplyBox(${c.id})"
+                  class="inline-flex items-center gap-1.5 font-medium text-gray-400 hover:text-kgp-400 transition-colors">
+                  <i class="fas fa-reply text-[10px]"></i>
+                  <span>Reply</span>
+                </button>
+                ${deleteActionHtml}
+                ${c.replies && c.replies.length > 0 ? `
+                  <span class="text-gray-600">• ${c.replies.length} ${c.replies.length === 1 ? 'reply' : 'replies'}</span>
+                ` : ''}
+              </div>
+
+              <!-- Collapsible Nested Reply Form -->
+              <div id="${replyBoxId}" class="hidden mt-3 pt-3 border-t border-white/5">
+                <form onsubmit="submitComment(event, ${articleIndex}, ${c.id})" class="space-y-2.5">
+                  <div class="flex items-center justify-between text-[11px] text-gray-400">
+                    <span>Replying to <strong class="text-white">@${escapeCommentHtml(c.author)}</strong></span>
+                    <button type="button" onclick="insertCommentLink('${replyTextareaId}')"
+                      class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-kgp-500/15 hover:bg-kgp-500/25 text-kgp-300 font-semibold transition-all">
+                      <i class="fas fa-link text-[9px]"></i> Add Hyperlink
+                    </button>
+                  </div>
+                  <textarea id="${replyTextareaId}" rows="2" required placeholder="Write a reply to ${escapeCommentHtml(c.author)}…"
+                    class="w-full px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-kgp-500 resize-none"></textarea>
+                  <div class="flex items-center justify-end gap-2">
+                    <button type="button" onclick="toggleReplyBox(${c.id})"
+                      class="px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+                      Cancel
+                    </button>
+                    <button type="submit" id="submitReplyBtn_${c.id}"
+                      class="px-4 py-1.5 rounded-lg bg-gradient-to-r from-kgp-500 to-accent-violet text-xs font-semibold text-white shadow transition-all">
+                      Post Reply
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          ${repliesHtml}
+        </div>
+      `;
+    }
+
+    function toggleReplyBox(commentId) {
+      if (!isUserLoggedIn) {
+        showAuthRequiredToast('reply to comments');
+        return;
+      }
+      const box = document.getElementById(`replyBox_${commentId}`);
+      if (!box) return;
+      box.classList.toggle('hidden');
+      if (!box.classList.contains('hidden')) {
+        const input = document.getElementById(`replyInputText_${commentId}`);
+        if (input) input.focus();
+      }
+    }
+
+    async function submitComment(event, index, parentId = null) {
+      event.preventDefault();
+      if (!isUserLoggedIn) {
+        showAuthRequiredToast('comment on posts');
+        return;
+      }
+      const article = articles[index];
+      if (!article) return;
+
+      const inputId = parentId ? `replyInputText_${parentId}` : 'commentInputText';
+      const btnId = parentId ? `submitReplyBtn_${parentId}` : 'submitCommentBtn';
+      const input = document.getElementById(inputId);
+      const btn = document.getElementById(btnId);
+      if (!input) return;
+
+      const content = input.value.trim();
+      if (!content) return;
+
+      const originalLabel = parentId ? 'Post Reply' : 'Post Comment';
+      if (btn) {
+        btn.textContent = 'Posting…';
+        btn.disabled = true;
+      }
+
+      if (article.id) {
+        try {
+          const res = await fetch(`/api/articles/${article.id}/comments`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content, parentId }),
+          });
+          const data = await res.json();
+          if (res.ok && data.comment) {
+            article.comments = data.totalComments;
+            input.value = '';
+            const countEl = document.getElementById('commentsSectionCount');
+            const modalCountEl = document.getElementById('modalCommentCount');
+            if (countEl) countEl.textContent = article.comments;
+            if (modalCountEl) modalCountEl.innerHTML = `<i class="far fa-comment mr-1"></i>${article.comments}`;
+            renderArticles(currentFilter);
+            await loadArticleComments(index);
+          }
+        } catch (err) {}
+      }
+
+      if (btn) {
+        btn.textContent = originalLabel;
+        btn.disabled = false;
+      }
+    }
+
+    async function deleteComment(event, articleIndex, commentId) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      if (!isUserLoggedIn) {
+        showAuthRequiredToast('delete comments');
+        return;
+      }
+      const article = articles[articleIndex];
+      if (!article || !article.id) return;
+
+      const btn = event && event.currentTarget ? event.currentTarget : null;
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin text-[10px]"></i><span>Deleting…</span>`;
+      }
+
+      try {
+        const res = await fetch(`/api/articles/${article.id}/comments/${commentId}`, {
+          method: 'DELETE',
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          alert(data.error || 'Cannot delete this comment (10-minute window exceeded).');
+          await loadArticleComments(articleIndex);
+          return;
+        }
+        article.comments = data.totalComments;
+        const countEl = document.getElementById('commentsSectionCount');
+        const modalCountEl = document.getElementById('modalCommentCount');
+        if (countEl) countEl.textContent = article.comments;
+        if (modalCountEl) modalCountEl.innerHTML = `<i class="far fa-comment mr-1"></i>${article.comments}`;
+        renderArticles(currentFilter);
+        await loadArticleComments(articleIndex);
+      } catch (err) {
+        alert('Network error while deleting comment.');
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    let isArticleFullScreen = false;
+
+    function applyArticleFullscreenState(full) {
+      isArticleFullScreen = full;
+      const modal = document.getElementById('articleModal');
+      const container = document.getElementById('articleModalContainer');
+      const icon = document.getElementById('articleFullscreenIcon');
+      const label = document.getElementById('articleFullscreenLabel');
+      const content = document.getElementById('articleModalContent');
+
+      if (!modal || !container) return;
+
+      if (full) {
+        modal.classList.remove('p-4', 'sm:p-6');
+        modal.classList.add('p-0');
+        container.classList.remove('max-w-3xl', 'rounded-3xl', 'max-h-[88vh]');
+        container.classList.add('w-screen', 'h-screen', 'max-w-none', 'max-h-none', 'rounded-none');
+        if (content) content.classList.replace('max-w-3xl', 'max-w-4xl');
+        if (icon) icon.className = 'fas fa-compress-alt text-[11px]';
+        if (label) label.textContent = 'Exit Full Screen';
+      } else {
+        modal.classList.remove('p-0');
+        modal.classList.add('p-4', 'sm:p-6');
+        container.classList.remove('w-screen', 'h-screen', 'max-w-none', 'max-h-none', 'rounded-none');
+        container.classList.add('max-w-3xl', 'rounded-3xl', 'max-h-[88vh]');
+        if (content) content.classList.replace('max-w-4xl', 'max-w-3xl');
+        if (icon) icon.className = 'fas fa-expand-alt text-[11px]';
+        if (label) label.textContent = 'Full Screen';
+      }
+    }
+
+    function toggleArticleFullscreen() {
+      applyArticleFullscreenState(!isArticleFullScreen);
+    }
+
+    function closeArticle() {
+      if (commentDeleteTimerInterval) clearInterval(commentDeleteTimerInterval);
+      applyArticleFullscreenState(false);
+      document.getElementById('articleModal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    // Close on escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeArticle();
+    });
+
+
+    // ===== Mobile Menu =====
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenu');
+      const overlay = document.getElementById('menuOverlay');
+      menu.classList.toggle('open');
+      overlay.classList.toggle('hidden');
+    }
+
+
+    // ===== Navbar Scroll Effect =====
+    window.addEventListener('scroll', () => {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('navbar-scrolled');
+      } else {
+        navbar.classList.remove('navbar-scrolled');
+      }
+    });
+
+
+    // ===== Scroll Animations =====
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+
+    // ===== Auth State & Logout =====
+    function renderNavbarUser(user) {
+      if (!user) return;
+      loggedInUser = user;
+      isUserLoggedIn = true;
+      const initials = (user.full_name || 'U')
+        .split(' ')
+        .map(n => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+      const deptBadge = user.department
+        ? `${user.department}${user.grad_year ? " '" + String(user.grad_year).slice(-2) : ''}`
+        : 'KGPian';
+      const verifiedIcon = user.is_verified
+        ? '<i class="fas fa-circle-check text-kgp-400 text-xs ml-1" title="Verified IIT KGP Email"></i>'
+        : '';
+      const avatarContent = user.profile_image
+        ? `<img src="${user.profile_image}" alt="${user.full_name}" class="w-8 h-8 rounded-xl object-cover shadow" />`
+        : `<div class="w-8 h-8 rounded-xl bg-gradient-to-br ${user.avatar_color || 'from-kgp-500 to-accent-violet'} flex items-center justify-center text-white font-bold text-xs shadow">${initials}</div>`;
+
+      const desktopArea = document.getElementById('desktopAuthArea');
+      if (desktopArea) {
+        desktopArea.innerHTML = `
+          <a href="write.html" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet hover:from-kgp-400 hover:to-violet-500 transition-all shadow-lg shadow-kgp-500/20 hover:-translate-y-0.5">
+            <i class="fas fa-pen-nib"></i>
+            Write
+          </a>
+          <div class="relative group">
+            <a href="profile.html" title="Go to My Profile" class="flex items-center gap-3 px-3 py-1.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
+              ${avatarContent}
+              <div class="text-left pr-1">
+                <div class="text-xs font-semibold text-white flex items-center">${user.full_name}${verifiedIcon}</div>
+                <div class="text-[10px] text-gray-400">${deptBadge}</div>
+              </div>
+              <i class="fas fa-chevron-down text-[10px] text-gray-500"></i>
+            </a>
+
+            <!-- Dropdown Menu -->
+            <div class="absolute right-0 mt-2 w-64 glass rounded-2xl p-4 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <a href="profile.html" class="block pb-3 mb-3 border-b border-white/10 hover:opacity-80 transition-opacity">
+                <div class="text-sm font-semibold text-white flex items-center">${user.full_name}${verifiedIcon}</div>
+                <div class="text-xs text-gray-400 truncate">${user.email || user.phone || ''}</div>
+                ${user.bio ? `<p class="text-[11px] text-gray-500 mt-1.5 italic">"${user.bio}"</p>` : ''}
+              </a>
+              <a href="profile.html" class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all mb-1">
+                <i class="fas fa-user-circle text-accent-cyan"></i>
+                My Profile (Published & Saved)
+              </a>
+              <a href="write.html" class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all mb-1">
+                <i class="fas fa-pen-nib text-kgp-400"></i>
+                Write an Article
+              </a>
+              <button onclick="logoutUser()" class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all">
+                <i class="fas fa-sign-out-alt"></i>
+                Log Out
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      const mobileArea = document.getElementById('mobileAuthArea');
+      if (mobileArea) {
+        mobileArea.innerHTML = `
+          <a href="profile.html" class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 mb-2 flex items-center gap-3">
+            ${avatarContent}
+            <div>
+              <div class="text-sm font-semibold text-white flex items-center">${user.full_name}${verifiedIcon}</div>
+              <div class="text-xs text-gray-400">${deptBadge} • View Profile</div>
+            </div>
+          </a>
+          <a href="profile.html" class="px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all block">
+            <i class="fas fa-user-circle mr-1.5 text-accent-cyan"></i> My Profile
+          </a>
+          <a href="write.html" class="px-4 py-3 text-sm font-semibold text-white rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet text-center block mb-1">
+            <i class="fas fa-pen-nib mr-1.5"></i> Write an Article
+          </a>
+          <button onclick="logoutUser()" class="px-4 py-3 text-sm font-semibold text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all text-left flex items-center gap-2">
+            <i class="fas fa-sign-out-alt"></i> Log Out
+          </button>
+        `;
+      }
+    }
+
+    function renderLoggedOutNavbar() {
+      loggedInUser = null;
+      isUserLoggedIn = false;
+      const desktopArea = document.getElementById('desktopAuthArea');
+      if (desktopArea) {
+        desktopArea.innerHTML = `
+          <a href="login.html" class="px-5 py-2 text-sm font-medium text-gray-300 hover:text-white rounded-xl hover:bg-white/5 transition-all border border-transparent hover:border-white/10">
+            Log In
+          </a>
+          <a href="signup.html" class="px-5 py-2.5 text-sm font-semibold text-white rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet hover:from-kgp-400 hover:to-violet-500 transition-all shadow-lg shadow-kgp-500/25 hover:shadow-kgp-500/40 hover:-translate-y-0.5">
+            Sign Up
+          </a>
+        `;
+      }
+      const mobileArea = document.getElementById('mobileAuthArea');
+      if (mobileArea) {
+        mobileArea.innerHTML = `
+          <a href="login.html" class="px-4 py-3 text-sm font-medium text-gray-300 hover:text-white rounded-xl hover:bg-white/5 transition-all text-left block">Log In</a>
+          <a href="signup.html" class="px-4 py-3 text-sm font-semibold text-white rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet text-center block">Sign Up</a>
+        `;
+      }
+    }
+
+    async function checkAuthState() {
+      const cached = window.getStoredKgpUser ? window.getStoredKgpUser() : null;
+      if (cached) {
+        renderNavbarUser(cached);
+      } else {
+        renderLoggedOutNavbar();
+      }
+
+      try {
+        const res = await fetch('/api/auth/me', { cache: 'no-store' });
+        const data = await res.json();
+        if (!res.ok || !data.loggedIn || !data.user) {
+          if (window.setStoredKgpUser) window.setStoredKgpUser(null);
+          renderLoggedOutNavbar();
+          return;
+        }
+        renderNavbarUser(data.user);
+      } catch (err) {
+        if (window.location.protocol !== 'file:') {
+          renderLoggedOutNavbar();
+        }
+      }
+    }
+
+    async function logoutUser() {
+      try {
+        await fetch('/api/auth/logout', { method: 'POST', cache: 'no-store' });
+      } catch (err) {}
+      if (window.setStoredKgpUser) window.setStoredKgpUser(null);
+      localStorage.removeItem('kgp-user');
+      localStorage.removeItem('kgp_user');
+      renderLoggedOutNavbar();
+      window.location.replace('index.html');
+    }
+
+    // Re-verify auth state when user navigates back/forward (bfcache)
+    window.addEventListener('pageshow', () => {
+      checkAuthState();
+      loadArticlesFromServer();
+    });
+
+    // ===== Dark / Light Mode Toggle =====
+    function applyTheme(theme) {
+      const isLight = theme === 'light';
+      document.body.classList.toggle('light-mode', isLight);
+
+      const icons = [
+        document.getElementById('themeIcon'),
+        document.getElementById('themeIconMobile')
+      ];
+      icons.forEach(icon => {
+        if (!icon) return;
+        if (isLight) {
+          icon.className = 'fas fa-moon text-indigo-600 text-sm';
+        } else {
+          icon.className = 'fas fa-sun text-amber-400 text-sm';
+        }
+      });
+    }
+
+    function toggleTheme() {
+      const isCurrentlyLight = document.body.classList.contains('light-mode');
+      const nextTheme = isCurrentlyLight ? 'dark' : 'light';
+      localStorage.setItem('kgp-theme', nextTheme);
+      applyTheme(nextTheme);
+    }
+
+    function initTheme() {
+      const saved = localStorage.getItem('kgp-theme') || 'dark';
+      applyTheme(saved);
+    }
+
+    // ===== Init =====
+    initTheme();
+    updateTopicCounts();
+    renderArticles('all');
+    loadArticlesFromServer();
+    checkAuthState();
+  </script>
+
+</body>
+</html>

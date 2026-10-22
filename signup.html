@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up — KGPConnect</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="auth-client.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            kgp: {
+              50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
+              400: '#60a5fa', 500: '#3b82f6', 600: '#1d4ed8', 700: '#1e3a8a',
+              800: '#1e2d5f', 900: '#0f172a',
+            },
+            accent: {
+              orange: '#f97316', emerald: '#10b981', violet: '#8b5cf6',
+              rose: '#f43f5e', amber: '#f59e0b', cyan: '#06b6d4',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .gradient-text {
+      background: linear-gradient(135deg, #60a5fa, #8b5cf6, #f43f5e);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .glass {
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .input-field { transition: all 0.3s ease; }
+    .input-field:focus {
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 0 20px rgba(59, 130, 246, 0.05);
+    }
+    .social-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .social-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+    .auth-card { animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+    .float { animation: float 6s ease-in-out infinite; }
+    .float-delay { animation: float 6s ease-in-out 2s infinite; }
+    .otp-input {
+      width: 48px; height: 56px; text-align: center; font-size: 1.25rem; font-weight: 700;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; color: white; outline: none; transition: all 0.3s ease;
+    }
+    .otp-input:focus { border-color: rgba(59, 130, 246, 0.5); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+    .phone-wrapper { position: relative; }
+    .country-code {
+      position: absolute; left: 1px; top: 1px; bottom: 1px;
+      display: flex; align-items: center; padding: 0 12px;
+      background: rgba(255,255,255,0.03); border-right: 1px solid rgba(255,255,255,0.1);
+      border-radius: 11px 0 0 11px; color: #94a3b8; font-size: 0.875rem; font-weight: 500; pointer-events: none;
+    }
+    .eye-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #64748b; cursor: pointer; transition: color 0.2s; }
+    .eye-toggle:hover { color: #94a3b8; }
+    .step-panel { display: none; animation: fadeIn 0.4s ease; }
+    .step-panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    .divider-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); }
+    .grid-pattern {
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* Password strength meter */
+    .strength-bar { height: 3px; border-radius: 2px; transition: all 0.4s ease; }
+    .strength-weak { background: #f43f5e; width: 25%; }
+    .strength-fair { background: #f59e0b; width: 50%; }
+    .strength-good { background: #60a5fa; width: 75%; }
+    .strength-strong { background: #10b981; width: 100%; }
+
+    /* Interest chips */
+    .interest-chip {
+      transition: all 0.2s ease; cursor: pointer;
+    }
+    .interest-chip:hover { transform: scale(1.05); }
+    .interest-chip.selected {
+      border-color: rgba(59, 130, 246, 0.5) !important;
+      background: rgba(59, 130, 246, 0.1) !important;
+      color: #93c5fd !important;
+    }
+
+    /* Progress bar */
+    .progress-step {
+      transition: all 0.3s ease;
+    }
+    .progress-step.completed .step-dot { background: #10b981; border-color: #10b981; }
+    .progress-step.active .step-dot { background: #3b82f6; border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59,130,246,0.2); }
+    .progress-step .step-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.15); background: transparent;
+      transition: all 0.3s ease;
+    }
+    .progress-line { height: 2px; background: rgba(255,255,255,0.08); flex: 1; position: relative; overflow: hidden; }
+    .progress-line .fill { height: 100%; background: #10b981; width: 0; transition: width 0.5s ease; }
+    .progress-line.filled .fill { width: 100%; }
+
+    select {
+      background-color: #1e293b !important;
+      color: #f8fafc !important;
+      color-scheme: dark;
+    }
+    select option {
+      background-color: #0f172a !important;
+      color: #f8fafc !important;
+    }
+
+    /* Light Mode */
+    body.light-mode {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+    }
+    body.light-mode .glass {
+      background: rgba(255, 255, 255, 0.96) !important;
+      border: 1px solid rgba(15, 23, 42, 0.12) !important;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08) !important;
+    }
+    body.light-mode .text-white { color: #0f172a !important; }
+    body.light-mode .text-gray-200,
+    body.light-mode .text-gray-300 { color: #1e293b !important; }
+    body.light-mode .text-gray-400,
+    body.light-mode .text-gray-500,
+    body.light-mode .text-gray-600 { color: #475569 !important; }
+    body.light-mode .border-white\/10,
+    body.light-mode .border-white\/8 { border-color: rgba(15, 23, 42, 0.15) !important; }
+    body.light-mode .input-field,
+    body.light-mode .otp-input,
+    body.light-mode .social-btn,
+    body.light-mode select {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      border-color: rgba(15, 23, 42, 0.2) !important;
+      color-scheme: light;
+    }
+    body.light-mode select option {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+    }
+    body.light-mode .interest-tag {
+      background-color: #f1f5f9 !important;
+      color: #334155 !important;
+      border-color: rgba(15, 23, 42, 0.15) !important;
+    }
+    body.light-mode .interest-tag.selected {
+      background-color: rgba(59, 130, 246, 0.15) !important;
+      color: #1d4ed8 !important;
+      border-color: #3b82f6 !important;
+    }
+    body.light-mode .country-code {
+      color: #334155 !important;
+      border-right-color: rgba(15, 23, 42, 0.15) !important;
+    }
+    body.light-mode .bg-gradient-to-r.text-white,
+    body.light-mode .bg-gradient-to-r .text-white,
+    body.light-mode .bg-gradient-to-br.text-white,
+    body.light-mode .bg-gradient-to-br .text-white { color: #ffffff !important; }
+  </style>
+</head>
+
+<body class="bg-kgp-900 text-gray-100 min-h-screen grid-pattern">
+
+  <!-- Background decorations -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden">
+    <div class="absolute -top-40 -right-40 w-[500px] h-[500px] bg-accent-violet/8 rounded-full blur-3xl float"></div>
+    <div class="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-kgp-500/8 rounded-full blur-3xl float-delay"></div>
+    <div class="absolute top-1/2 left-1/3 w-[300px] h-[300px] bg-accent-emerald/5 rounded-full blur-3xl"></div>
+  </div>
+
+  <!-- Minimal Navbar -->
+  <nav class="relative z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 lg:h-20">
+        <a href="index.html" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-kgp-500 to-accent-violet flex items-center justify-center shadow-lg shadow-kgp-500/20">
+            <span class="text-white font-display font-bold text-lg">K</span>
+          </div>
+          <div>
+            <span class="font-display font-bold text-xl text-white tracking-tight">KGP</span><span class="font-display font-bold text-xl gradient-text tracking-tight">Connect</span>
+            <p class="text-[10px] text-gray-500 -mt-1 tracking-widest uppercase">IIT Kharagpur</p>
+          </div>
+        </a>
+        <div class="flex items-center gap-4">
+          <button onclick="toggleTheme()" title="Toggle Dark/Light Mode"
+            class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-gray-300 hover:text-white transition-all">
+            <i id="themeIcon" class="fas fa-sun text-amber-400 text-sm"></i>
+          </button>
+          <a href="login.html" class="text-sm text-gray-400 hover:text-white transition-colors">
+            Already a member? <span class="font-semibold text-kgp-400 hover:text-kgp-300">Log In</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="relative z-10 flex items-center justify-center px-4 py-8 min-h-[calc(100vh-80px)]">
+    <div class="w-full max-w-md auth-card">
+
+      <!-- Card -->
+      <div class="glass rounded-3xl p-8 sm:p-10 shadow-2xl">
+
+        <!-- Progress Indicator -->
+        <div class="flex items-center gap-0 mb-8 px-2" id="progressBar">
+          <div class="progress-step active" data-step="1">
+            <div class="step-dot"></div>
+          </div>
+          <div class="progress-line" id="line1"><div class="fill"></div></div>
+          <div class="progress-step" data-step="2">
+            <div class="step-dot"></div>
+          </div>
+          <div class="progress-line" id="line2"><div class="fill"></div></div>
+          <div class="progress-step" data-step="3">
+            <div class="step-dot"></div>
+          </div>
+        </div>
+
+        <!-- ===== STEP 1: Account Creation ===== -->
+        <div id="step-create" class="step-panel active">
+
+          <!-- Header -->
+          <div class="text-center mb-8">
+            <h1 class="font-display text-2xl sm:text-3xl font-bold text-white mb-2">Join KGPConnect</h1>
+            <p class="text-sm text-gray-400">First-time registration: set your password & verify with a 1-time Email OTP</p>
+          </div>
+
+          <!-- Email + Password + OTP Signup Form -->
+          <form onsubmit="sendSignupEmailOTP(event)">
+            <div class="space-y-4">
+
+              <!-- Full Name -->
+              <div>
+                <label class="block text-xs font-medium text-gray-400 mb-1.5 ml-1">Full name <span class="text-rose-400">*</span></label>
+                <div class="relative">
+                  <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 text-sm"></i>
+                  <input type="text" id="fullName" placeholder="e.g. Arjun Mehta" required
+                    class="input-field w-full pl-11 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-gray-600 text-sm focus:outline-none" />
+                </div>
+              </div>
+
+              <!-- Compulsory KGP Email -->
+              <div>
+                <label class="block text-xs font-medium text-gray-400 mb-1.5 ml-1">KGP Email ID <span class="text-rose-400">*</span></label>
+                <div class="relative">
+                  <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 text-sm"></i>
+                  <input type="email" id="signupEmail" placeholder="yourname@kgpian.iitkgp.ac.in or @iitkgp.ac.in" required
+                    class="input-field w-full pl-11 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-gray-600 text-sm focus:outline-none" />
+                </div>
+                <p class="text-[11px] text-gray-500 mt-1 ml-1"><i class="fas fa-graduation-cap text-kgp-400 mr-1"></i>Compulsory: must end with <code class="text-kgp-400">@iitkgp.ac.in</code> or <code class="text-kgp-400">@kgpian.iitkgp.ac.in</code></p>
+              </div>
+
+              <!-- Set Password -->
+              <div>
+                <label class="block text-xs font-medium text-gray-400 mb-1.5 ml-1">Set Password <span class="text-rose-400">*</span></label>
+                <div class="relative">
+                  <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 text-sm"></i>
+                  <input type="password" id="signupPassword" placeholder="Minimum 6 characters" minlength="6" required
+                    class="input-field w-full pl-11 pr-11 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-gray-600 text-sm focus:outline-none" />
+                  <button type="button" onclick="toggleSignupPasswordVisibility('signupPassword', 'signupPwdEye')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+                    <i id="signupPwdEye" class="far fa-eye text-sm"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Confirm Password -->
+              <div>
+                <label class="block text-xs font-medium text-gray-400 mb-1.5 ml-1">Confirm Password <span class="text-rose-400">*</span></label>
+                <div class="relative">
+                  <i class="fas fa-shield-halved absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 text-sm"></i>
+                  <input type="password" id="signupConfirmPassword" placeholder="Re-enter your password" minlength="6" required
+                    class="input-field w-full pl-11 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-gray-600 text-sm focus:outline-none" />
+                </div>
+              </div>
+
+              <!-- Optional Roll Number -->
+              <div>
+                <label class="block text-xs font-medium text-gray-400 mb-1.5 ml-1">Roll Number <span class="text-gray-500 font-normal">(optional)</span></label>
+                <div class="relative">
+                  <i class="fas fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 text-sm"></i>
+                  <input type="text" id="signupRollNumber" placeholder="e.g. 22CS10045 (Optional)"
+                    class="input-field w-full pl-11 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-gray-600 text-sm focus:outline-none" />
+                </div>
+              </div>
+
+              <!-- Terms -->
+              <div class="flex items-start gap-2">
+                <input type="checkbox" id="terms" required class="w-4 h-4 mt-0.5 rounded border-white/20 bg-white/5 text-kgp-500 focus:ring-kgp-500/30 cursor-pointer" />
+                <label for="terms" class="text-xs text-gray-500 cursor-pointer leading-relaxed">
+                  I agree to KGPConnect's <a href="#" class="text-kgp-400 hover:text-kgp-300">Terms of Service</a> and <a href="#" class="text-kgp-400 hover:text-kgp-300">Privacy Policy</a>
+                </label>
+              </div>
+
+              <!-- Submit -->
+              <button type="submit" id="sendSignupOtpBtn"
+                class="w-full py-3.5 rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet hover:from-kgp-400 hover:to-violet-500 text-white font-semibold text-sm transition-all shadow-lg shadow-kgp-500/20 hover:shadow-kgp-500/35 hover:-translate-y-0.5 mt-2">
+                <i class="fas fa-paper-plane mr-2"></i>Send OTP to Verify Email
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ===== STEP 1B: EMAIL OTP VERIFICATION ===== -->
+        <div id="step-otp" class="step-panel">
+          <button type="button" onclick="showStep('step-create')" class="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-300 transition-colors mb-6">
+            <i class="fas fa-arrow-left text-xs"></i> Change KGP Email ID
+          </button>
+
+          <div class="text-center mb-8">
+            <div class="w-16 h-16 rounded-2xl bg-kgp-500/15 flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-envelope-open-text text-2xl text-kgp-400"></i>
+            </div>
+            <h3 class="font-display font-semibold text-white text-lg mb-1">Verify your KGP Email</h3>
+            <p class="text-xs text-gray-500">Enter the 6-digit OTP sent to <span id="otpEmailDisplay" class="text-gray-300 font-medium">yourname@kgpian.iitkgp.ac.in</span></p>
+            <p class="text-[11px] text-gray-500 mt-1.5">Please check your inbox and spam folder.</p>
+          </div>
+
+          <form onsubmit="verifySignupEmailOTP(event)">
+            <div class="flex items-center justify-center gap-2.5 mb-6" id="otpContainer">
+              <input type="text" maxlength="1" class="otp-input" oninput="otpMove(this, 'next')" onkeydown="otpMove(this, 'prev', event)" />
+              <input type="text" maxlength="1" class="otp-input" oninput="otpMove(this, 'next')" onkeydown="otpMove(this, 'prev', event)" />
+              <input type="text" maxlength="1" class="otp-input" oninput="otpMove(this, 'next')" onkeydown="otpMove(this, 'prev', event)" />
+              <div class="w-3 flex items-center justify-center"><div class="w-2 h-0.5 bg-gray-700 rounded"></div></div>
+              <input type="text" maxlength="1" class="otp-input" oninput="otpMove(this, 'next')" onkeydown="otpMove(this, 'prev', event)" />
+              <input type="text" maxlength="1" class="otp-input" oninput="otpMove(this, 'next')" onkeydown="otpMove(this, 'prev', event)" />
+              <input type="text" maxlength="1" class="otp-input" oninput="otpMove(this, 'next')" onkeydown="otpMove(this, 'prev', event)" />
+            </div>
+
+            <button type="submit" id="verifySignupOtpBtn"
+              class="w-full py-3.5 rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet hover:from-kgp-400 hover:to-violet-500 text-white font-semibold text-sm transition-all shadow-lg shadow-kgp-500/20 hover:shadow-kgp-500/35 hover:-translate-y-0.5 mb-4">
+              Verify OTP & Continue
+            </button>
+
+            <div class="text-center">
+              <p class="text-xs text-gray-600">
+                Didn't receive the email code?
+                <button type="button" id="resendBtn" onclick="resendSignupOTP()" class="text-kgp-400 hover:text-kgp-300 font-medium transition-colors ml-1">Resend OTP</button>
+                <span id="resendTimer" class="text-gray-600 ml-1 hidden">in <span id="timerCount">30</span>s</span>
+              </p>
+            </div>
+          </form>
+        </div>
+
+        <!-- ===== STEP 2: Profile Details ===== -->
+        <div id="step-profile" class="step-panel">
+          <div class="text-center mb-8">
+            <h2 class="font-display text-xl font-bold text-white mb-1">Set up your profile</h2>
+            <p class="text-sm text-gray-400">Tell us about yourself at KGP</p>
+          </div>
+
+          <form onsubmit="goToStep3(event)">
+            <div class="space-y-4">
+
+              <!-- Department -->
+              <div>
+                <label class="block text-xs font-medium text-gray-400 mb-1.5 ml-1">Department</label>
+                <div class="relative">
+                  <i class="fas fa-building-columns absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 text-sm"></i>
+                  <select id="department" required
+                    class="input-field w-full pl-11 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white text-sm focus:outline-none appearance-none cursor-pointer">
+                    <option value="" disabled selected class="bg-kgp-900">Select department</option>
+                    <option value="CSE" class="bg-kgp-900">Computer Science & Engineering</option>
+                    <option value="ECE" class="bg-kgp-900">Electronics & Electrical Comm.</option>
+                    <option value="EE" class="bg-kgp-900">Electrical Engineering</option>
+                    <option value="ME" class="bg-kgp-900">Mechanical Engineering</option>
+                    <option value="CE" class="bg-kgp-900">Civil Engineering</option>
+                    <option value="MA" class="bg-kgp-900">Mathematics & Computing</option>
+                    <option value="PH" class="bg-kgp-900">Physics</option>
+                    <option value="CH" class="bg-kgp-900">Chemistry</option>
+                    <option value="BT" class="bg-kgp-900">Biotechnology</option>
+                    <option value="AG" class="bg-kgp-900">Agricultural Engineering</option>
+                    <option value="MF" class="bg-kgp-900">Manufacturing</option>
+                    <option value="AE" class="bg-kgp-900">Aerospace Engineering</option>
+                    <option value="AR" class="bg-kgp-900">Architecture</option>
+                    <option value="IE" class="bg-kgp-900">Industrial Engineering</option>
+                    <option value="MI" class="bg-kgp-900">Mining Engineering</option>
+                    <option value="NA" class="bg-kgp-900">Ocean Engineering</option>
+                    <option value="HS" class="bg-kgp-900">Humanities & Social Sciences</option>
+                    <option value="other" class="bg-kgp-900">Other</option>
+                  </select>
+                  <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 text-xs pointer-events-none"></i>
+                </div>
+              </div>
+
+              <!-- Year of Graduation -->
+              <div>
+                <label class="block text-xs font-medium text-gray-400 mb-1.5 ml-1">Year of graduation</label>
+                <div class="relative">
+                  <i class="fas fa-graduation-cap absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 text-sm"></i>
+                  <select id="gradYear" required
+                    class="input-field w-full pl-11 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white text-sm focus:outline-none appearance-none cursor-pointer">
+                    <option value="" disabled selected class="bg-kgp-900">Select year</option>
+                    <option value="2025" class="bg-kgp-900">2025</option>
+                    <option value="2026" class="bg-kgp-900">2026</option>
+                    <option value="2027" class="bg-kgp-900">2027</option>
+                    <option value="2028" class="bg-kgp-900">2028</option>
+                    <option value="2029" class="bg-kgp-900">2029</option>
+                    <option value="2030" class="bg-kgp-900">2030</option>
+                    <option value="alumni" class="bg-kgp-900">Alumni</option>
+                  </select>
+                  <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 text-xs pointer-events-none"></i>
+                </div>
+              </div>
+
+              <!-- Roll Number (optional) -->
+              <div>
+                <label class="block text-xs font-medium text-gray-400 mb-1.5 ml-1">Roll number <span class="text-gray-600">(optional)</span></label>
+                <div class="relative">
+                  <i class="fas fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 text-sm"></i>
+                  <input type="text" id="rollNumber" placeholder="e.g. 22CS10045"
+                    class="input-field w-full pl-11 pr-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-gray-600 text-sm focus:outline-none" />
+                </div>
+              </div>
+
+              <!-- Bio -->
+              <div>
+                <label class="block text-xs font-medium text-gray-400 mb-1.5 ml-1">Short bio <span class="text-gray-600">(optional)</span></label>
+                <textarea id="bio" rows="2" placeholder="ML enthusiast | GSoC '26 | Chess lover ♟️" maxlength="160"
+                  class="input-field w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-gray-600 text-sm focus:outline-none resize-none"></textarea>
+                <p class="text-[10px] text-gray-700 mt-1 ml-1 text-right"><span id="bioCount">0</span>/160</p>
+              </div>
+
+              <button type="submit"
+                class="w-full py-3.5 rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet hover:from-kgp-400 hover:to-violet-500 text-white font-semibold text-sm transition-all shadow-lg shadow-kgp-500/20 hover:shadow-kgp-500/35 hover:-translate-y-0.5 mt-1">
+                Continue
+              </button>
+            </div>
+          </form>
+        </div>
+
+
+        <!-- ===== STEP 3: Interests ===== -->
+        <div id="step-interests" class="step-panel">
+          <div class="text-center mb-6">
+            <h2 class="font-display text-xl font-bold text-white mb-1">Pick your interests</h2>
+            <p class="text-sm text-gray-400">Select at least 3 topics to personalize your feed</p>
+          </div>
+
+          <div class="flex flex-wrap gap-2 mb-8" id="interestsGrid">
+            <!-- Interests injected by JS -->
+          </div>
+
+          <p class="text-xs text-gray-600 text-center mb-4"><span id="selectedCount">0</span> selected — choose at least 3</p>
+
+          <button onclick="completeSignup()" id="finishBtn" disabled
+            class="w-full py-3.5 rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet text-white font-semibold text-sm transition-all shadow-lg shadow-kgp-500/20 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 hover:from-kgp-400 hover:to-violet-500 hover:shadow-kgp-500/35 hover:-translate-y-0.5">
+            Complete Sign Up
+          </button>
+
+          <button onclick="completeSignup()" class="w-full py-2.5 text-xs text-gray-600 hover:text-gray-400 transition-colors mt-2">
+            Skip for now
+          </button>
+        </div>
+
+
+        <!-- ===== SUCCESS STEP ===== -->
+        <div id="step-success" class="step-panel">
+          <div class="text-center py-6">
+            <div class="relative w-24 h-24 mx-auto mb-6">
+              <div class="absolute inset-0 rounded-full bg-accent-emerald/10 animate-ping"></div>
+              <div class="relative w-24 h-24 rounded-full bg-accent-emerald/10 flex items-center justify-center">
+                <i class="fas fa-check-circle text-5xl text-accent-emerald"></i>
+              </div>
+            </div>
+            <h3 class="font-display text-2xl font-bold text-white mb-2">You're all set! 🎉</h3>
+            <p class="text-sm text-gray-400 mb-2">Welcome to the KGPConnect community.</p>
+            <p class="text-xs text-gray-600 mb-8">Start reading articles, follow topics, and connect with fellow KGPians.</p>
+            <a href="index.html"
+              class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-gradient-to-r from-kgp-500 to-accent-violet text-white font-semibold text-sm transition-all shadow-lg hover:-translate-y-0.5">
+              <i class="fas fa-home"></i>
+              Explore KGPConnect
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom link -->
+      <p class="text-center text-sm text-gray-600 mt-6">
+        Already have an account? <a href="login.html" class="text-kgp-400 hover:text-kgp-300 font-semibold transition-colors">Log In</a>
+      </p>
+    </div>
+  </main>
+
+
+  <script>
+    const interests = [
+      { label: 'Machine Learning', icon: 'fa-brain', color: 'blue' },
+      { label: 'Computer Vision', icon: 'fa-eye', color: 'cyan' },
+      { label: 'LLM', icon: 'fa-comments', color: 'violet' },
+      { label: 'Data Engineering', icon: 'fa-database', color: 'amber' },
+      { label: 'Agentic AI', icon: 'fa-robot', color: 'rose' },
+      { label: 'Deep Learning', icon: 'fa-network-wired', color: 'emerald' },
+      { label: 'Reinforcement Learning', icon: 'fa-gamepad', color: 'pink' },
+      { label: 'NLP', icon: 'fa-language', color: 'indigo' },
+      { label: 'Web Dev', icon: 'fa-code', color: 'sky' },
+      { label: 'Systems & Infra', icon: 'fa-server', color: 'orange' },
+      { label: 'Cybersecurity', icon: 'fa-shield-halved', color: 'red' },
+      { label: 'Blockchain', icon: 'fa-link', color: 'purple' },
+      { label: 'Robotics', icon: 'fa-gears', color: 'slate' },
+      { label: 'Competitive Programming', icon: 'fa-trophy', color: 'yellow' },
+      { label: 'Open Source', icon: 'fa-code-branch', color: 'green' },
+      { label: 'Product & Design', icon: 'fa-palette', color: 'fuchsia' },
+    ];
+
+    let selectedInterests = new Set();
+    let currentEmail = '';
+    let resendInterval;
+
+    // Check if already logged in with complete profile
+    (async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        const data = await res.json();
+        if (data.loggedIn && data.user.department) {
+          window.location.href = '/index.html';
+        }
+      } catch(e) {}
+    })();
+
+    function showError(msg) {
+      document.querySelectorAll('.error-toast').forEach(e => e.remove());
+      const toast = document.createElement('div');
+      toast.className = 'error-toast fixed top-4 right-4 z-50 px-5 py-3 rounded-xl bg-red-500/90 backdrop-blur text-white text-sm font-medium shadow-lg shadow-red-500/25 flex items-center gap-2';
+      toast.innerHTML = `<i class="fas fa-exclamation-circle"></i>${msg}`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+
+    // Render interest chips
+    function renderInterests() {
+      const grid = document.getElementById('interestsGrid');
+      grid.innerHTML = interests.map(i => `
+        <button type="button" onclick="toggleInterest(this, '${i.label}')"
+          class="interest-chip inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/[0.03] border border-white/8 text-gray-400 text-xs font-medium hover:bg-white/[0.06]">
+          <i class="fas ${i.icon} text-${i.color}-400/60"></i>
+          ${i.label}
+        </button>
+      `).join('');
+    }
+
+    function toggleInterest(el, label) {
+      if (selectedInterests.has(label)) {
+        selectedInterests.delete(label);
+        el.classList.remove('selected');
+      } else {
+        selectedInterests.add(label);
+        el.classList.add('selected');
+      }
+      document.getElementById('selectedCount').textContent = selectedInterests.size;
+      document.getElementById('finishBtn').disabled = selectedInterests.size < 3;
+    }
+
+    renderInterests();
+
+
+    // ===== Step Navigation =====
+    function showStep(stepId) {
+      document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById(stepId).classList.add('active');
+    }
+
+    function updateProgress(step) {
+      const steps = document.querySelectorAll('.progress-step');
+      const lines = [document.getElementById('line1'), document.getElementById('line2')];
+      steps.forEach((s, i) => {
+        s.classList.remove('active', 'completed');
+        if (i + 1 < step) s.classList.add('completed');
+        if (i + 1 === step) s.classList.add('active');
+      });
+      lines.forEach((l, i) => {
+        if (i + 1 < step) l.classList.add('filled');
+        else l.classList.remove('filled');
+      });
+    }
+
+
+    function isValidKgpEmail(email) {
+      return /^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9-]+\.)?iitkgp\.ac\.in$/i.test((email || '').trim());
+    }
+
+    function toggleSignupPasswordVisibility(inputId, iconId) {
+      const inp = document.getElementById(inputId);
+      const icn = document.getElementById(iconId);
+      if (!inp || !icn) return;
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        icn.className = 'far fa-eye-slash text-sm';
+      } else {
+        inp.type = 'password';
+        icn.className = 'far fa-eye text-sm';
+      }
+    }
+
+    // ===== Send OTP to KGP Email (Step 1) =====
+    async function sendSignupEmailOTP(e) {
+      if (e) e.preventDefault();
+      const fullName = document.getElementById('fullName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value;
+      const confirmPassword = document.getElementById('signupConfirmPassword').value;
+      const btn = document.getElementById('sendSignupOtpBtn');
+
+      if (!fullName) {
+        showError('Please enter your full name.');
+        return;
+      }
+
+      if (!isValidKgpEmail(email)) {
+        showError('Please enter a valid KGP Email ID (@iitkgp.ac.in or @kgpian.iitkgp.ac.in).');
+        return;
+      }
+
+      if (!password || password.length < 6) {
+        showError('Please set a password of at least 6 characters.');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showError('Passwords do not match.');
+        return;
+      }
+
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending OTP to Email…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/auth/send-email-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, fullName, mode: 'signup' }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error || 'Could not send OTP.');
+          btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Send OTP to Verify Email';
+          btn.disabled = false;
+          return;
+        }
+
+        currentEmail = email;
+        document.getElementById('otpEmailDisplay').textContent = email;
+
+        document.querySelectorAll('#otpContainer .otp-input').forEach(i => { i.value = ''; });
+        showStep('step-otp');
+        startResendTimer();
+        document.querySelector('#otpContainer .otp-input')?.focus();
+      } catch (err) {
+        showError('Network error. Please try again.');
+      }
+      btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Send OTP to Verify Email';
+      btn.disabled = false;
+    }
+
+    async function resendSignupOTP() {
+      await sendSignupEmailOTP();
+    }
+
+    // ===== Verify Email OTP & Create Account -> Go to Step 2 =====
+    async function verifySignupEmailOTP(e) {
+      e.preventDefault();
+      const inputs = document.querySelectorAll('#otpContainer .otp-input');
+      let otp = '';
+      inputs.forEach(i => otp += i.value);
+      if (otp.length < 6) {
+        inputs.forEach(i => { i.style.borderColor = 'rgba(244,63,94,0.5)'; });
+        setTimeout(() => inputs.forEach(i => { i.style.borderColor = ''; }), 1500);
+        return;
+      }
+
+      const fullName = document.getElementById('fullName').value.trim();
+      const password = document.getElementById('signupPassword').value;
+      const rollNumber = document.getElementById('signupRollNumber')?.value.trim() || '';
+      const btn = document.getElementById('verifySignupOtpBtn');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Verifying OTP…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/auth/verify-email-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: currentEmail, code: otp, password, fullName, rollNumber }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error || 'Invalid OTP.');
+          btn.innerHTML = 'Verify OTP & Continue';
+          btn.disabled = false;
+          inputs.forEach(i => { i.value = ''; i.style.borderColor = 'rgba(244,63,94,0.5)'; });
+          setTimeout(() => inputs.forEach(i => { i.style.borderColor = ''; }), 1500);
+          inputs[0].focus();
+          return;
+        }
+
+        if (data.user) {
+          if (window.setStoredKgpUser) window.setStoredKgpUser(data.user);
+          localStorage.setItem('kgp-user', JSON.stringify(data.user));
+        }
+        if (rollNumber && document.getElementById('rollNumber')) {
+          document.getElementById('rollNumber').value = rollNumber;
+        }
+        updateProgress(2);
+        showStep('step-profile');
+      } catch (err) {
+        showError('Network error. Please try again.');
+      }
+      btn.innerHTML = 'Verify OTP & Continue';
+      btn.disabled = false;
+    }
+
+    async function goToStep3(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('button[type="submit"]');
+      const department = document.getElementById('department').value;
+      const gradYear = document.getElementById('gradYear').value;
+      const rollNumber = document.getElementById('rollNumber').value.trim();
+      const bio = document.getElementById('bio').value.trim();
+
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving profile…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/auth/profile', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ department, gradYear, rollNumber, bio }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error);
+          btn.innerHTML = 'Continue';
+          btn.disabled = false;
+          return;
+        }
+
+        updateProgress(3);
+        showStep('step-interests');
+      } catch (err) {
+        showError('Network error. Please try again.');
+      }
+      btn.innerHTML = 'Continue';
+      btn.disabled = false;
+    }
+
+    async function completeSignup() {
+      const btn = document.getElementById('finishBtn');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Setting things up…';
+      btn.disabled = true;
+
+      try {
+        if (selectedInterests.size > 0) {
+          await fetch('/api/auth/interests', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ interests: Array.from(selectedInterests) }),
+          });
+        }
+        showStep('step-success');
+      } catch (err) {
+        showError('Network error. Please try again.');
+        btn.innerHTML = 'Complete Sign Up';
+        btn.disabled = false;
+      }
+    }
+
+    // ===== Shared OTP Utilities =====
+    function otpMove(el, dir, event) {
+      if (dir === 'next' && el.value.length === 1) {
+        let next = el.nextElementSibling;
+        if (next && !next.classList.contains('otp-input')) next = next.nextElementSibling;
+        if (next && next.classList.contains('otp-input')) next.focus();
+      }
+      if (dir === 'prev' && event && event.key === 'Backspace' && el.value === '') {
+        let prev = el.previousElementSibling;
+        if (prev && !prev.classList.contains('otp-input')) prev = prev.previousElementSibling;
+        if (prev && prev.classList.contains('otp-input')) { prev.focus(); prev.select(); }
+      }
+    }
+
+    function startResendTimer() {
+      const btn = document.getElementById('resendBtn');
+      const timerSpan = document.getElementById('resendTimer');
+      const countSpan = document.getElementById('timerCount');
+      btn.classList.add('hidden');
+      timerSpan.classList.remove('hidden');
+      let seconds = 30;
+      countSpan.textContent = seconds;
+      clearInterval(resendInterval);
+      resendInterval = setInterval(() => {
+        seconds--;
+        countSpan.textContent = seconds;
+        if (seconds <= 0) {
+          clearInterval(resendInterval);
+          btn.classList.remove('hidden');
+          timerSpan.classList.add('hidden');
+        }
+      }, 1000);
+    }
+
+    // Bio counter
+    document.getElementById('bio')?.addEventListener('input', function() {
+      document.getElementById('bioCount').textContent = this.value.length;
+    });
+
+    // OTP paste support
+    document.getElementById('otpContainer')?.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const paste = (e.clipboardData || window.clipboardData).getData('text').trim();
+      const inputs = document.querySelectorAll('#otpContainer .otp-input');
+      let idx = 0;
+      for (const char of paste) {
+        while (idx < inputs.length && !inputs[idx].classList.contains('otp-input')) idx++;
+        if (idx < inputs.length) { inputs[idx].value = char; idx++; }
+      }
+    });
+
+    // ===== Dark / Light Mode Toggle =====
+    function applyTheme(theme) {
+      const isLight = theme === 'light';
+      document.body.classList.toggle('light-mode', isLight);
+      const icon = document.getElementById('themeIcon');
+      if (icon) {
+        icon.className = isLight ? 'fas fa-moon text-indigo-600 text-sm' : 'fas fa-sun text-amber-400 text-sm';
+      }
+    }
+    function toggleTheme() {
+      const nextTheme = document.body.classList.contains('light-mode') ? 'dark' : 'light';
+      localStorage.setItem('kgp-theme', nextTheme);
+      applyTheme(nextTheme);
+    }
+    applyTheme(localStorage.getItem('kgp-theme') || 'dark');
+  </script>
+
+</body>
+</html>
