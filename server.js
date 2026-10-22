@@ -112,6 +112,7 @@ app.post('/api/auth/send-email-otp', async (req, res) => {
 
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log(`🔑 Verification OTP for ${cleanEmail}: ${otp}`);
 
     // Store OTP in email_otp_codes (expires in 5 minutes)
     db.prepare('DELETE FROM email_otp_codes WHERE LOWER(email) = ?').run(cleanEmail);
@@ -120,7 +121,7 @@ app.post('/api/auth/send-email-otp', async (req, res) => {
       VALUES (?, ?, datetime('now', '+5 minutes'))
     `).run(cleanEmail, otp);
 
-    // Send real email if SMTP_USER and SMTP_PASS are configured in .env
+    // Send real email if SMTP_USER and SMTP_PASS are configured
     const transporter = getMailTransporter();
     if (transporter) {
       try {
@@ -152,11 +153,14 @@ app.post('/api/auth/send-email-otp', async (req, res) => {
       } catch (mailErr) {
         console.error('⚠️ SMTP email send failed:', mailErr.message);
         if (process.env.NODE_ENV === 'production') {
-          return res.status(500).json({ error: 'Could not send verification email. Please try again later.' });
+          return res.status(500).json({ error: 'Could not send verification email. Please check SMTP credentials or try again later.' });
         }
       }
     } else if (process.env.NODE_ENV === 'production') {
-      return res.status(500).json({ error: 'Email service is not configured on the server.' });
+      console.warn(`⚠️ Email OTP delivery failed: SMTP_USER / SMTP_PASS are not configured in environment variables.`);
+      return res.status(500).json({
+        error: 'Email service is not configured on the server. Please add SMTP_USER and SMTP_PASS in your deployment Environment Variables (Render Dashboard -> Environment).',
+      });
     }
 
     // Never expose the OTP code in the API response
@@ -1078,5 +1082,11 @@ app.listen(PORT, () => {
   console.log(`\n🚀 KGPConnect server running at http://localhost:${PORT}`);
   console.log(`   📄 Home:    http://localhost:${PORT}/index.html`);
   console.log(`   🔐 Login:   http://localhost:${PORT}/login.html`);
-  console.log(`   📝 Signup:  http://localhost:${PORT}/signup.html\n`);
+  console.log(`   📝 Signup:  http://localhost:${PORT}/signup.html`);
+  const hasMail = Boolean(process.env.SMTP_USER && process.env.SMTP_PASS);
+  if (hasMail) {
+    console.log(`   ✉️  SMTP:    Configured (${process.env.SMTP_USER})\n`);
+  } else {
+    console.log(`   ⚠️  SMTP:    NOT configured. Set SMTP_USER & SMTP_PASS in hosting environment variables to deliver live OTPs.\n`);
+  }
 });
