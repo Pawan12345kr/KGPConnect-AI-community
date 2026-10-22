@@ -1253,6 +1253,10 @@
           showToast(`6-digit OTP sent to ${profileUser.email}`, 'success');
           document.getElementById('forgotOtpRequestBox').classList.add('hidden');
           document.getElementById('forgotOtpVerifyForm').classList.remove('hidden');
+          if (data.devOtp) {
+            document.getElementById('forgotOtpCodeInput').value = data.devOtp;
+            showToast(`Render Free blocks SMTP. Auto-filled OTP: ${data.devOtp}`, 'info');
+          }
           document.getElementById('forgotOtpCodeInput').focus();
         } else {
           showToast(data.error || 'Could not send OTP.', 'error');

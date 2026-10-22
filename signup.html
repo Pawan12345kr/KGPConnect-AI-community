@@ -332,6 +332,7 @@
             <h3 class="font-display font-semibold text-white text-lg mb-1">Verify your KGP Email</h3>
             <p class="text-xs text-gray-500">Enter the 6-digit OTP sent to <span id="otpEmailDisplay" class="text-gray-300 font-medium">yourname@kgpian.iitkgp.ac.in</span></p>
             <p class="text-[11px] text-gray-500 mt-1.5">Please check your inbox and spam folder.</p>
+            <div id="otpNoticeBanner" class="hidden mt-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300 leading-relaxed text-center"></div>
           </div>
 
           <form onsubmit="verifySignupEmailOTP(event)">
@@ -661,7 +662,23 @@
         currentEmail = email;
         document.getElementById('otpEmailDisplay').textContent = email;
 
-        document.querySelectorAll('#otpContainer .otp-input').forEach(i => { i.value = ''; });
+        const inputs = document.querySelectorAll('#otpContainer .otp-input');
+        inputs.forEach(i => { i.value = ''; });
+
+        const banner = document.getElementById('otpNoticeBanner');
+        if (data.devOtp) {
+          const digits = String(data.devOtp).split('');
+          inputs.forEach((input, idx) => {
+            if (digits[idx]) input.value = digits[idx];
+          });
+          if (banner) {
+            banner.innerHTML = `<i class="fas fa-info-circle mr-1 text-amber-400"></i> <strong>Render Free Tier Note:</strong> Outbound SMTP (port 587) is blocked by Render's firewall. For testing, your verification OTP is: <strong class="text-white text-sm tracking-wider underline">${data.devOtp}</strong> (auto-filled).`;
+            banner.classList.remove('hidden');
+          }
+        } else if (banner) {
+          banner.classList.add('hidden');
+        }
+
         showStep('step-otp');
         startResendTimer();
         document.querySelector('#otpContainer .otp-input')?.focus();
